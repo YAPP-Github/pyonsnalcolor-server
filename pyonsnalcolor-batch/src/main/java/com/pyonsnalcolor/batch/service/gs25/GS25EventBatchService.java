@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * TODO : 편의점에 맞게 구현 필요
+ */
 @Service("GS25Event")
 @Slf4j
 public class GS25EventBatchService extends EventBatchService {

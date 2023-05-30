@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * TODO : 편의점에 맞게 구현 필요
+ */
 @Service("GS25Pb")
 public class GS25PbBatchService extends PbBatchService {
 

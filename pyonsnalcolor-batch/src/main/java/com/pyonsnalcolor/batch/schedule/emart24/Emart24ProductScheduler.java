@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+/**
+ * TODO : 편의점에 맞게 구현 필요
+ */
 @Component
 public class Emart24ProductScheduler extends Scheduler {
     @Autowired

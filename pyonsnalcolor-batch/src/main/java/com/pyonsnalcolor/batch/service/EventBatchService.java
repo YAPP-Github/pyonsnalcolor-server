@@ -17,7 +17,7 @@ public abstract class EventBatchService implements BatchService {
         List<BaseProduct> newProducts = getNewProducts();
         List<BaseProduct> eventExpiredProducts = getEventExpiredProducts();
         sendAlarms(newProducts);
-        saveProducts(eventExpiredProducts);
+        saveProducts(newProducts);
         deleteProducts(eventExpiredProducts);
     }
 
