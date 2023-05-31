@@ -1,40 +1,40 @@
 package com.pyonsnalcolor.batch.service;
 
-import com.pyonsnalcolor.batch.model.BaseProduct;
-import com.pyonsnalcolor.batch.repository.ProductRepository;
+import com.pyonsnalcolor.batch.model.BaseEventProduct;
+import com.pyonsnalcolor.batch.repository.EventProductRepository;
 
 import java.util.List;
 
 public abstract class EventBatchService implements BatchService {
-    private ProductRepository productRepository;
+    private EventProductRepository eventProductRepository;
 
-    public EventBatchService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public EventBatchService(EventProductRepository eventProductRepository) {
+        this.eventProductRepository = eventProductRepository;
     }
 
     @Override
     public void execute() {
-        List<BaseProduct> allProducts = getAllProducts();
-        List<BaseProduct> newProducts = getNewProducts(allProducts);
-        List<BaseProduct> eventExpiredProducts = getEventExpiredProducts(allProducts);
+        List<BaseEventProduct> allProducts = getAllProducts();
+        List<BaseEventProduct> newProducts = getNewProducts(allProducts);
+        List<BaseEventProduct> eventExpiredProducts = getEventExpiredProducts(allProducts);
         sendAlarms(newProducts);
         saveProducts(newProducts);
         deleteProducts(eventExpiredProducts);
     }
 
-    protected abstract List<BaseProduct> getAllProducts();
+    protected abstract List<BaseEventProduct> getAllProducts();
 
-    protected abstract List<BaseProduct> getEventExpiredProducts(List<BaseProduct> allProducts);
+    protected abstract List<BaseEventProduct> getEventExpiredProducts(List<BaseEventProduct> allProducts);
 
-    protected abstract List<BaseProduct> getNewProducts(List<BaseProduct> allProducts);
+    protected abstract List<BaseEventProduct> getNewProducts(List<BaseEventProduct> allProducts);
 
-    protected abstract void sendAlarms(List<BaseProduct> baseProducts);
+    protected abstract void sendAlarms(List<BaseEventProduct> baseProducts);
 
-    private final void saveProducts(List<BaseProduct> baseProducts) {
-        productRepository.saveAll(baseProducts);
+    private final void saveProducts(List<BaseEventProduct> baseProducts) {
+        eventProductRepository.saveAll(baseProducts);
     }
 
-    private final void deleteProducts(List<BaseProduct> baseProducts) {
-        productRepository.deleteAll(baseProducts);
+    private final void deleteProducts(List<BaseEventProduct> baseProducts) {
+        eventProductRepository.deleteAll(baseProducts);
     }
 }

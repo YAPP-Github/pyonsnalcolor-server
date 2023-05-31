@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.batch.service.cu;
 
-import com.pyonsnalcolor.batch.model.BaseProduct;
-import com.pyonsnalcolor.batch.repository.ProductRepository;
+import com.pyonsnalcolor.batch.model.BasePbProduct;
+import com.pyonsnalcolor.batch.repository.PbProductRepository;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +14,12 @@ import java.util.List;
 public class CuPbBatchService extends PbBatchService {
 
     @Autowired
-    public CuPbBatchService(ProductRepository productRepository) {
-        super(productRepository);
+    public CuPbBatchService(PbProductRepository pbProductRepository) {
+        super(pbProductRepository);
     }
 
     @Override
-    protected List<BaseProduct> getNewProducts() {
+    protected List<BasePbProduct> getNewProducts() {
         /**
          * TODO : 크롤링하여 새 상품 데이터들을 반환하는 기능을 구현하시면 됩니다.
          */
@@ -28,7 +28,7 @@ public class CuPbBatchService extends PbBatchService {
     }
 
     @Override
-    protected void sendAlarms(List<BaseProduct> CuProducts) {
+    protected void sendAlarms(List<BasePbProduct> CuProducts) {
         System.out.println("send Cu pb products alarms");
     }
 }

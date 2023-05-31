@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.batch.service.emart24;
 
-import com.pyonsnalcolor.batch.model.BaseProduct;
-import com.pyonsnalcolor.batch.repository.ProductRepository;
+import com.pyonsnalcolor.batch.model.BasePbProduct;
+import com.pyonsnalcolor.batch.repository.PbProductRepository;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +14,18 @@ import java.util.List;
 public class Emart24PbBatchService extends PbBatchService {
 
     @Autowired
-    public Emart24PbBatchService(ProductRepository productRepository) {
-        super(productRepository);
+    public Emart24PbBatchService(PbProductRepository pbProductRepository) {
+        super(pbProductRepository);
     }
 
     @Override
-    protected List<BaseProduct> getNewProducts() {
+    protected List<BasePbProduct> getNewProducts() {
         System.out.println("get new emart24 pb products");
         return null;
     }
 
     @Override
-    protected void sendAlarms(List<BaseProduct> emart24Products) {
+    protected void sendAlarms(List<BasePbProduct> emart24Products) {
         System.out.println("send emart24 pb products alarms");
     }
 }

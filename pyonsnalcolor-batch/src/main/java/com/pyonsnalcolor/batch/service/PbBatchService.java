@@ -1,29 +1,29 @@
 package com.pyonsnalcolor.batch.service;
 
-import com.pyonsnalcolor.batch.model.BaseProduct;
-import com.pyonsnalcolor.batch.repository.ProductRepository;
+import com.pyonsnalcolor.batch.model.BasePbProduct;
+import com.pyonsnalcolor.batch.repository.PbProductRepository;
 
 import java.util.List;
 
 public abstract class PbBatchService implements BatchService {
-    private ProductRepository productRepository;
+    private PbProductRepository pbProductRepository;
 
-    public PbBatchService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public PbBatchService(PbProductRepository pbProductRepository) {
+        this.pbProductRepository = pbProductRepository;
     }
 
     @Override
     public void execute() {
-        List<BaseProduct> newProducts = getNewProducts();
+        List<BasePbProduct> newProducts = getNewProducts();
         sendAlarms(newProducts);
         saveProducts(newProducts);
     }
 
-    protected abstract List<BaseProduct> getNewProducts();
+    protected abstract List<BasePbProduct> getNewProducts();
 
-    protected abstract void sendAlarms(List<BaseProduct> baseProducts);
+    protected abstract void sendAlarms(List<BasePbProduct> baseProducts);
 
-    private final void saveProducts(List<BaseProduct> baseProducts) {
-        productRepository.saveAll(baseProducts);
+    private final void saveProducts(List<BasePbProduct> baseProducts) {
+        pbProductRepository.saveAll(baseProducts);
     }
 }

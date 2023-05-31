@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.batch.service.gs25;
 
-import com.pyonsnalcolor.batch.model.BaseProduct;
-import com.pyonsnalcolor.batch.repository.ProductRepository;
+import com.pyonsnalcolor.batch.model.BasePbProduct;
+import com.pyonsnalcolor.batch.repository.PbProductRepository;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +15,18 @@ import java.util.List;
 public class GS25PbBatchService extends PbBatchService {
 
     @Autowired
-    public GS25PbBatchService(ProductRepository productRepository) {
-        super(productRepository);
+    public GS25PbBatchService(PbProductRepository pbProductRepository) {
+        super(pbProductRepository);
     }
 
     @Override
-    protected List<BaseProduct> getNewProducts() {
+    protected List<BasePbProduct> getNewProducts() {
         System.out.println("get new gs25 pb products");
         return null;
     }
 
     @Override
-    protected void sendAlarms(List<BaseProduct> gs25Products) {
+    protected void sendAlarms(List<BasePbProduct> gs25Products) {
         System.out.println("send gs25 pb products alarms");
     }
 }
