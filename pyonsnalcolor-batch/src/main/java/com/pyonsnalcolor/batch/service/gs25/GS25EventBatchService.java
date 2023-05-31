@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * TODO : 편의점에 맞게 구현 필요
- */
+
 @Service("GS25Event")
 @Slf4j
 public class GS25EventBatchService extends EventBatchService {
@@ -21,13 +19,19 @@ public class GS25EventBatchService extends EventBatchService {
     }
 
     @Override
-    protected List<BaseProduct> getEventExpiredProducts() {
+    protected List<BaseProduct> getAllProducts() {
+        System.out.println("get all gs25 event products");
+        return null;
+    }
+
+    @Override
+    protected List<BaseProduct> getEventExpiredProducts(List<BaseProduct> allProducts) {
         System.out.println("get expired gs25 event products");
         return null;
     }
 
     @Override
-    protected List<BaseProduct> getNewProducts() {
+    protected List<BaseProduct> getNewProducts(List<BaseProduct> allProducts) {
         System.out.println("get new event gs25 products");
         return null;
     }

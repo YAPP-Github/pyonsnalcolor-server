@@ -18,13 +18,19 @@ public class Emart24EventBatchService extends EventBatchService {
     }
 
     @Override
-    protected List<BaseProduct> getEventExpiredProducts() {
+    protected List<BaseProduct> getAllProducts() {
         System.out.println("get expired emart24 event products");
         return null;
     }
 
     @Override
-    protected List<BaseProduct> getNewProducts() {
+    protected List<BaseProduct> getEventExpiredProducts(List<BaseProduct> allProducts) {
+        System.out.println("get expired emart24 event products");
+        return null;
+    }
+
+    @Override
+    protected List<BaseProduct> getNewProducts(List<BaseProduct> allProducts) {
         System.out.println("get new event emart24 products");
         return null;
     }

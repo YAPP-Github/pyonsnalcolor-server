@@ -3,15 +3,15 @@ package com.pyonsnalcolor.batch.service.gs25;
 import com.pyonsnalcolor.batch.model.BaseProduct;
 import com.pyonsnalcolor.batch.repository.ProductRepository;
 import com.pyonsnalcolor.batch.service.PbBatchService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * TODO : 편의점에 맞게 구현 필요
- */
+
 @Service("GS25Pb")
+@Slf4j
 public class GS25PbBatchService extends PbBatchService {
 
     @Autowired

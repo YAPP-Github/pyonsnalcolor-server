@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.batch.service.emart24;
+package com.pyonsnalcolor.batch.service.seven;
 
 import com.pyonsnalcolor.batch.model.BaseProduct;
 import com.pyonsnalcolor.batch.repository.ProductRepository;
@@ -9,23 +9,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service("Emart24Pb")
+@Service("SevenPb")
 @Slf4j
-public class Emart24PbBatchService extends PbBatchService {
+public class SevenPbBatchService extends PbBatchService {
 
     @Autowired
-    public Emart24PbBatchService(ProductRepository productRepository) {
+    public SevenPbBatchService(ProductRepository productRepository) {
         super(productRepository);
     }
 
     @Override
     protected List<BaseProduct> getNewProducts() {
-        System.out.println("get new emart24 pb products");
+        /**
+         * TODO : 크롤링하여 새 상품 데이터들을 반환하는 기능을 구현하시면 됩니다.
+         */
+        System.out.println("get new Seven pb products");
         return null;
     }
 
     @Override
-    protected void sendAlarms(List<BaseProduct> emart24Products) {
-        System.out.println("send emart24 pb products alarms");
+    protected void sendAlarms(List<BaseProduct> SevenProducts) {
+        System.out.println("send Seven pb products alarms");
     }
 }

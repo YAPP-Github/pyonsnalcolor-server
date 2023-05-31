@@ -14,16 +14,19 @@ public abstract class EventBatchService implements BatchService {
 
     @Override
     public void execute() {
-        List<BaseProduct> newProducts = getNewProducts();
-        List<BaseProduct> eventExpiredProducts = getEventExpiredProducts();
+        List<BaseProduct> allProducts = getAllProducts();
+        List<BaseProduct> newProducts = getNewProducts(allProducts);
+        List<BaseProduct> eventExpiredProducts = getEventExpiredProducts(allProducts);
         sendAlarms(newProducts);
         saveProducts(newProducts);
         deleteProducts(eventExpiredProducts);
     }
 
-    protected abstract List<BaseProduct> getEventExpiredProducts();
+    protected abstract List<BaseProduct> getAllProducts();
 
-    protected abstract List<BaseProduct> getNewProducts();
+    protected abstract List<BaseProduct> getEventExpiredProducts(List<BaseProduct> allProducts);
+
+    protected abstract List<BaseProduct> getNewProducts(List<BaseProduct> allProducts);
 
     protected abstract void sendAlarms(List<BaseProduct> baseProducts);
 
