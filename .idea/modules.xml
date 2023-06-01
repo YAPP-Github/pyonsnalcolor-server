@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/pyonsnalcolor.iml" filepath="$PROJECT_DIR$/pyonsnalcolor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pyonsnalcolor-alarm/pyonsnalcolor-alarm.iml" filepath="$PROJECT_DIR$/pyonsnalcolor-alarm/pyonsnalcolor-alarm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pyonsnalcolor-batch/pyonsnalcolor-batch.iml" filepath="$PROJECT_DIR$/pyonsnalcolor-batch/pyonsnalcolor-batch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pyonsnalcolor-gateway/pyonsnalcolor-gateway.iml" filepath="$PROJECT_DIR$/pyonsnalcolor-gateway/pyonsnalcolor-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pyonsnalcolor-member/pyonsnalcolor-member.iml" filepath="$PROJECT_DIR$/pyonsnalcolor-member/pyonsnalcolor-member.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pyonsnalcolor-product/pyonsnalcolor-product.iml" filepath="$PROJECT_DIR$/pyonsnalcolor-product/pyonsnalcolor-product.iml" />
+    </modules>
+  </component>
+</project>
