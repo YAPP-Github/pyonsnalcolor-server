@@ -25,7 +25,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="pyonsnalcolor" options="" />
+      <module name="pyonsnalcolor" options="-parameters" />
       <module name="pyonsnalcolor-alarm" options="-parameters" />
       <module name="pyonsnalcolor-batch" options="-parameters" />
       <module name="pyonsnalcolor-gateway" options="-parameters" />
