@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.pyonsnalcolor.batch.service.gs25.GS25Constant.GS_MAIN_PAGE_URL;
+
 
 @Service("GS25Event")
 @Slf4j
@@ -30,7 +32,6 @@ public class GS25EventBatchService extends EventBatchService {
     private GS25Client gs25Client;
     private ObjectMapper objectMapper;
 
-    private static final String GS_MAIN_PAGE_URL = "http://gs25.gsretail.com/gscvs/ko/main";
     private static final String NOT_EXIST = "NONE";
 
     @Autowired

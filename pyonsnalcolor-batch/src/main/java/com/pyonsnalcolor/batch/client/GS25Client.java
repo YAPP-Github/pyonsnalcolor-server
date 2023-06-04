@@ -10,4 +10,9 @@ public interface GS25Client {
     Object getEventProducts(@RequestHeader("Cookie") String cookie,
                             @RequestParam("CSRFToken") String csrfToken,
                             @RequestBody GS25EventRequestBody requestBody);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/products/youus-freshfoodDetail-search", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    Object getPbProducts(@RequestHeader("Cookie") String cookie,
+                         @RequestParam("CSRFToken") String csrfToken,
+                         @RequestBody GS25PbRequestBody requestBody);
 }
