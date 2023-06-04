@@ -19,8 +19,12 @@ public class Emart24PbBatchService extends PbBatchService {
     }
 
     @Override
-    protected List<BasePbProduct> getNewProducts() {
-        System.out.println("get new emart24 pb products");
+    protected List<BasePbProduct> getAllProducts() {
+        return null;
+    }
+
+    @Override
+    protected List<BasePbProduct> getNewProducts(List<BasePbProduct> allProducts) {
         return null;
     }
 

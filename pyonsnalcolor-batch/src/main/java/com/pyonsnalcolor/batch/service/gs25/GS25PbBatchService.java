@@ -46,7 +46,7 @@ public class GS25PbBatchService extends PbBatchService {
     }
 
     @Override
-    protected List<BasePbProduct> getNewProducts() {
+    protected List<BasePbProduct> getAllProducts() {
         List<BasePbProduct> results = new ArrayList<>();
         try {
             Map<String, String> accessInfo = getAccessInfo();
@@ -77,6 +77,11 @@ public class GS25PbBatchService extends PbBatchService {
             System.out.println("result = " + result);
         }
 
+        return null;
+    }
+
+    @Override
+    protected List<BasePbProduct> getNewProducts(List<BasePbProduct> allProducts) {
         return null;
     }
 
