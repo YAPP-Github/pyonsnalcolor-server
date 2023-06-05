@@ -22,9 +22,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SevenPbBatchService extends PbBatchService {
 
-    private static final String SEVEN_URL= "https://www.7-eleven.co.kr/product/listMoreAjax.asp?intPageSize=10";
+    private static final String SEVEN_URL = "https://www.7-eleven.co.kr/product/listMoreAjax.asp?intPageSize=10";
     private static final String IMG_PREFIX = "https://www.7-eleven.co.kr";
     private static final int PB_TAB = 5;
+    private static final int TIMEOUT = 30000;
 
     @Autowired
     public SevenPbBatchService(PbProductRepository pbProductRepository) {
@@ -33,14 +34,11 @@ public class SevenPbBatchService extends PbBatchService {
 
     @Override
     protected List<BasePbProduct> getAllProducts() {
-        List<BasePbProduct> results = new ArrayList<>();
-
         try {
-            results.addAll(getProducts());
+            return getProducts();
         } catch (Exception e) {
-            log.info("해당 페이지에 접근하지 못합니다. {}", e.getMessage());
+            throw new RuntimeException(e);
         }
-        return results;
     }
 
     @Override
@@ -58,8 +56,8 @@ public class SevenPbBatchService extends PbBatchService {
 
         int intCurrPage = 0;
         while (true) {
-            String SEVEN_ELEVEN_TMP = SEVEN_URL+ "&intCurrPage=" + intCurrPage + "&pTab=" + PB_TAB;
-            Document doc = Jsoup.connect(SEVEN_ELEVEN_TMP).timeout(0).get();
+            String SEVEN_ELEVEN_TMP = SEVEN_URL + "&intCurrPage=" + intCurrPage + "&pTab=" + PB_TAB;
+            Document doc = Jsoup.connect(SEVEN_ELEVEN_TMP).timeout(TIMEOUT).get();
             Elements elements = doc.select("div.pic_product div.pic_product");
 
             if (elements.isEmpty()) {
@@ -80,6 +78,11 @@ public class SevenPbBatchService extends PbBatchService {
         String name = element.select("div.name").first().text();
         String image = IMG_PREFIX + element.select("img").first().attr("src");
         String price = element.select("div.price").text();
+
+        log.info("name : {}", name);
+        log.info("image : {}", image);
+        log.info("price : {}", price);
+
 
         return BasePbProduct.builder()
                 .name(name)
