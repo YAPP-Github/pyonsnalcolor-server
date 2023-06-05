@@ -33,15 +33,11 @@ public class CuPbBatchService extends PbBatchService {
 
     @Override
     protected List<BasePbProduct> getAllProducts() {
-        List<BasePbProduct> results = new ArrayList<>();
-
         try {
-            results.addAll(getProductsByCategory(CU_CATEGORY_PB));
-            results.addAll(getProductsByCategory(CU_CATEGORY_CU_ONLY));
+            return getProductsByCategoryAll();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return results;
     }
 
     @Override
@@ -52,6 +48,13 @@ public class CuPbBatchService extends PbBatchService {
     @Override
     protected void sendAlarms(List<BasePbProduct> CuProducts) {
         System.out.println("send Cu pb products alarms");
+    }
+
+    private List<BasePbProduct> getProductsByCategoryAll() throws IOException {
+        List<BasePbProduct> products = new ArrayList<>();
+        products.addAll(getProductsByCategory(CU_CATEGORY_PB));
+        products.addAll(getProductsByCategory(CU_CATEGORY_CU_ONLY));
+        return products;
     }
 
     private List<BasePbProduct> getProductsByCategory(String category) throws IOException {
