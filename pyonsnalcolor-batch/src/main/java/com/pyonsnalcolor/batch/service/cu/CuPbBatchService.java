@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -58,8 +59,8 @@ public class CuPbBatchService extends PbBatchService {
 
         int pageIndex = 1;
         while (true) {
-            String CU_PB_URL_TMP = CU_PB_URL + "pageIndex=" + pageIndex + "&searchgubun=" + category;
-            Document doc = Jsoup.connect(CU_PB_URL_TMP).timeout(0).get();
+            String pagedCuPbUrl = getCuPbUrlByPageIndexAndCategory(pageIndex, category);
+            Document doc = Jsoup.connect(pagedCuPbUrl).timeout(TIMEOUT).get();
             Elements elements = doc.select("a.prod_item");
 
             if (elements.isEmpty()) {
@@ -87,5 +88,15 @@ public class CuPbBatchService extends PbBatchService {
                 .storeType(StoreType.CU.getName())
                 .updatedTime(LocalDateTime.now())
                 .build();
+    }
+
+    private String getCuPbUrlByPageIndexAndCategory(int pageIndex, String category) {
+        return UriComponentsBuilder
+                .fromUriString(CU_PB_URL)
+                .queryParam("searchCondition", "setC")
+                .queryParam("pageIndex", pageIndex)
+                .queryParam("searchgubun", category)
+                .build()
+                .toString();
     }
 }
