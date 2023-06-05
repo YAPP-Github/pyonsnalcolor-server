@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CuEventBatchService extends EventBatchService {
 
-    private static final String CU_URL= "https://cu.bgfretail.com/event/plusAjax.do?";
+    private static final String CU_URL = "https://cu.bgfretail.com/event/plusAjax.do?";
 
     @Autowired
     public CuEventBatchService(EventProductRepository eventProductRepository) {
@@ -32,14 +32,12 @@ public class CuEventBatchService extends EventBatchService {
 
     @Override
     protected List<BaseEventProduct> getAllProducts() {
-        List<BaseEventProduct> results = new ArrayList<>();
 
         try {
-            results.addAll(getProducts());
+            return getProducts();
         } catch (Exception e) {
-            log.error("해당 페이지에 접근하지 못합니다. {}", e.getMessage());
+            throw new RuntimeException(e);
         }
-        return results;
     }
 
     @Override
@@ -70,7 +68,7 @@ public class CuEventBatchService extends EventBatchService {
 
         int pageIndex = 1;
         while (true) {
-            String CU_EVENT_URL_TMP = CU_URL+ "pageIndex=" + pageIndex;
+            String CU_EVENT_URL_TMP = CU_URL + "pageIndex=" + pageIndex;
             Document doc = Jsoup.connect(CU_EVENT_URL_TMP).timeout(0).get();
             Elements elements = doc.select("a.prod_item");
 
@@ -93,7 +91,7 @@ public class CuEventBatchService extends EventBatchService {
         String price = element.select("div.price > strong").first().text();
         String eventTypeTag = element.select("div.badge").first().text();
         EventType eventType = EventType.getEventTypeWithValue(eventTypeTag);
-        
+
         return BaseEventProduct.builder()
                 .name(name)
                 .image(image)
