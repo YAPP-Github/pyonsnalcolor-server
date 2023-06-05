@@ -12,6 +12,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
 public class CuEventBatchService extends EventBatchService {
 
     private static final String CU_URL = "https://cu.bgfretail.com/event/plusAjax.do?";
+    private static final String DOCUMENT_SELECT_TAG = "a.prod_item";
+    private static final int TIMEOUT = 30000;
 
     @Autowired
     public CuEventBatchService(EventProductRepository eventProductRepository) {
@@ -68,9 +71,9 @@ public class CuEventBatchService extends EventBatchService {
 
         int pageIndex = 1;
         while (true) {
-            String CU_EVENT_URL_TMP = CU_URL + "pageIndex=" + pageIndex;
-            Document doc = Jsoup.connect(CU_EVENT_URL_TMP).timeout(0).get();
-            Elements elements = doc.select("a.prod_item");
+            String pagedCuEventUrl = getSevenEventUrlByPageIndex(pageIndex);
+            Document doc = Jsoup.connect(pagedCuEventUrl).timeout(TIMEOUT).get();
+            Elements elements = doc.select(DOCUMENT_SELECT_TAG);
 
             if (elements.isEmpty()) {
                 break;
@@ -91,7 +94,7 @@ public class CuEventBatchService extends EventBatchService {
         String price = element.select("div.price > strong").first().text();
         String eventTypeTag = element.select("div.badge").first().text();
         EventType eventType = EventType.getEventTypeWithValue(eventTypeTag);
-
+        
         return BaseEventProduct.builder()
                 .name(name)
                 .image(image)
@@ -100,5 +103,13 @@ public class CuEventBatchService extends EventBatchService {
                 .storeType(StoreType.CU.getName())
                 .updatedTime(LocalDateTime.now())
                 .build();
+    }
+
+    private String getSevenEventUrlByPageIndex(int pageIndex) {
+        return UriComponentsBuilder
+                .fromUriString(CU_URL)
+                .queryParam("pageIndex", pageIndex)
+                .build()
+                .toString();
     }
 }
