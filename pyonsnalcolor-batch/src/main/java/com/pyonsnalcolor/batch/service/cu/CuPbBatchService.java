@@ -9,7 +9,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,11 +21,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CuPbBatchService extends PbBatchService {
 
-    private static final String CU_PB_URL= "https://cu.bgfretail.com/product/pbAjax.do?searchCondition=setC&";
-    private static final String CU_CATEGORY_PB= "PBG";
-    private static final String CU_CATEGORY_CU_ONLY= "CUG";
+    private static final String CU_PB_URL = "https://cu.bgfretail.com/product/pbAjax.do";
+    private static final String CU_CATEGORY_PB = "PBG";
+    private static final String CU_CATEGORY_CU_ONLY = "CUG";
+    private static final int TIMEOUT = 30000;
 
-    @Autowired
     public CuPbBatchService(PbProductRepository pbProductRepository) {
         super(pbProductRepository);
     }
@@ -39,7 +38,7 @@ public class CuPbBatchService extends PbBatchService {
             results.addAll(getProductsByCategory(CU_CATEGORY_PB));
             results.addAll(getProductsByCategory(CU_CATEGORY_CU_ONLY));
         } catch (Exception e) {
-            log.error("해당 페이지에 접근하지 못합니다. {}", e.getMessage());
+            throw new RuntimeException(e);
         }
         return results;
     }
@@ -59,7 +58,7 @@ public class CuPbBatchService extends PbBatchService {
 
         int pageIndex = 1;
         while (true) {
-            String CU_PB_URL_TMP =CU_PB_URL+ "pageIndex=" + pageIndex + "&searchgubun=" + category;
+            String CU_PB_URL_TMP = CU_PB_URL + "pageIndex=" + pageIndex + "&searchgubun=" + category;
             Document doc = Jsoup.connect(CU_PB_URL_TMP).timeout(0).get();
             Elements elements = doc.select("a.prod_item");
 
