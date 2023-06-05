@@ -11,6 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class SevenPbBatchService extends PbBatchService {
 
     private static final String SEVEN_URL = "https://www.7-eleven.co.kr/product/listMoreAjax.asp?intPageSize=10";
     private static final String IMG_PREFIX = "https://www.7-eleven.co.kr";
+    private static final String DOCUMENT_SELECT_TAG = "div.pic_product div.pic_product";
     private static final int PB_TAB = 5;
     private static final int TIMEOUT = 30000;
 
@@ -54,22 +56,21 @@ public class SevenPbBatchService extends PbBatchService {
     private List<BasePbProduct> getProducts() throws IOException {
         List<BasePbProduct> products = new ArrayList<>();
 
-        int intCurrPage = 0;
+        int pageIndex = 0;
         while (true) {
-            String SEVEN_ELEVEN_TMP = SEVEN_URL + "&intCurrPage=" + intCurrPage + "&pTab=" + PB_TAB;
-            Document doc = Jsoup.connect(SEVEN_ELEVEN_TMP).timeout(TIMEOUT).get();
-            Elements elements = doc.select("div.pic_product div.pic_product");
+            String pagedSevenPbUrl = getSevenPbUrlByPageIndex(pageIndex);
+            Document doc = Jsoup.connect(pagedSevenPbUrl).timeout(TIMEOUT).get();
+            Elements elements = doc.select(DOCUMENT_SELECT_TAG);
 
             if (elements.isEmpty()) {
-                log.error("해당 페이지에서 찾을 수 있는 편의점 상품을 모두 찾았습니다.");
                 break;
             }
 
-            List<BasePbProduct> tmp = elements.stream()
+            List<BasePbProduct> pagedProducts = elements.stream()
                     .map(this::convertToBasePbProduct)
                     .collect(Collectors.toList());
-            products.addAll(tmp);
-            intCurrPage++;
+            products.addAll(pagedProducts);
+            pageIndex++;
         }
         return products;
     }
@@ -79,11 +80,6 @@ public class SevenPbBatchService extends PbBatchService {
         String image = IMG_PREFIX + element.select("img").first().attr("src");
         String price = element.select("div.price").text();
 
-        log.info("name : {}", name);
-        log.info("image : {}", image);
-        log.info("price : {}", price);
-
-
         return BasePbProduct.builder()
                 .name(name)
                 .image(image)
@@ -91,5 +87,14 @@ public class SevenPbBatchService extends PbBatchService {
                 .updatedTime(LocalDateTime.now())
                 .storeType(StoreType.SEVEN_ELEVEN.getName())
                 .build();
+    }
+
+    private String getSevenPbUrlByPageIndex(int pageIndex) {
+        return UriComponentsBuilder
+                .fromUriString(SEVEN_URL)
+                .queryParam("intCurrPage", pageIndex)
+                .queryParam("pTab", PB_TAB)
+                .build()
+                .toString();
     }
 }
