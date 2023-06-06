@@ -14,12 +14,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service("Emart24Pb")
 @Slf4j
 public class Emart24PbBatchService extends PbBatchService {
-    private static final String EMART_PAGE_URL_TEMPLATE = "http://www.emart24.co.kr/goods/pl?search=&page=%s&category_seq=&align=";
+    private static final String EMART_PB_URL_TEMPLATE = "http://www.emart24.co.kr/goods/pl?search=&page=%s&category_seq=&align=";
 
     @Autowired
     public Emart24PbBatchService(PbProductRepository pbProductRepository) {
@@ -28,25 +29,26 @@ public class Emart24PbBatchService extends PbBatchService {
 
     @Override
     protected List<BasePbProduct> getAllProducts() {
-        List<BasePbProduct> results = new ArrayList<>();
-        Elements productElements;
-        int curPage = 1;
-
         try {
+            List<BasePbProduct> results = new ArrayList<>();
+            Elements productElements;
+            int curPage = 1;
+
             do {
-                String url = String.format(EMART_PAGE_URL_TEMPLATE, curPage);
+                String url = String.format(EMART_PB_URL_TEMPLATE, curPage);
                 Document document = Jsoup.connect(url).get();
                 productElements = document.getElementsByClass("itemWrap");
 
                 results.addAll(parseProductsData(productElements));
                 curPage++;
             } while (productElements.size() > 0);
+
+            return results;
         } catch (Exception e) {
             //TODO : 임시로 모든 예외에 대해 퉁쳐서 처리. 후에 리팩토링 진행할 것
             log.error("fail getAllProducts", e);
         }
-
-        return results;
+        return Collections.emptyList();
     }
 
     private List<BasePbProduct> parseProductsData(Elements productElements) {
@@ -56,12 +58,19 @@ public class Emart24PbBatchService extends PbBatchService {
             Elements itemTitle = productElement.getElementsByClass("itemtitle");
             Element element = itemTitle.get(0);
             String name = element.getElementsByTag("a").get(0).text();
-            String price = productElement.getElementsByClass("price").get(0).text();
+            String price = convertToNum(productElement.getElementsByClass("price").get(0).text());
             String image = productElement.getElementsByTag("img").attr("src");
 
             results.add(convertToBasePbProduct(image, name, price));
         }
         return results;
+    }
+
+    private String convertToNum(String price) {
+        String priceInfo = price.split(" ")[0];
+        String result = priceInfo.replace(",", "");
+
+        return result;
     }
 
     private BasePbProduct convertToBasePbProduct(String image, String name, String price) {

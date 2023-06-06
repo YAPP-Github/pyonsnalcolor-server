@@ -7,7 +7,8 @@ public enum EventType {
     ONE_TO_ONE("ONE_TO_ONE"),
     TWO_TO_ONE("TWO_TO_ONE"),
     THREE_TO_ONE("THREE_TO_ONE"),
-    GIFT("GIFT");
+    GIFT("GIFT"),
+    DISCOUNT("DISCOUNT");
 
     private String value;
 
