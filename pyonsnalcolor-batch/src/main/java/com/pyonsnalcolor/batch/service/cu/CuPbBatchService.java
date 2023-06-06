@@ -25,7 +25,7 @@ public class CuPbBatchService extends PbBatchService {
     private static final String CU_PB_URL = "https://cu.bgfretail.com/product/pbAjax.do";
     private static final String CU_CATEGORY_PB = "PBG";
     private static final String CU_CATEGORY_CU_ONLY = "CUG";
-    private static final int TIMEOUT = 30000;
+    private static final int TIMEOUT = 5000;
 
     public CuPbBatchService(PbProductRepository pbProductRepository) {
         super(pbProductRepository);
