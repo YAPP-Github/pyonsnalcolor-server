@@ -32,12 +32,13 @@ public class CuPbBatchService extends PbBatchService {
     }
 
     @Override
-    protected List<BasePbProduct> getAllProducts() {
+    protected List<BasePbProduct> getAllProducts(){
         try {
             return getProductsByCategoryAll();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("CU PB 상품 조회하는 데 실패했습니다.", e);
         }
+        return null; // 이후에 에러 처리 관련 수정 - getAllProducts() 호출하는 쪽에 throw
     }
 
     @Override
