@@ -25,6 +25,7 @@ public class CuPbBatchService extends PbBatchService {
     private static final String CU_PB_URL = "https://cu.bgfretail.com/product/pbAjax.do";
     private static final String CU_CATEGORY_PB = "PBG";
     private static final String CU_CATEGORY_CU_ONLY = "CUG";
+    private static final String DOC_SELECT_TAG = "a.prod_item";
     private static final int TIMEOUT = 5000;
 
     public CuPbBatchService(PbProductRepository pbProductRepository) {
@@ -65,7 +66,7 @@ public class CuPbBatchService extends PbBatchService {
         while (true) {
             String pagedCuPbUrl = getCuPbUrlByPageIndexAndCategory(pageIndex, category);
             Document doc = Jsoup.connect(pagedCuPbUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select("a.prod_item");
+            Elements elements = doc.select(DOC_SELECT_TAG);
 
             if (elements.isEmpty()) {
                 break;
