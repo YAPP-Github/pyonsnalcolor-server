@@ -9,7 +9,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,11 +24,10 @@ public class SevenPbBatchService extends PbBatchService {
 
     private static final String SEVEN_URL = "https://www.7-eleven.co.kr/product/listMoreAjax.asp?intPageSize=10";
     private static final String IMG_PREFIX = "https://www.7-eleven.co.kr";
-    private static final String DOCUMENT_SELECT_TAG = "div.pic_product div.pic_product";
+    private static final String DOC_SELECT_TAG = "div.pic_product div.pic_product";
     private static final int PB_TAB = 5;
-    private static final int TIMEOUT = 30000;
+    private static final int TIMEOUT = 5000;
 
-    @Autowired
     public SevenPbBatchService(PbProductRepository pbProductRepository) {
         super(pbProductRepository);
     }
@@ -39,8 +37,9 @@ public class SevenPbBatchService extends PbBatchService {
         try {
             return getProducts();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("세븐일레븐 PB 상품 조회하는 데 실패했습니다.", e);
         }
+        return null; // 이후에 에러 처리 관련 수정 - getAllProducts() 호출하는 쪽에 throw
     }
 
     @Override
@@ -60,7 +59,7 @@ public class SevenPbBatchService extends PbBatchService {
         while (true) {
             String pagedSevenPbUrl = getSevenPbUrlByPageIndex(pageIndex);
             Document doc = Jsoup.connect(pagedSevenPbUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select(DOCUMENT_SELECT_TAG);
+            Elements elements = doc.select(DOC_SELECT_TAG);
 
             if (elements.isEmpty()) {
                 break;
