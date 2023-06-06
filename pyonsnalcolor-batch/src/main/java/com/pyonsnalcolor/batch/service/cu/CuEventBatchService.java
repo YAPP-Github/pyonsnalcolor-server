@@ -10,7 +10,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,10 +24,9 @@ import java.util.stream.Collectors;
 public class CuEventBatchService extends EventBatchService {
 
     private static final String CU_URL = "https://cu.bgfretail.com/event/plusAjax.do?";
-    private static final String DOCUMENT_SELECT_TAG = "a.prod_item";
-    private static final int TIMEOUT = 30000;
+    private static final String DOC_SELECT_TAG = "a.prod_item";
+    private static final int TIMEOUT = 5000;
 
-    @Autowired
     public CuEventBatchService(EventProductRepository eventProductRepository) {
         super(eventProductRepository);
     }
@@ -39,8 +37,9 @@ public class CuEventBatchService extends EventBatchService {
         try {
             return getProducts();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("CU 행사 상품 조회하는 데 실패했습니다.", e);
         }
+        return null; // 이후에 에러 처리 관련 수정 - getAllProducts() 호출하는 쪽에 throw
     }
 
     @Override
@@ -73,7 +72,7 @@ public class CuEventBatchService extends EventBatchService {
         while (true) {
             String pagedCuEventUrl = getSevenEventUrlByPageIndex(pageIndex);
             Document doc = Jsoup.connect(pagedCuEventUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select(DOCUMENT_SELECT_TAG);
+            Elements elements = doc.select(DOC_SELECT_TAG);
 
             if (elements.isEmpty()) {
                 break;
