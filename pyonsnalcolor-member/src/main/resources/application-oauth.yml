@@ -1,0 +1,9 @@
+spring:
+  security:
+    oauth2:
+      kakao:
+        access-token-uri: ${KAKAO_ACCESS_TOKEN_URI}
+        grant-type: ${KAKAO_GRANT_TYPE}
+        client-id: ${KAKAO_CLIENT_ID}
+        redirect-uri: ${KAKAO_REDIRECT_URI}
+        request-uri: ${KAKAO_REQUEST_URI}
