@@ -3,6 +3,7 @@ package com.pyonsnalcolor.batch.service.emart24;
 import com.pyonsnalcolor.batch.model.BaseEventProduct;
 import com.pyonsnalcolor.batch.model.EventType;
 import com.pyonsnalcolor.batch.model.StoreType;
+import com.pyonsnalcolor.batch.model.UUIDGenerator;
 import com.pyonsnalcolor.batch.repository.EventProductRepository;
 import com.pyonsnalcolor.batch.service.EventBatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.*;
 
 @Service("Emart24Event")
 @Slf4j
@@ -133,10 +136,10 @@ public class Emart24EventBatchService extends EventBatchService {
     private BaseEventProduct convertToBasePbProduct(String image, String name, String price, String originPrice, String giftImage, EventType eventType) {
         BaseEventProduct baseEventProduct = BaseEventProduct.builder()
                 .originPrice(originPrice) //변경
-                .storeType(StoreType.GS25.getName())
+                .storeType(StoreType.EMART24)
                 .updatedTime(LocalDateTime.now())
                 .eventType(eventType) //변경
-                .id(0L)
+                .id(generateId())
                 .giftImage(giftImage) //변경
                 .image(image)
                 .price(price)

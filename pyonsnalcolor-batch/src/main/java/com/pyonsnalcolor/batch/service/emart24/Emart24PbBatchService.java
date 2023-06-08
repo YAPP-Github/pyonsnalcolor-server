@@ -2,6 +2,7 @@ package com.pyonsnalcolor.batch.service.emart24;
 
 import com.pyonsnalcolor.batch.model.BasePbProduct;
 import com.pyonsnalcolor.batch.model.StoreType;
+import com.pyonsnalcolor.batch.model.UUIDGenerator;
 import com.pyonsnalcolor.batch.repository.PbProductRepository;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.*;
 
 @Service("Emart24Pb")
 @Slf4j
@@ -75,20 +78,15 @@ public class Emart24PbBatchService extends PbBatchService {
 
     private BasePbProduct convertToBasePbProduct(String image, String name, String price) {
         BasePbProduct basePbProduct = BasePbProduct.builder()
-                .id(0L)
+                .id(generateId())
                 .name(name)
                 .price(price)
-                .storeType(StoreType.GS25.getName())
+                .storeType(StoreType.EMART24)
                 .updatedTime(LocalDateTime.now())
                 .image(image)
                 .build();
 
         return basePbProduct;
-    }
-
-    @Override
-    protected List<BasePbProduct> getNewProducts(List<BasePbProduct> allProducts) {
-        return null;
     }
 
     @Override

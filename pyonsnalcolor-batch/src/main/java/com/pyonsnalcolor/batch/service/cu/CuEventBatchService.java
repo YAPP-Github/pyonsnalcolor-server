@@ -99,7 +99,7 @@ public class CuEventBatchService extends EventBatchService {
                 .image(image)
                 .price(price)
                 .eventType(eventType)
-                .storeType(StoreType.CU.getName())
+                .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
                 .build();
     }

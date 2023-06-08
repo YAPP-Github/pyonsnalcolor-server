@@ -2,10 +2,12 @@ package com.pyonsnalcolor.batch.service;
 
 import com.pyonsnalcolor.batch.model.BaseEventProduct;
 import com.pyonsnalcolor.batch.repository.EventProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public abstract class EventBatchService implements BatchService {
+    @Autowired
     private EventProductRepository eventProductRepository;
 
     public EventBatchService(EventProductRepository eventProductRepository) {

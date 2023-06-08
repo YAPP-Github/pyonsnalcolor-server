@@ -43,11 +43,6 @@ public class CuPbBatchService extends PbBatchService {
     }
 
     @Override
-    protected List<BasePbProduct> getNewProducts(List<BasePbProduct> allProducts) {
-        return null;
-    }
-
-    @Override
     protected void sendAlarms(List<BasePbProduct> CuProducts) {
         System.out.println("send Cu pb products alarms");
     }
@@ -90,7 +85,7 @@ public class CuPbBatchService extends PbBatchService {
                 .name(name)
                 .image(image)
                 .price(price)
-                .storeType(StoreType.CU.getName())
+                .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
                 .build();
     }
