@@ -47,4 +47,34 @@ public class MemberService {
         }
         return tokenDto;
     }
+
+    public TokenDto reissueAccessToken(TokenDto tokenDto) {
+        String refreshToken = tokenDto.getRefreshToken();
+        String resolvedToken = resolveBearerToken(refreshToken);
+        String oauthId = jwtTokenProvider.getOauthId(resolvedToken);
+
+        validateRefreshToken(oauthId, refreshToken);
+
+        String newAccessToken = jwtTokenProvider.createAccessToken(oauthId);
+        return TokenDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    private void validateRefreshToken(String oauthId, String refreshToken) {
+        Object findRefreshToken = memberRepository.findRefreshTokenByOauthId(oauthId)
+                .orElseThrow(() -> new RuntimeException("사용자의 refreshToken이 존재하지 않습니다."));
+
+        if (!findRefreshToken.equals(refreshToken)) {
+            throw new RuntimeException("사용자의 refreshToken와 일치하지 않습니다.");
+        }
+    }
+
+    private String resolveBearerToken(String token) {
+        if (token != null && token.startsWith(bearerHeader)) {
+            return token.substring(bearerHeader.length());
+        }
+        return null;
+    }
 }

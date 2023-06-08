@@ -28,4 +28,10 @@ public class AuthController {
         TokenDto tokenDto = memberService.join(LoginType.KAKAO, email);
         return new ResponseEntity(tokenDto, HttpStatus.OK);
     }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenDto> reissueAccessToken(@RequestBody TokenDto tokenDto) {
+        TokenDto newTokenDto = memberService.reissueAccessToken(tokenDto);
+        return new ResponseEntity(newTokenDto, HttpStatus.OK);
+    }
 }
