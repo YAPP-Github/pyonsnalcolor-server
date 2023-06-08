@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pyonsnalcolor.batch.client.GS25Client;
 import com.pyonsnalcolor.batch.client.GS25EventRequestBody;
 import com.pyonsnalcolor.batch.client.GS25PbRequestBody;
-import com.pyonsnalcolor.batch.model.BaseEventProduct;
-import com.pyonsnalcolor.batch.model.BasePbProduct;
-import com.pyonsnalcolor.batch.model.EventType;
-import com.pyonsnalcolor.batch.model.StoreType;
+import com.pyonsnalcolor.batch.model.*;
 import com.pyonsnalcolor.batch.repository.PbProductRepository;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +19,11 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.*;
 import static com.pyonsnalcolor.batch.service.gs25.GS25Constant.GS_MAIN_PAGE_URL;
 
 
@@ -72,17 +71,7 @@ public class GS25PbBatchService extends PbBatchService {
             log.error("fail getAllProducts", e);
         }
 
-        System.out.println(results.size());
-        for (BasePbProduct result : results) {
-            System.out.println("result = " + result);
-        }
-
-        return null;
-    }
-
-    @Override
-    protected List<BasePbProduct> getNewProducts(List<BasePbProduct> allProducts) {
-        return null;
+        return Collections.emptyList();
     }
 
     private List<BasePbProduct> parseProductsData(Object data) throws JsonProcessingException {
@@ -105,10 +94,10 @@ public class GS25PbBatchService extends PbBatchService {
         String price = Double.toString((Double) productMap.get("price"));
 
         BasePbProduct basePbProduct = BasePbProduct.builder()
-                .id(0L)
+                .id(generateId())
                 .name(name)
                 .price(price)
-                .storeType(StoreType.GS25.getName())
+                .storeType(StoreType.GS25)
                 .updatedTime(LocalDateTime.now())
                 .image(image)
                 .build();

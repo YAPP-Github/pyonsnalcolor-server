@@ -7,6 +7,7 @@ import com.pyonsnalcolor.batch.client.GS25EventRequestBody;
 import com.pyonsnalcolor.batch.model.BaseEventProduct;
 import com.pyonsnalcolor.batch.model.EventType;
 import com.pyonsnalcolor.batch.model.StoreType;
+import com.pyonsnalcolor.batch.model.UUIDGenerator;
 import com.pyonsnalcolor.batch.repository.EventProductRepository;
 import com.pyonsnalcolor.batch.service.EventBatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.*;
 import static com.pyonsnalcolor.batch.service.gs25.GS25Constant.GS_MAIN_PAGE_URL;
 
 
@@ -104,10 +106,10 @@ public class GS25EventBatchService extends EventBatchService {
 
         BaseEventProduct baseEventProduct = BaseEventProduct.builder()
                 .originPrice(NOT_EXIST)
-                .storeType(StoreType.GS25.getName())
+                .storeType(StoreType.GS25)
                 .updatedTime(LocalDateTime.now())
                 .eventType(EventType.getEventTypeWithValue(eventType))
-                .id(0L)
+                .id(generateId())
                 .giftImage(giftImage)
                 .image(image)
                 .price(price)

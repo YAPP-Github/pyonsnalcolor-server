@@ -12,7 +12,7 @@ public abstract class Scheduler {
         this.eventProductBatchService = eventProductBatchService;
     }
 
-    @Scheduled(fixedRate = 10000)
+    //@Scheduled(fixedRate = 10000)
     public void run() {
         pbProductBatchService.execute();
         eventProductBatchService.execute();

@@ -43,11 +43,6 @@ public class SevenPbBatchService extends PbBatchService {
     }
 
     @Override
-    protected List<BasePbProduct> getNewProducts(List<BasePbProduct> allProducts) {
-        return null;
-    }
-
-    @Override
     protected void sendAlarms(List<BasePbProduct> SevenProducts) {
         System.out.println("send Seven pb products alarms");
     }
@@ -84,7 +79,7 @@ public class SevenPbBatchService extends PbBatchService {
                 .image(image)
                 .price(price)
                 .updatedTime(LocalDateTime.now())
-                .storeType(StoreType.SEVEN_ELEVEN.getName())
+                .storeType(StoreType.SEVEN_ELEVEN)
                 .build();
     }
 
