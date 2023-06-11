@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.member.controller;
 
-import com.pyonsnalcolor.member.dto.AuthorizationRequestDto;
+import com.pyonsnalcolor.member.dto.LoginRequestDto;
 import com.pyonsnalcolor.member.dto.TokenDto;
 import com.pyonsnalcolor.member.entity.enumtype.LoginType;
 import com.pyonsnalcolor.member.oauth.kakao.KakaoOauthService;
@@ -22,9 +22,9 @@ public class AuthController {
 
     @PostMapping("/kakao")
     public ResponseEntity<TokenDto> authorizationWithKakao(
-            @RequestBody AuthorizationRequestDto authorizationRequestDto
+            @RequestBody LoginRequestDto loginRequestDto
     ) {
-        String email = kakaoOauthService.getKakaoEmail(authorizationRequestDto);
+        String email = kakaoOauthService.getEmail(loginRequestDto);
         TokenDto tokenDto = memberService.join(LoginType.KAKAO, email);
         return new ResponseEntity(tokenDto, HttpStatus.OK);
     }
