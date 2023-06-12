@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.batch.service.emart24;
+package com.pyonsnalcolor.batch.service.gs25;
 
 import com.pyonsnalcolor.batch.service.BatchService;
 import org.junit.jupiter.api.DisplayName;
@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Emart24PbBatchServiceTest {
+class GS25EventBatchServiceTest {
     @Autowired
-    @Qualifier("Emart24Pb")
+    @Qualifier("GS25Event")
     private BatchService batchService;
 
     @Test
-    @DisplayName("이마트24 Pb 상품 전체 플로우 실행")
+    @DisplayName("GS24 이벤트 상품 전체 플로우 실행")
     public void integrationTest() {
         batchService.execute();
     }
