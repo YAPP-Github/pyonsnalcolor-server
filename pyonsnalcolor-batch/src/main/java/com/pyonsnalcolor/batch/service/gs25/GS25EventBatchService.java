@@ -7,7 +7,6 @@ import com.pyonsnalcolor.batch.client.GS25EventRequestBody;
 import com.pyonsnalcolor.batch.model.BaseEventProduct;
 import com.pyonsnalcolor.batch.model.EventType;
 import com.pyonsnalcolor.batch.model.StoreType;
-import com.pyonsnalcolor.batch.model.UUIDGenerator;
 import com.pyonsnalcolor.batch.repository.EventProductRepository;
 import com.pyonsnalcolor.batch.service.EventBatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.pyonsnalcolor.batch.model.UUIDGenerator.*;
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.generateId;
 import static com.pyonsnalcolor.batch.service.gs25.GS25Constant.GS_MAIN_PAGE_URL;
 
 
@@ -144,22 +143,5 @@ public class GS25EventBatchService extends EventBatchService {
         String jsessionid = response.cookie("JSESSIONID");
 
         return jsessionid;
-    }
-
-    @Override
-    protected List<BaseEventProduct> getEventExpiredProducts(List<BaseEventProduct> allProducts) {
-        System.out.println("get expired gs25 event products");
-        return null;
-    }
-
-    @Override
-    protected List<BaseEventProduct> getNewProducts(List<BaseEventProduct> allProducts) {
-        System.out.println("get new event gs25 products");
-        return null;
-    }
-
-    @Override
-    protected void sendAlarms(List<BaseEventProduct> gs25Products) {
-        System.out.println("send event gs25 products alarms");
     }
 }

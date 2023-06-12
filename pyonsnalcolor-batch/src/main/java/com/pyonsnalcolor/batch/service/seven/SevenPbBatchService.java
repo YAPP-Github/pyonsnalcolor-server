@@ -42,11 +42,6 @@ public class SevenPbBatchService extends PbBatchService {
         return null; // 이후에 에러 처리 관련 수정 - getAllProducts() 호출하는 쪽에 throw
     }
 
-    @Override
-    protected void sendAlarms(List<BasePbProduct> SevenProducts) {
-        System.out.println("send Seven pb products alarms");
-    }
-
     private List<BasePbProduct> getProducts() throws IOException {
         List<BasePbProduct> products = new ArrayList<>();
 

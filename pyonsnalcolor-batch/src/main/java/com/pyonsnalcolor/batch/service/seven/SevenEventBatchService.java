@@ -25,27 +25,4 @@ public class SevenEventBatchService extends EventBatchService {
         System.out.println("get expired Seven event products");
         return null;
     }
-
-    @Override
-    protected List<BaseEventProduct> getEventExpiredProducts(List<BaseEventProduct> allProducts) {
-        /**
-         * TODO : 전체 이벤트 데이터들에서 기간이 끝난 상품들을 골라내는 기능을 구현해주시면 됩니다.
-         */
-        System.out.println("get expired Seven event products");
-        return null;
-    }
-
-    @Override
-    protected List<BaseEventProduct> getNewProducts(List<BaseEventProduct> allProducts) {
-        /**
-         * TODO : 전체 이벤트 데이터들에서 새롭게 등장한 상품들을 골라내는 기능을 구현해주시면 됩니다.
-         */
-        System.out.println("get new event Seven products");
-        return null;
-    }
-
-    @Override
-    protected void sendAlarms(List<BaseEventProduct> SevenProducts) {
-        System.out.println("send event Seven products alarms");
-    }
 }

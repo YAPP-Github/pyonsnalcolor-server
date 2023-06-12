@@ -2,7 +2,6 @@ package com.pyonsnalcolor.batch.service.emart24;
 
 import com.pyonsnalcolor.batch.model.BasePbProduct;
 import com.pyonsnalcolor.batch.model.StoreType;
-import com.pyonsnalcolor.batch.model.UUIDGenerator;
 import com.pyonsnalcolor.batch.repository.PbProductRepository;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.pyonsnalcolor.batch.model.UUIDGenerator.*;
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.generateId;
 
 @Service("Emart24Pb")
 @Slf4j
@@ -87,10 +86,5 @@ public class Emart24PbBatchService extends PbBatchService {
                 .build();
 
         return basePbProduct;
-    }
-
-    @Override
-    protected void sendAlarms(List<BasePbProduct> emart24Products) {
-        System.out.println("send emart24 pb products alarms");
     }
 }
