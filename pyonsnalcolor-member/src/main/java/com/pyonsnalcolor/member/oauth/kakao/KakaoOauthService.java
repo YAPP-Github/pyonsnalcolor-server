@@ -3,6 +3,7 @@ package com.pyonsnalcolor.member.oauth.kakao;
 import com.pyonsnalcolor.member.dto.LoginRequestDto;
 import com.pyonsnalcolor.member.oauth.kakao.dto.KakaoUserInfoDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
@@ -26,14 +27,15 @@ public class KakaoOauthService {
     @Value("${spring.security.oauth2.kakao.request-uri}")
     private String requestUri;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     public String getEmail(LoginRequestDto loginRequestDto) {
         String accessToken = loginRequestDto.getToken();
         return getKakaoUserInfo(accessToken).getEmail();
     }
 
     private KakaoUserInfoDto getKakaoUserInfo (String accessToken) {
-        RestTemplate restTemplate = new RestTemplate();
-
         HttpHeaders headers = new HttpHeaders();
         headers.add(accessTokenHeader, bearerHeader + accessToken);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

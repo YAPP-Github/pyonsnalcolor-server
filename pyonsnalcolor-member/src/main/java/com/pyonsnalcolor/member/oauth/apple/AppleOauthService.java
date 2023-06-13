@@ -7,6 +7,7 @@ import com.pyonsnalcolor.member.oauth.apple.dto.ApplePublicKeyDto;
 import com.pyonsnalcolor.member.oauth.apple.dto.ApplePublicKeysDto;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,8 @@ import java.util.Map;
 public class AppleOauthService {
 
     private static final String EMAIL = "email";
-    private static final String ALG = "alg";
-    private static final String KID = "kid";
+    private static final String ALGORITHM = "alg";
+    private static final String KEY_ID = "kid";
 
     @Value("${spring.security.oauth2.apple.key-uri}")
     private String keyUri;
@@ -40,39 +41,42 @@ public class AppleOauthService {
     @Value("${spring.security.oauth2.apple.issuer}")
     private String issuer;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     public String getEmail(LoginRequestDto loginRequestDto) {
         String identityToken = loginRequestDto.getToken();
         PublicKey publicKeyForParseIdentityToken = createPublicKeyForParseIdentityToken(identityToken);
 
-        Claims claims = parseAndValidateClaims(identityToken, publicKeyForParseIdentityToken);
+        Claims claims = parseClaims(identityToken, publicKeyForParseIdentityToken);
         return claims.get(EMAIL, String.class);
     }
 
     private PublicKey createPublicKeyForParseIdentityToken(String identityToken) {
-        ApplePublicKeyDto selectedApplePublicKey = selectApplePublicKeyMatchesIdentityToken(identityToken);
+        ApplePublicKeyDto applePublicKey = getApplePublicKeyMatchesIdentityToken(identityToken);
 
-        byte[] nBytes = Base64.getUrlDecoder().decode(selectedApplePublicKey.getN());
-        byte[] eBytes = Base64.getUrlDecoder().decode(selectedApplePublicKey.getE());
+        byte[] nBytes = Base64.getUrlDecoder().decode(applePublicKey.getN());
+        byte[] eBytes = Base64.getUrlDecoder().decode(applePublicKey.getE());
 
         BigInteger n = new BigInteger(1, nBytes);
         BigInteger e = new BigInteger(1, eBytes);
 
         try {
             RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(n, e);
-            KeyFactory keyFactory = KeyFactory.getInstance(selectedApplePublicKey.getKty());
+            KeyFactory keyFactory = KeyFactory.getInstance(applePublicKey.getKty());
             return keyFactory.generatePublic(publicKeySpec);
         } catch (InvalidKeySpecException | NoSuchAlgorithmException exception) {
             throw new JwtException("Identity token을 파싱할 공개키를 생성할 수 없습니다.");
         }
     }
 
-    private ApplePublicKeyDto selectApplePublicKeyMatchesIdentityToken(String identityToken) {
+    private ApplePublicKeyDto getApplePublicKeyMatchesIdentityToken(String identityToken) {
         Map<String, String> headerMap = parseHeaderOfIdentityToken(identityToken);
-        String alg = headerMap.get(ALG);
-        String kid = headerMap.get(KID);
+        String algorithm = headerMap.get(ALGORITHM);
+        String keyId = headerMap.get(KEY_ID);
 
         ApplePublicKeysDto keys = getApplePublicKeysFromApple();
-        return keys.getApplePublicKeyMatchesAlgAndKid(alg, kid);
+        return keys.getApplePublicKeyMatchesAlgAndKid(algorithm, keyId);
     }
 
     private Map<String, String> parseHeaderOfIdentityToken(String identityToken) {
@@ -87,11 +91,10 @@ public class AppleOauthService {
     }
 
     private ApplePublicKeysDto getApplePublicKeysFromApple() {
-        RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForObject(keyUri, ApplePublicKeysDto.class);
     }
 
-    private Claims parseAndValidateClaims(String identityToken, PublicKey publicKey) {
+    private Claims parseClaims(String identityToken, PublicKey publicKey) {
         try {
             return Jwts.parserBuilder()
                     .requireAudience(clientId)
