@@ -3,7 +3,6 @@ package com.pyonsnalcolor.batch.service.emart24;
 import com.pyonsnalcolor.batch.model.BaseEventProduct;
 import com.pyonsnalcolor.batch.model.EventType;
 import com.pyonsnalcolor.batch.model.StoreType;
-import com.pyonsnalcolor.batch.model.UUIDGenerator;
 import com.pyonsnalcolor.batch.repository.EventProductRepository;
 import com.pyonsnalcolor.batch.service.EventBatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.pyonsnalcolor.batch.model.UUIDGenerator.*;
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.generateId;
 
 @Service("Emart24Event")
 @Slf4j
@@ -47,6 +46,10 @@ public class Emart24EventBatchService extends EventBatchService {
                 results.addAll(parseProductsData(productElements));
                 curPage++;
             } while (productElements.size() > 0);
+
+            for(BaseEventProduct b: results) {
+                System.out.println("b = " + b);
+            }
 
             return results;
         } catch (Exception e) {
@@ -147,22 +150,5 @@ public class Emart24EventBatchService extends EventBatchService {
                 .build();
 
         return baseEventProduct;
-    }
-
-    @Override
-    protected List<BaseEventProduct> getEventExpiredProducts(List<BaseEventProduct> allProducts) {
-        System.out.println("get expired emart24 event products");
-        return null;
-    }
-
-    @Override
-    protected List<BaseEventProduct> getNewProducts(List<BaseEventProduct> allProducts) {
-        System.out.println("get new event emart24 products");
-        return null;
-    }
-
-    @Override
-    protected void sendAlarms(List<BaseEventProduct> emart24Products) {
-        System.out.println("send event emart24 products alarms");
     }
 }

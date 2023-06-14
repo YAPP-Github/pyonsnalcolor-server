@@ -3,9 +3,9 @@ package com.pyonsnalcolor.batch.service.gs25;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pyonsnalcolor.batch.client.GS25Client;
-import com.pyonsnalcolor.batch.client.GS25EventRequestBody;
 import com.pyonsnalcolor.batch.client.GS25PbRequestBody;
-import com.pyonsnalcolor.batch.model.*;
+import com.pyonsnalcolor.batch.model.BasePbProduct;
+import com.pyonsnalcolor.batch.model.StoreType;
 import com.pyonsnalcolor.batch.repository.PbProductRepository;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.pyonsnalcolor.batch.model.UUIDGenerator.*;
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.generateId;
 import static com.pyonsnalcolor.batch.service.gs25.GS25Constant.GS_MAIN_PAGE_URL;
 
 
@@ -137,10 +137,5 @@ public class GS25PbBatchService extends PbBatchService {
         String jsessionid = response.cookie("JSESSIONID");
 
         return jsessionid;
-    }
-
-    @Override
-    protected void sendAlarms(List<BasePbProduct> gs25Products) {
-        System.out.println("send gs25 pb products alarms");
     }
 }
