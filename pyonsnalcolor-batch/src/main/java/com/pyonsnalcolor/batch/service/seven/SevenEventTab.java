@@ -48,11 +48,11 @@ public enum SevenEventTab {
             getPagedProductsByGift(elements);
         }
         return elements.stream()
-                .map (p -> convertToBaseEventProduct(p, null))
+                .map (p -> convertToBaseEventProductWithGift(p, null))
                 .collect(Collectors.toList());
     }
 
-    private BaseEventProduct convertToBaseEventProduct(Element element, Element giftElement) {
+    private BaseEventProduct convertToBaseEventProductWithGift(Element element, Element giftElement) {
         String name = element.select("div.name").first().text();
         String image = IMG_PREFIX + element.select("img").first().attr("src");
         String price = element.select("div.price").text();
@@ -83,7 +83,7 @@ public enum SevenEventTab {
                 .forEach((classifier, products) -> {
                     Element originElement = products.get(0);
                     Element giftElement = products.get(1);
-                    BaseEventProduct baseEventProduct = convertToBaseEventProduct(originElement, giftElement);
+                    BaseEventProduct baseEventProduct = convertToBaseEventProductWithGift(originElement, giftElement);
                     pagedProducts.add(baseEventProduct);
                 });
         return pagedProducts;
