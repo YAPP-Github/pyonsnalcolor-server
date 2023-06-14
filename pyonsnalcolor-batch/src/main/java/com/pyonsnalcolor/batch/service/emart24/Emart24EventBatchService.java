@@ -47,10 +47,6 @@ public class Emart24EventBatchService extends EventBatchService {
                 curPage++;
             } while (productElements.size() > 0);
 
-            for(BaseEventProduct b: results) {
-                System.out.println("b = " + b);
-            }
-
             return results;
         } catch (Exception e) {
             //TODO : 임시로 모든 예외에 대해 퉁쳐서 처리. 후에 리팩토링 진행할 것
