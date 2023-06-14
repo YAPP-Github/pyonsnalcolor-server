@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.pyonsnalcolor.batch.model.UUIDGenerator.generateId;
+
 @Service("CuEvent")
 @Slf4j
 public class CuEventBatchService extends EventBatchService {
@@ -75,6 +77,7 @@ public class CuEventBatchService extends EventBatchService {
                 .name(name)
                 .image(image)
                 .price(price)
+                .id((generateId()))
                 .eventType(eventType)
                 .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
