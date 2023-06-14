@@ -3,6 +3,7 @@ package com.pyonsnalcolor.member.controller;
 import com.pyonsnalcolor.member.dto.LoginRequestDto;
 import com.pyonsnalcolor.member.dto.TokenDto;
 import com.pyonsnalcolor.member.entity.enumtype.LoginType;
+import com.pyonsnalcolor.member.oauth.apple.AppleOauthService;
 import com.pyonsnalcolor.member.oauth.kakao.KakaoOauthService;
 import com.pyonsnalcolor.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class AuthController {
 
     private final MemberService memberService;
     private final KakaoOauthService kakaoOauthService;
+    private final AppleOauthService appleOauthService;
 
     @PostMapping("/kakao")
     public ResponseEntity<TokenDto> authorizationWithKakao(
@@ -26,6 +28,15 @@ public class AuthController {
     ) {
         String email = kakaoOauthService.getEmail(loginRequestDto);
         TokenDto tokenDto = memberService.join(LoginType.KAKAO, email);
+        return new ResponseEntity(tokenDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/apple")
+    public ResponseEntity<TokenDto> authorizationWithApple(
+            @RequestBody LoginRequestDto loginRequestDto
+    ) {
+        String email = appleOauthService.getEmail(loginRequestDto);
+        TokenDto tokenDto = memberService.join(LoginType.APPLE, email);
         return new ResponseEntity(tokenDto, HttpStatus.OK);
     }
 
