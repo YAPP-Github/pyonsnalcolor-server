@@ -45,7 +45,7 @@ public enum SevenEventTab {
 
     public List<BaseEventProduct> getPagedProducts(Elements elements) {
         if (this == GIFT) {
-            getPagedProductsByGift(elements);
+            return getPagedProductsByGift(elements);
         }
         return elements.stream()
                 .map (p -> convertToBaseEventProductWithGift(p, null))
