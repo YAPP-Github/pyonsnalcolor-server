@@ -55,14 +55,16 @@ public class SevenEventBatchService extends EventBatchService {
         int tab = sevenEventTab.getTab();
         while (true) {
             String sevenEventUrl = getSevenEventUrlByPageIndexAndTab(pageIndex, tab);
-            Document doc = Jsoup.connect(sevenEventUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select(sevenEventTab.getDocumentTag());
+            Document document = Jsoup.connect(sevenEventUrl).timeout(TIMEOUT).get();
+            Elements elements = document.select(sevenEventTab.getDocumentTag());
 
             if (elements.isEmpty()) {
                 break;
             }
+            Document detailPageDocument = Jsoup.connect(sevenEventUrl).timeout(TIMEOUT).get();
+            Elements detailPageElements = detailPageDocument.select("a.btn_product_01");
 
-            List<BaseEventProduct> pagedProducts = sevenEventTab.getPagedProducts(elements);
+            List<BaseEventProduct> pagedProducts = sevenEventTab.getPagedProducts(elements, detailPageElements);
             products.addAll(pagedProducts);
             pageIndex++;
         }
