@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.domain.alarm.enumtype;
 
-public enum StoreFcmTopic {
+public enum ProductStoreType {
     PB_GS25,
     PB_CU,
     PB_EMART24,

@@ -1,8 +1,9 @@
 package com.pyonsnalcolor.domain.member;
 
-import com.pyonsnalcolor.domain.alarm.FcmTopic;
+import com.pyonsnalcolor.domain.alarm.PushProductStore;
 import com.pyonsnalcolor.domain.alarm.PushKeyword;
 import com.pyonsnalcolor.domain.alarm.PushRecord;
+import com.pyonsnalcolor.domain.member.enumtype.Nickname;
 import com.pyonsnalcolor.domain.member.enumtype.OAuthType;
 import com.pyonsnalcolor.domain.member.enumtype.Role;
 import lombok.*;
@@ -27,7 +28,7 @@ public class Member {
 
     private String email;
 
-    private String nickname;
+    private Nickname nickname;
 
     private String refreshToken;
 
@@ -40,7 +41,7 @@ public class Member {
     private OAuthType OAuthType;
 
     @OneToMany(mappedBy = "member")
-    private List<FcmTopic> fcmTopics = new ArrayList<>();
+    private List<PushProductStore> pushProductStores = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<PushKeyword> pushKeywords = new ArrayList<>();

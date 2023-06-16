@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.domain.alarm;
 
-import com.pyonsnalcolor.domain.alarm.enumtype.StoreFcmTopic;
+import com.pyonsnalcolor.domain.alarm.enumtype.ProductStoreType;
 import com.pyonsnalcolor.domain.member.Member;
 import lombok.*;
 
@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "fcm_topic")
-public class FcmTopic {
+@Table(name = "push_product_store")
+public class PushProductStore {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fcm_topic_id")
+    @Column(name = "push_product_store_id")
     private Long id;
 
-    private StoreFcmTopic storeFcmTopic;
+    private ProductStoreType productStoreType;
 
     @Column(name = "is_subscribed")
     private boolean isSubscribed;
