@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.member.service;
 
-import com.pyonsnalcolor.member.entity.Member;
-import com.pyonsnalcolor.member.repository.MemberRepository;
+import com.pyonsnalcolor.domain.member.Member;
+import com.pyonsnalcolor.domain.member.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
