@@ -4,6 +4,7 @@ import com.pyonsnalcolor.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 
 @Builder
 @Getter
@@ -17,6 +18,7 @@ public class PushKeyword {
     @Column(name = "push_keyword_id")
     private Long id;
 
+    @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣]+${1,10}")
     private String name;
 
     @Column(name = "is_deleted")

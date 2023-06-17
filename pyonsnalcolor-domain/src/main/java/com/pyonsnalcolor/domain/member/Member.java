@@ -9,6 +9,8 @@ import com.pyonsnalcolor.domain.member.enumtype.Role;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +26,13 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @Column(unique = true)
     private String oauthId; // {Oauth 타입 + 사용자 정보}
 
+    @Email
     private String email;
 
+    @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣 ]*${1,15}")
     private Nickname nickname;
 
     private String refreshToken;
