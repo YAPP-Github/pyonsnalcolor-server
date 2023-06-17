@@ -3,6 +3,7 @@ package com.pyonsnalcolor.domain.alarm;
 import com.pyonsnalcolor.domain.alarm.enumtype.ProductStoreType;
 import com.pyonsnalcolor.domain.member.Member;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class PushProductStore {
     private ProductStoreType productStoreType;
 
     @Column(name = "is_subscribed")
+    @ColumnDefault("true")
     private boolean isSubscribed;
 
     @Column(name = "updated_time")
