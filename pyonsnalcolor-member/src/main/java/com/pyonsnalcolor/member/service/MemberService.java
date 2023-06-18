@@ -1,11 +1,12 @@
 package com.pyonsnalcolor.member.service;
 
+import com.pyonsnalcolor.domain.member.Member;
+import com.pyonsnalcolor.domain.member.enumtype.OAuthType;
+import com.pyonsnalcolor.domain.member.enumtype.Role;
 import com.pyonsnalcolor.member.dto.TokenDto;
-import com.pyonsnalcolor.member.entity.Member;
-import com.pyonsnalcolor.member.entity.enumtype.LoginType;
-import com.pyonsnalcolor.member.entity.enumtype.Role;
 import com.pyonsnalcolor.member.jwt.JwtTokenProvider;
-import com.pyonsnalcolor.member.repository.MemberRepository;
+import com.pyonsnalcolor.domain.member.MemberRepository;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +30,8 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public TokenDto join(LoginType loginType, String email) {
-        String oauthId = loginType.addLoginTypeHeaderWithEmail(email);
+    public TokenDto join(OAuthType OAuthType, String email) {
+        String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
         TokenDto tokenDto = jwtTokenProvider.createAccessAndRefreshTokenDto(oauthId);
         String refreshToken = tokenDto.getRefreshToken();
 
@@ -40,7 +41,7 @@ public class MemberService {
                     .email(email)
                     .refreshToken(refreshToken)
                     .oauthId(oauthId)
-                    .loginType(loginType)
+                    .OAuthType(OAuthType)
                     .role(Role.ROLE_USER)
                     .build();
             memberRepository.save(member);
@@ -64,10 +65,10 @@ public class MemberService {
 
     private void validateRefreshToken(String oauthId, String refreshToken) {
         Object findRefreshToken = memberRepository.findRefreshTokenByOauthId(oauthId)
-                .orElseThrow(() -> new RuntimeException("사용자의 refreshToken이 존재하지 않습니다."));
+                .orElseThrow(() -> new JwtException("사용자의 refreshToken이 존재하지 않습니다."));
 
         if (!findRefreshToken.equals(refreshToken)) {
-            throw new RuntimeException("사용자의 refreshToken와 일치하지 않습니다.");
+            throw new JwtException("사용자의 refreshToken와 일치하지 않습니다.");
         }
     }
 
@@ -75,6 +76,6 @@ public class MemberService {
         if (token != null && token.startsWith(bearerHeader)) {
             return token.substring(bearerHeader.length());
         }
-        return null;
+        throw new JwtException("사용자 token이 Bearer 형식에 맞지 않습니다.");
     }
 }

@@ -1,5 +1,6 @@
 package com.pyonsnalcolor.member.entity;
 
+import com.pyonsnalcolor.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

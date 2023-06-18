@@ -1,6 +1,6 @@
-package com.pyonsnalcolor.member.repository;
+package com.pyonsnalcolor.domain.member;
 
-import com.pyonsnalcolor.member.entity.Member;
+import com.pyonsnalcolor.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
