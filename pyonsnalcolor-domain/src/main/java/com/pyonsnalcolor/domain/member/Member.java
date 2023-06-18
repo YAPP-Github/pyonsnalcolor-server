@@ -33,7 +33,7 @@ public class Member {
     private String email;
 
     @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣 ]*${1,15}")
-    private Nickname nickname;
+    private String nickname;
 
     private String refreshToken;
 
@@ -53,4 +53,8 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<PushRecord> pushRecords = new ArrayList<>();
+
+    public void updateNickname(String updatedNickname) {
+        this.nickname = updatedNickname;
+    }
 }
