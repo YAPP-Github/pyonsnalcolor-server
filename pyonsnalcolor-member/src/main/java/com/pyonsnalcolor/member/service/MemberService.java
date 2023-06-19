@@ -1,8 +1,11 @@
 package com.pyonsnalcolor.member.service;
 
 import com.pyonsnalcolor.domain.member.Member;
+import com.pyonsnalcolor.domain.member.enumtype.Nickname;
 import com.pyonsnalcolor.domain.member.enumtype.OAuthType;
 import com.pyonsnalcolor.domain.member.enumtype.Role;
+import com.pyonsnalcolor.member.dto.MemberInfoResponseDto;
+import com.pyonsnalcolor.member.dto.NicknameRequestDto;
 import com.pyonsnalcolor.member.dto.TokenDto;
 import com.pyonsnalcolor.member.jwt.JwtTokenProvider;
 import com.pyonsnalcolor.domain.member.MemberRepository;
@@ -11,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +35,7 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public TokenDto join(OAuthType OAuthType, String email) {
+    public TokenDto login(OAuthType OAuthType, String email) {
         String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
         TokenDto tokenDto = jwtTokenProvider.createAccessAndRefreshTokenDto(oauthId);
         String refreshToken = tokenDto.getRefreshToken();
@@ -39,6 +44,7 @@ public class MemberService {
         if (isMemberEmpty) {
             Member member = Member.builder()
                     .email(email)
+                    .nickname(Nickname.getRandomNickname())
                     .refreshToken(refreshToken)
                     .oauthId(oauthId)
                     .OAuthType(OAuthType)
@@ -49,10 +55,10 @@ public class MemberService {
         return tokenDto;
     }
 
-    public TokenDto reissueAccessToken(TokenDto tokenDto) {
-        String refreshToken = tokenDto.getRefreshToken();
-        String resolvedToken = resolveBearerToken(refreshToken);
-        String oauthId = jwtTokenProvider.getOauthId(resolvedToken);
+    public TokenDto reissueAccessToken(Authentication authentication) {
+        Member member = findMemberByAuthentication(authentication);
+        String oauthId = member.getOauthId();
+        String refreshToken = member.getRefreshToken();
 
         validateRefreshToken(oauthId, refreshToken);
 
@@ -65,10 +71,10 @@ public class MemberService {
 
     private void validateRefreshToken(String oauthId, String refreshToken) {
         Object findRefreshToken = memberRepository.findRefreshTokenByOauthId(oauthId)
-                .orElseThrow(() -> new JwtException("사용자의 refreshToken이 존재하지 않습니다."));
+                .orElseThrow(() -> new JwtException("사용자의 refresh token이 존재하지 않습니다."));
 
         if (!findRefreshToken.equals(refreshToken)) {
-            throw new JwtException("사용자의 refreshToken와 일치하지 않습니다.");
+            throw new JwtException("사용자의 refresh token과 일치하지 않습니다.");
         }
     }
 
@@ -76,6 +82,33 @@ public class MemberService {
         if (token != null && token.startsWith(bearerHeader)) {
             return token.substring(bearerHeader.length());
         }
-        throw new JwtException("사용자 token이 Bearer 형식에 맞지 않습니다.");
+        throw new JwtException("사용자의 token이 Bearer 형식에 맞지 않습니다.");
+    }
+
+    public void withdraw(Authentication authentication) {
+        Member member = findMemberByAuthentication(authentication);
+        memberRepository.delete(member);
+
+        SecurityContextHolder.clearContext();
+    }
+
+    public MemberInfoResponseDto getMemberInfo(Authentication authentication) {
+        Member member = findMemberByAuthentication(authentication);
+        return new MemberInfoResponseDto(member);
+    }
+
+    public void updateNickname(Authentication authentication, NicknameRequestDto nicknameRequestDto) {
+        Member member = findMemberByAuthentication(authentication);
+        String updatedNickname = nicknameRequestDto.getNickname();
+        member.updateNickname(updatedNickname);
+    }
+
+    private Member findMemberByAuthentication(Authentication authentication) {
+        String oauthId = authentication.getName();
+
+        return memberRepository.findByOauthId(oauthId)
+                .orElseThrow(
+                () -> new IllegalArgumentException("해당 토큰의 사용자가 존재하지 않습니다.")
+        );
     }
 }
