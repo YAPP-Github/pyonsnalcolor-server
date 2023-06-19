@@ -37,21 +37,38 @@ public class MemberService {
     @Transactional
     public TokenDto login(OAuthType OAuthType, String email) {
         String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
+        return memberRepository.findByOauthId(oauthId)
+                .map(this::updateAccessToken)
+                .orElseGet(() ->  join(oauthId));
+    }
+
+    private TokenDto updateAccessToken(Member member) {
+        String oauthId = member.getOauthId();
+        String refreshToken = member.getRefreshToken();
+        String newAccessToken = jwtTokenProvider.createAccessToken(oauthId);
+
+        return TokenDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    private TokenDto join(String oauthId) {
+        String email = OAuthType.parseEmail(oauthId);
+        OAuthType oAuthType = OAuthType.parseOAuthType(oauthId);
         TokenDto tokenDto = jwtTokenProvider.createAccessAndRefreshTokenDto(oauthId);
         String refreshToken = tokenDto.getRefreshToken();
 
-        boolean isMemberEmpty = memberRepository.findByOauthId(oauthId).isEmpty();
-        if (isMemberEmpty) {
-            Member member = Member.builder()
-                    .email(email)
-                    .nickname(Nickname.getRandomNickname())
-                    .refreshToken(refreshToken)
-                    .oauthId(oauthId)
-                    .OAuthType(OAuthType)
-                    .role(Role.ROLE_USER)
-                    .build();
-            memberRepository.save(member);
-        }
+        Member member = Member.builder()
+                .email(email)
+                .nickname(Nickname.getRandomNickname())
+                .refreshToken(refreshToken)
+                .oauthId(oauthId)
+                .OAuthType(oAuthType)
+                .role(Role.ROLE_USER)
+                .build();
+        memberRepository.save(member);
+
         return tokenDto;
     }
 
@@ -61,12 +78,7 @@ public class MemberService {
         String refreshToken = member.getRefreshToken();
 
         validateRefreshToken(oauthId, refreshToken);
-
-        String newAccessToken = jwtTokenProvider.createAccessToken(oauthId);
-        return TokenDto.builder()
-                .accessToken(newAccessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return updateAccessToken(member);
     }
 
     private void validateRefreshToken(String oauthId, String refreshToken) {
