@@ -15,34 +15,28 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping("/oauth")
+public class OAuthController {
 
     private final MemberService memberService;
     private final KakaoOauthService kakaoOauthService;
     private final AppleOauthService appleOauthService;
 
     @PostMapping("/kakao")
-    public ResponseEntity<TokenDto> authorizationWithKakao(
+    public ResponseEntity<TokenDto> authorizeWithKakao(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
         String email = kakaoOauthService.getEmail(loginRequestDto);
-        TokenDto tokenDto = memberService.join(OAuthType.KAKAO, email);
+        TokenDto tokenDto = memberService.login(OAuthType.KAKAO, email);
         return new ResponseEntity(tokenDto, HttpStatus.OK);
     }
 
     @PostMapping("/apple")
-    public ResponseEntity<TokenDto> authorizationWithApple(
+    public ResponseEntity<TokenDto> authorizeWithApple(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
         String email = appleOauthService.getEmail(loginRequestDto);
-        TokenDto tokenDto = memberService.join(OAuthType.APPLE, email);
+        TokenDto tokenDto = memberService.login(OAuthType.APPLE, email);
         return new ResponseEntity(tokenDto, HttpStatus.OK);
-    }
-
-    @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissueAccessToken(@RequestBody TokenDto tokenDto) {
-        TokenDto newTokenDto = memberService.reissueAccessToken(tokenDto);
-        return new ResponseEntity(newTokenDto, HttpStatus.OK);
     }
 }
