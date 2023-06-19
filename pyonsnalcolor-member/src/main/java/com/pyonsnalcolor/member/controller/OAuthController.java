@@ -23,7 +23,7 @@ public class OAuthController {
     private final AppleOauthService appleOauthService;
 
     @PostMapping("/kakao")
-    public ResponseEntity<TokenDto> authorizeWithKakao(
+    public ResponseEntity<TokenDto> loginWithKakao(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
         String email = kakaoOauthService.getEmail(loginRequestDto);
@@ -32,7 +32,7 @@ public class OAuthController {
     }
 
     @PostMapping("/apple")
-    public ResponseEntity<TokenDto> authorizeWithApple(
+    public ResponseEntity<TokenDto> loginWithApple(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
         String email = appleOauthService.getEmail(loginRequestDto);

@@ -37,6 +37,7 @@ public class MemberService {
     @Transactional
     public TokenDto login(OAuthType OAuthType, String email) {
         String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
+
         return memberRepository.findByOauthId(oauthId)
                 .map(this::updateAccessToken)
                 .orElseGet(() ->  join(oauthId));
@@ -90,13 +91,6 @@ public class MemberService {
         }
     }
 
-    private String resolveBearerToken(String token) {
-        if (token != null && token.startsWith(bearerHeader)) {
-            return token.substring(bearerHeader.length());
-        }
-        throw new JwtException("사용자의 token이 Bearer 형식에 맞지 않습니다.");
-    }
-
     public void withdraw(Authentication authentication) {
         Member member = findMemberByAuthentication(authentication);
         memberRepository.delete(member);
@@ -112,6 +106,7 @@ public class MemberService {
     public void updateNickname(Authentication authentication, NicknameRequestDto nicknameRequestDto) {
         Member member = findMemberByAuthentication(authentication);
         String updatedNickname = nicknameRequestDto.getNickname();
+
         member.updateNickname(updatedNickname);
     }
 
