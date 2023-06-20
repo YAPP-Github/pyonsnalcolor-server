@@ -18,7 +18,7 @@ public class PushKeyword {
     @Column(name = "push_keyword_id")
     private Long id;
 
-    @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣]+${1,10}")
+    @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣]{1,10}")
     private String name;
 
     @Column(name = "is_deleted")

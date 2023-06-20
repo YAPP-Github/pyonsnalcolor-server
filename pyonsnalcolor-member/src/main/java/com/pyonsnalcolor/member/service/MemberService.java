@@ -17,7 +17,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -34,19 +33,18 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Transactional
     public TokenDto login(OAuthType OAuthType, String email) {
         String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
 
         return memberRepository.findByOauthId(oauthId)
                 .map(this::updateAccessToken)
-                .orElseGet(() ->  join(oauthId));
+                .orElseGet(() ->  join(OAuthType, email));
     }
 
     private TokenDto updateAccessToken(Member member) {
         String oauthId = member.getOauthId();
         String refreshToken = member.getRefreshToken();
-        String newAccessToken = jwtTokenProvider.createAccessToken(oauthId);
+        String newAccessToken = jwtTokenProvider.createTokenWithValidity(oauthId, accessTokenValidity);
 
         return TokenDto.builder()
                 .accessToken(newAccessToken)
@@ -54,9 +52,8 @@ public class MemberService {
                 .build();
     }
 
-    private TokenDto join(String oauthId) {
-        String email = OAuthType.parseEmail(oauthId);
-        OAuthType oAuthType = OAuthType.parseOAuthType(oauthId);
+    private TokenDto join(OAuthType OAuthType, String email) {
+        String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
         TokenDto tokenDto = jwtTokenProvider.createAccessAndRefreshTokenDto(oauthId);
         String refreshToken = tokenDto.getRefreshToken();
 
@@ -65,7 +62,7 @@ public class MemberService {
                 .nickname(Nickname.getRandomNickname())
                 .refreshToken(refreshToken)
                 .oauthId(oauthId)
-                .OAuthType(oAuthType)
+                .OAuthType(OAuthType)
                 .role(Role.ROLE_USER)
                 .build();
         memberRepository.save(member);
@@ -108,6 +105,7 @@ public class MemberService {
         String updatedNickname = nicknameRequestDto.getNickname();
 
         member.updateNickname(updatedNickname);
+        memberRepository.save(member);
     }
 
     private Member findMemberByAuthentication(Authentication authentication) {

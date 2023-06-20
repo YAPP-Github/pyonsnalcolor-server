@@ -25,12 +25,8 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String jwtSecretKey;
 
-    @Value("${jwt.access-token.validity}")
     private long accessTokenValidity;
-
-    @Value("${jwt.refresh-token.validity}")
     private long refreshTokenValidity;
-
     private SecretKey secretKey;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecretKey,
@@ -42,21 +38,18 @@ public class JwtTokenProvider {
     }
 
     public TokenDto createAccessAndRefreshTokenDto(String oauthId) {
-        String accessToken = createAccessToken(oauthId);
-        String refreshToken = createRefreshToken(oauthId);
+        String accessToken = createTokenWithValidity(oauthId, accessTokenValidity);
+        String refreshToken = createTokenWithValidity(oauthId, refreshTokenValidity);
 
         return TokenDto.builder()
-                .accessToken(createBearerHeader(accessToken))
-                .refreshToken(createBearerHeader(refreshToken))
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
-    public String createAccessToken(String oauthId){
-        return createJwtTokenWithValidity(oauthId, accessTokenValidity);
-    }
-
-    public String createRefreshToken(String oauthId){
-        return createJwtTokenWithValidity(oauthId, refreshTokenValidity);
+    public String createTokenWithValidity(String oauthId, long tokenValidity){
+        String accessToken = createJwtTokenWithValidity(oauthId, tokenValidity);
+        return createBearerHeader(accessToken);
     }
 
     private String createJwtTokenWithValidity(String oauthId, long tokenValidity){
@@ -101,10 +94,6 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
-    public String getOauthId(String token) {
-        return (String) getClaims(token).get("oauthId");
     }
 
     private String createBearerHeader (String token) {

@@ -8,8 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,7 +37,7 @@ public class MemberController {
     @PatchMapping("/nickname")
     public ResponseEntity<TokenDto> updateNickname(
             Authentication authentication,
-            @RequestBody NicknameRequestDto nicknameRequestDto
+            @RequestBody @Valid NicknameRequestDto nicknameRequestDto
     ) {
         memberService.updateNickname(authentication, nicknameRequestDto);
         return new ResponseEntity(HttpStatus.OK);

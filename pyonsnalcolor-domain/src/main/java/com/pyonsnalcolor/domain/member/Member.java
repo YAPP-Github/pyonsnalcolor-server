@@ -32,7 +32,7 @@ public class Member {
     @Email
     private String email;
 
-    @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣 ]*${1,15}")
+    @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣 ]{1,15}")
     private String nickname;
 
     private String refreshToken;
