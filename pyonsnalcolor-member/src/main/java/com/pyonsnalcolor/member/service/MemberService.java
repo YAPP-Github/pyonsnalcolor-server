@@ -7,6 +7,7 @@ import com.pyonsnalcolor.domain.member.enumtype.Role;
 import com.pyonsnalcolor.member.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.member.dto.NicknameRequestDto;
 import com.pyonsnalcolor.member.dto.TokenDto;
+import com.pyonsnalcolor.member.entity.CustomUserDetails;
 import com.pyonsnalcolor.member.jwt.JwtTokenProvider;
 import com.pyonsnalcolor.domain.member.MemberRepository;
 import io.jsonwebtoken.JwtException;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +46,8 @@ public class MemberService {
         String refreshToken = member.getRefreshToken();
         String newAccessToken = jwtTokenProvider.createTokenWithValidity(oauthId, accessTokenValidity);
 
+        validateRefreshToken(oauthId, refreshToken);
+
         return TokenDto.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(refreshToken)
@@ -70,17 +72,13 @@ public class MemberService {
         return tokenDto;
     }
 
-    public TokenDto reissueAccessToken(Authentication authentication) {
-        Member member = findMemberByAuthentication(authentication);
-        String oauthId = member.getOauthId();
-        String refreshToken = member.getRefreshToken();
-
-        validateRefreshToken(oauthId, refreshToken);
+    public TokenDto reissueAccessToken(CustomUserDetails customUserDetails) {
+        Member member = customUserDetails.getMember();
         return updateAccessToken(member);
     }
 
     private void validateRefreshToken(String oauthId, String refreshToken) {
-        Object findRefreshToken = memberRepository.findRefreshTokenByOauthId(oauthId)
+        String findRefreshToken = memberRepository.findRefreshTokenByOauthId(oauthId)
                 .orElseThrow(() -> new JwtException("사용자의 refresh token이 존재하지 않습니다."));
 
         if (!findRefreshToken.equals(refreshToken)) {
@@ -88,32 +86,23 @@ public class MemberService {
         }
     }
 
-    public void withdraw(Authentication authentication) {
-        Member member = findMemberByAuthentication(authentication);
+    public void withdraw(CustomUserDetails customUserDetails) throws Exception {
+        Member member = customUserDetails.getMember();
         memberRepository.delete(member);
 
         SecurityContextHolder.clearContext();
     }
 
-    public MemberInfoResponseDto getMemberInfo(Authentication authentication) {
-        Member member = findMemberByAuthentication(authentication);
+    public MemberInfoResponseDto getMemberInfo(CustomUserDetails customUserDetails) throws Exception {
+        Member member = customUserDetails.getMember();
         return new MemberInfoResponseDto(member);
     }
 
-    public void updateNickname(Authentication authentication, NicknameRequestDto nicknameRequestDto) {
-        Member member = findMemberByAuthentication(authentication);
+    public void updateNickname(CustomUserDetails customUserDetails, NicknameRequestDto nicknameRequestDto) throws Exception {
+        Member member = customUserDetails.getMember();
         String updatedNickname = nicknameRequestDto.getNickname();
 
         member.updateNickname(updatedNickname);
         memberRepository.save(member);
-    }
-
-    private Member findMemberByAuthentication(Authentication authentication) {
-        String oauthId = authentication.getName();
-
-        return memberRepository.findByOauthId(oauthId)
-                .orElseThrow(
-                () -> new IllegalArgumentException("해당 토큰의 사용자가 존재하지 않습니다.")
-        );
     }
 }
