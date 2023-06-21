@@ -37,8 +37,8 @@ public class KakaoOauthService {
 
     private KakaoUserInfoDto getKakaoUserInfo (String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(accessTokenHeader, bearerHeader + accessToken);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set(accessTokenHeader, bearerHeader + accessToken);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
         return restTemplate.postForObject(requestUri, request, KakaoUserInfoDto.class);
