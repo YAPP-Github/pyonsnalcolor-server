@@ -21,18 +21,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissueAccessToken(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) throws Exception {
-        TokenDto newTokenDto = memberService.reissueAccessToken(customUserDetails);
-        return new ResponseEntity(newTokenDto, HttpStatus.OK);
-    }
-
     @GetMapping("/infos")
     public ResponseEntity<MemberInfoResponseDto> getMemberInfo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) throws Exception {
+    ) {
         MemberInfoResponseDto memberInfoResponseDto = memberService.getMemberInfo(customUserDetails);
         return new ResponseEntity(memberInfoResponseDto, HttpStatus.OK);
     }
@@ -41,7 +33,7 @@ public class MemberController {
     public ResponseEntity<TokenDto> updateNickname(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody @Valid NicknameRequestDto nicknameRequestDto
-    ) throws Exception {
+    ) {
         memberService.updateNickname(customUserDetails, nicknameRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -49,7 +41,7 @@ public class MemberController {
     @DeleteMapping("/withdraw")
     public ResponseEntity<TokenDto> withdraw(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) throws Exception {
+    ) {
         memberService.withdraw(customUserDetails);
         return new ResponseEntity(HttpStatus.OK);
     }

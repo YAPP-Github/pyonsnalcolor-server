@@ -7,6 +7,9 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/pyonsnal
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect

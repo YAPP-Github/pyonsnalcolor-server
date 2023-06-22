@@ -10,13 +10,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/oauth")
-public class OAuthController {
+@RequestMapping("/auth")
+public class AuthController {
 
     private final MemberService memberService;
     private final KakaoOauthService kakaoOauthService;
@@ -38,5 +41,13 @@ public class OAuthController {
         String email = appleOauthService.getEmail(loginRequestDto);
         TokenDto tokenDto = memberService.login(OAuthType.APPLE, email);
         return new ResponseEntity(tokenDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenDto> reissueAccessToken(
+            @RequestBody TokenDto tokenDto
+    ) {
+        TokenDto newTokenDto = memberService.reissueAccessToken(tokenDto);
+        return new ResponseEntity(newTokenDto, HttpStatus.OK);
     }
 }

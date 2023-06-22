@@ -72,8 +72,10 @@ public class MemberService {
         return tokenDto;
     }
 
-    public TokenDto reissueAccessToken(CustomUserDetails customUserDetails) {
-        Member member = customUserDetails.getMember();
+    public TokenDto reissueAccessToken(TokenDto tokenDto) {
+        String refreshToken = tokenDto.getRefreshToken();
+        Member member = memberRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new JwtException("해당 refresh token을 가진 사용자가 존재하지 않습니다."));
         return updateAccessToken(member);
     }
 
