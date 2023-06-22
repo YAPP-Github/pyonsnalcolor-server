@@ -33,12 +33,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public TokenDto login(OAuthType OAuthType, String email) {
-        String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
+    public TokenDto login(OAuthType oAuthType, String email) {
+        String oauthId = oAuthType.addOAuthTypeHeaderWithEmail(email);
 
         return memberRepository.findByOauthId(oauthId)
                 .map(this::updateAccessToken)
-                .orElseGet(() ->  join(OAuthType, email));
+                .orElseGet(() ->  join(oAuthType, email));
     }
 
     private TokenDto updateAccessToken(Member member) {
@@ -86,19 +86,22 @@ public class MemberService {
         }
     }
 
-    public void withdraw(CustomUserDetails customUserDetails) throws Exception {
+    public void withdraw(CustomUserDetails customUserDetails) {
         Member member = customUserDetails.getMember();
         memberRepository.delete(member);
 
         SecurityContextHolder.clearContext();
     }
 
-    public MemberInfoResponseDto getMemberInfo(CustomUserDetails customUserDetails) throws Exception {
+    public MemberInfoResponseDto getMemberInfo(CustomUserDetails customUserDetails) {
         Member member = customUserDetails.getMember();
         return new MemberInfoResponseDto(member);
     }
 
-    public void updateNickname(CustomUserDetails customUserDetails, NicknameRequestDto nicknameRequestDto) throws Exception {
+    public void updateNickname(
+            CustomUserDetails customUserDetails,
+            NicknameRequestDto nicknameRequestDto
+    ) {
         Member member = customUserDetails.getMember();
         String updatedNickname = nicknameRequestDto.getNickname();
 

@@ -10,6 +10,8 @@ public class MemberInfoResponseDto {
 
     private String oauthId;
 
+    private String oAuthType;
+
     private String nickname;
 
     private String email;
@@ -17,6 +19,7 @@ public class MemberInfoResponseDto {
     public MemberInfoResponseDto(Member member) {
         this.memberId  = member.getId();
         this.oauthId  = member.getOauthId();
+        this.oAuthType = member.getOAuthType().toString();
         this.nickname  = member.getNickname();
         this.email  = member.getEmail();
     }
