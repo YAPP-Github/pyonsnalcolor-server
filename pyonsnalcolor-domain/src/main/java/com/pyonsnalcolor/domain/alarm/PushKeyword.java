@@ -21,9 +21,6 @@ public class PushKeyword {
     @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣]{1,10}")
     private String name;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
