@@ -4,6 +4,8 @@ import lombok.*;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TokenDto {
 
     private String accessToken;
