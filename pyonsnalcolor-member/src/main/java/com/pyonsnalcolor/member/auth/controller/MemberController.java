@@ -21,6 +21,12 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @DeleteMapping("/logout")
+    public ResponseEntity logout(@RequestBody TokenDto tokenDto) {
+        memberService.logout(tokenDto);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @GetMapping("/infos")
     public ResponseEntity<MemberInfoResponseDto> getMemberInfo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails

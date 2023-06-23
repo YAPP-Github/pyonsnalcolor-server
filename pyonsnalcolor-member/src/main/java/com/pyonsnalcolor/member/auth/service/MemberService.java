@@ -4,6 +4,7 @@ import com.pyonsnalcolor.domain.member.Member;
 import com.pyonsnalcolor.domain.member.enumtype.Nickname;
 import com.pyonsnalcolor.domain.member.enumtype.OAuthType;
 import com.pyonsnalcolor.domain.member.enumtype.Role;
+import com.pyonsnalcolor.member.auth.RedisUtil;
 import com.pyonsnalcolor.member.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.member.auth.dto.NicknameRequestDto;
 import com.pyonsnalcolor.member.auth.dto.TokenDto;
@@ -30,8 +31,11 @@ public class MemberService {
     @Value("${jwt.bearer.header}")
     private String bearerHeader;
 
+    private static final String LOGOUT_BLACKLIST = "logout";
+
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisUtil redisUtil;
 
     public TokenDto login(OAuthType oAuthType, String email) {
         String oauthId = oAuthType.addOAuthTypeHeaderWithEmail(email);
@@ -109,5 +113,13 @@ public class MemberService {
 
         member.updateNickname(updatedNickname);
         memberRepository.save(member);
+    }
+
+    public void logout(TokenDto tokenDto) {
+        String bearerToken = tokenDto.getAccessToken();
+        String accessToken = jwtTokenProvider.resolveBearerToken(bearerToken);
+        Long expirationTime = jwtTokenProvider.getExpirationTime(accessToken);
+
+        redisUtil.setBlackList(accessToken, LOGOUT_BLACKLIST, expirationTime);
     }
 }

@@ -2,6 +2,8 @@ package com.pyonsnalcolor.member.auth.jwt;
 
 import com.pyonsnalcolor.member.auth.CustomUserDetails;
 import com.pyonsnalcolor.member.auth.CustomUserDetailsService;
+import com.pyonsnalcolor.member.auth.RedisUtil;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     private String OAUTH_ID = "oAuthId";
 
     @Override
@@ -42,8 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = resolveBearerToken(request, accessTokenHeader);
+        String accessToken = resolveBearerTokenFromHeader(request, accessTokenHeader);
 
+        if (accessToken != null && redisUtil.isTokenBlackList(accessToken)) {
+            throw new JwtException("로그아웃된 사용자입니다."); // 이후에 응답 변경
+        }
         if (accessToken != null && jwtTokenProvider.validateToken(accessToken)) {
             saveAuthentication(accessToken);
         }
@@ -58,14 +66,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public Authentication createAuthentication(String token) {
         String oAuthId = (String) jwtTokenProvider.getClaims(token).get(OAUTH_ID);
         CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(oAuthId);
-        return new UsernamePasswordAuthenticationToken(customUserDetails, "", customUserDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+                customUserDetails,
+                "",
+                customUserDetails.getAuthorities());
     }
 
-    private String resolveBearerToken(HttpServletRequest request, String header) {
+    private String resolveBearerTokenFromHeader(HttpServletRequest request, String header) {
         String bearerToken = request.getHeader(header);
-        if (bearerToken != null && bearerToken.startsWith(bearerHeader)) {
-            return bearerToken.substring(bearerHeader.length());
-        }
-        return null;
+        return jwtTokenProvider.resolveBearerToken(bearerToken);
     }
 }
