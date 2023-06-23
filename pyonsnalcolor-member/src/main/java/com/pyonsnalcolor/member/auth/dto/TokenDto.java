@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.member.dto;
+package com.pyonsnalcolor.member.auth.dto;
 
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.member.oauth.apple.dto;
+package com.pyonsnalcolor.member.auth.oauth.apple.dto;
 
 import lombok.Getter;
 import java.util.List;

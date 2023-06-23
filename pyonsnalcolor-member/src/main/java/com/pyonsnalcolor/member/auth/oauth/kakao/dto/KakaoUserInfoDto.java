@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.member.oauth.kakao.dto;
+package com.pyonsnalcolor.member.auth.oauth.kakao.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

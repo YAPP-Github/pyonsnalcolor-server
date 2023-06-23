@@ -1,10 +1,10 @@
-package com.pyonsnalcolor.member.controller;
+package com.pyonsnalcolor.member.auth.controller;
 
-import com.pyonsnalcolor.member.dto.MemberInfoResponseDto;
-import com.pyonsnalcolor.member.dto.NicknameRequestDto;
-import com.pyonsnalcolor.member.dto.TokenDto;
-import com.pyonsnalcolor.member.entity.CustomUserDetails;
-import com.pyonsnalcolor.member.service.MemberService;
+import com.pyonsnalcolor.member.auth.dto.MemberInfoResponseDto;
+import com.pyonsnalcolor.member.auth.dto.NicknameRequestDto;
+import com.pyonsnalcolor.member.auth.dto.TokenDto;
+import com.pyonsnalcolor.member.auth.CustomUserDetails;
+import com.pyonsnalcolor.member.auth.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

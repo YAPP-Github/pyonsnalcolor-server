@@ -27,7 +27,7 @@ public class Member {
     private Long id;
 
     @Column(unique = true)
-    private String oauthId; // {Oauth 타입 + 사용자 정보}
+    private String oAuthId; // {Oauth 타입 + 사용자 정보}
 
     @Email
     private String email;

@@ -1,8 +1,7 @@
-package com.pyonsnalcolor.member.service;
+package com.pyonsnalcolor.member.auth;
 
 import com.pyonsnalcolor.domain.member.Member;
 import com.pyonsnalcolor.domain.member.MemberRepository;
-import com.pyonsnalcolor.member.entity.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,8 +15,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByOauthId(username)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 oauthId을 가진 사용자가 없습니다."));
+        Member member = memberRepository.findByoAuthId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 oAuthId을 가진 사용자가 없습니다."));
 
         return new CustomUserDetails(member);
     }

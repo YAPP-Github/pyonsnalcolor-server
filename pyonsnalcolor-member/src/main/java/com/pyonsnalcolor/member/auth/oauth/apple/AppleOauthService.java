@@ -1,10 +1,10 @@
-package com.pyonsnalcolor.member.oauth.apple;
+package com.pyonsnalcolor.member.auth.oauth.apple;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pyonsnalcolor.member.dto.LoginRequestDto;
-import com.pyonsnalcolor.member.oauth.apple.dto.ApplePublicKeyDto;
-import com.pyonsnalcolor.member.oauth.apple.dto.ApplePublicKeysDto;
+import com.pyonsnalcolor.member.auth.dto.LoginRequestDto;
+import com.pyonsnalcolor.member.auth.oauth.apple.dto.ApplePublicKeyDto;
+import com.pyonsnalcolor.member.auth.oauth.apple.dto.ApplePublicKeysDto;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

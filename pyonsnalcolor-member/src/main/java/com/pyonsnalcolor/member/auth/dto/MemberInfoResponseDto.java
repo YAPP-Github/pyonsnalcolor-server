@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.member.dto;
+package com.pyonsnalcolor.member.auth.dto;
 
 import com.pyonsnalcolor.domain.member.Member;
 import lombok.Getter;
@@ -8,7 +8,7 @@ public class MemberInfoResponseDto {
 
     private Long memberId;
 
-    private String oauthId;
+    private String oAuthId;
 
     private String oAuthType;
 
@@ -18,7 +18,7 @@ public class MemberInfoResponseDto {
 
     public MemberInfoResponseDto(Member member) {
         this.memberId  = member.getId();
-        this.oauthId  = member.getOauthId();
+        this.oAuthId = member.getOAuthId();
         this.oAuthType = member.getOAuthType().toString();
         this.nickname  = member.getNickname();
         this.email  = member.getEmail();

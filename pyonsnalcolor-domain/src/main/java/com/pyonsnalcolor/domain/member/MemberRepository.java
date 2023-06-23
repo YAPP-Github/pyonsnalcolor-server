@@ -11,10 +11,10 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Optional<Member> findByOauthId(String oauthId);
+    Optional<Member> findByoAuthId(String oAuthId);
 
-    @Query("select m.refreshToken from Member m where m.oauthId= :oauthId")
-    Optional<String> findRefreshTokenByOauthId(@Param("oauthId") String oauthId);
+    @Query("select m.refreshToken from Member m where m.oAuthId= :oAuthId")
+    Optional<String> findRefreshTokenByoAuthId(@Param("oAuthId") String oAuthId);
 
     Optional<Member> findByRefreshToken(String refreshToken);
 }

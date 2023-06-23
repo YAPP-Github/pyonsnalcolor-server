@@ -1,11 +1,11 @@
-package com.pyonsnalcolor.member.controller;
+package com.pyonsnalcolor.member.auth.controller;
 
 import com.pyonsnalcolor.domain.member.enumtype.OAuthType;
-import com.pyonsnalcolor.member.dto.LoginRequestDto;
-import com.pyonsnalcolor.member.dto.TokenDto;
-import com.pyonsnalcolor.member.oauth.apple.AppleOauthService;
-import com.pyonsnalcolor.member.oauth.kakao.KakaoOauthService;
-import com.pyonsnalcolor.member.service.MemberService;
+import com.pyonsnalcolor.member.auth.dto.LoginRequestDto;
+import com.pyonsnalcolor.member.auth.dto.TokenDto;
+import com.pyonsnalcolor.member.auth.oauth.apple.AppleOauthService;
+import com.pyonsnalcolor.member.auth.oauth.kakao.KakaoOauthService;
+import com.pyonsnalcolor.member.auth.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

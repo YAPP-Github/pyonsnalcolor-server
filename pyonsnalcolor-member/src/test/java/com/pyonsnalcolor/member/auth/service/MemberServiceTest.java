@@ -1,13 +1,13 @@
-package com.pyonsnalcolor.member.service;
+package com.pyonsnalcolor.member.auth.service;
 
 import com.pyonsnalcolor.domain.member.Member;
 import com.pyonsnalcolor.domain.member.MemberRepository;
 import com.pyonsnalcolor.domain.member.enumtype.OAuthType;
 import com.pyonsnalcolor.domain.member.enumtype.Role;
-import com.pyonsnalcolor.member.dto.MemberInfoResponseDto;
-import com.pyonsnalcolor.member.dto.NicknameRequestDto;
-import com.pyonsnalcolor.member.dto.TokenDto;
-import com.pyonsnalcolor.member.entity.CustomUserDetails;
+import com.pyonsnalcolor.member.auth.dto.MemberInfoResponseDto;
+import com.pyonsnalcolor.member.auth.dto.NicknameRequestDto;
+import com.pyonsnalcolor.member.auth.dto.TokenDto;
+import com.pyonsnalcolor.member.auth.CustomUserDetails;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +43,7 @@ class MemberServiceTest {
         member = Member.builder()
                 .email(email)
                 .OAuthType(oAuthType)
-                .oauthId(oAuthId)
+                .oAuthId(oAuthId)
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER)
                 .build();
@@ -57,12 +57,12 @@ class MemberServiceTest {
         memberService.login(oAuthType, email);
 
         // when
-        Member member = memberRepository.findByOauthId(oAuthId).get();
+        Member member = memberRepository.findByoAuthId(oAuthId).get();
 
         // then
         Assertions.assertAll(
                 () -> assertEquals(member.getEmail(), email),
-                () -> assertEquals(member.getOauthId(), oAuthId),
+                () -> assertEquals(member.getOAuthId(), oAuthId),
                 () -> assertEquals(member.getOAuthType(), oAuthType)
         );
     }
@@ -76,12 +76,12 @@ class MemberServiceTest {
         TokenDto tokenDto = memberService.login(oAuthType, email);
 
         // when
-        Member member = memberRepository.findByOauthId(oAuthId).get();
+        Member member = memberRepository.findByoAuthId(oAuthId).get();
 
         // then
         Assertions.assertAll(
                 () -> assertEquals(member.getEmail(), email),
-                () -> assertEquals(member.getOauthId(), oAuthId),
+                () -> assertEquals(member.getOAuthId(), oAuthId),
                 () -> assertEquals(member.getOAuthType(), oAuthType)
         );
     }
@@ -100,7 +100,7 @@ class MemberServiceTest {
         // then
         Assertions.assertAll(
                 () -> assertEquals(memberInfoResponseDto.getEmail(), email),
-                () -> assertEquals(memberInfoResponseDto.getOauthId(), oAuthId),
+                () -> assertEquals(memberInfoResponseDto.getOAuthId(), oAuthId),
                 () -> assertEquals(memberInfoResponseDto.getOAuthType(), oAuthType.toString())
         );
     }
@@ -116,7 +116,7 @@ class MemberServiceTest {
         memberService.updateNickname(customUserDetails, new NicknameRequestDto(updatedNickname));
 
         // when
-        Member findMember = memberRepository.findByOauthId(oAuthId)
+        Member findMember = memberRepository.findByoAuthId(oAuthId)
                 .orElseThrow(Exception::new);
 
         // then
