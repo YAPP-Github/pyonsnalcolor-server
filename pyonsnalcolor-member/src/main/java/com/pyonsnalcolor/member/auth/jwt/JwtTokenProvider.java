@@ -1,6 +1,6 @@
-package com.pyonsnalcolor.member.jwt;
+package com.pyonsnalcolor.member.auth.jwt;
 
-import com.pyonsnalcolor.member.dto.TokenDto;
+import com.pyonsnalcolor.member.auth.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +28,7 @@ public class JwtTokenProvider {
     private long accessTokenValidity;
     private long refreshTokenValidity;
     private SecretKey secretKey;
+    private String OAUTH_ID = "oAuthId";
 
     public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecretKey,
                             @Value("${jwt.access-token.validity}") long accessTokenValidity,
@@ -52,7 +53,7 @@ public class JwtTokenProvider {
         return createBearerHeader(accessToken);
     }
 
-    private String createJwtTokenWithValidity(String oauthId, long tokenValidity){
+    private String createJwtTokenWithValidity(String oAuthId, long tokenValidity){
         Date now = new Date();
         Date expirationAt = new Date(now.getTime() + tokenValidity);
 
@@ -60,7 +61,7 @@ public class JwtTokenProvider {
                 .setIssuer(jwtIssuer)
                 .setIssuedAt(now)
                 .setExpiration(expirationAt);
-        claims.put("oauthId", oauthId);
+        claims.put(OAUTH_ID, oAuthId);
 
         return Jwts.builder()
                 .setIssuer(jwtIssuer)

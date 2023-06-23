@@ -1,14 +1,14 @@
-package com.pyonsnalcolor.member.service;
+package com.pyonsnalcolor.member.auth.service;
 
 import com.pyonsnalcolor.domain.member.Member;
 import com.pyonsnalcolor.domain.member.enumtype.Nickname;
 import com.pyonsnalcolor.domain.member.enumtype.OAuthType;
 import com.pyonsnalcolor.domain.member.enumtype.Role;
-import com.pyonsnalcolor.member.dto.MemberInfoResponseDto;
-import com.pyonsnalcolor.member.dto.NicknameRequestDto;
-import com.pyonsnalcolor.member.dto.TokenDto;
-import com.pyonsnalcolor.member.entity.CustomUserDetails;
-import com.pyonsnalcolor.member.jwt.JwtTokenProvider;
+import com.pyonsnalcolor.member.auth.dto.MemberInfoResponseDto;
+import com.pyonsnalcolor.member.auth.dto.NicknameRequestDto;
+import com.pyonsnalcolor.member.auth.dto.TokenDto;
+import com.pyonsnalcolor.member.auth.CustomUserDetails;
+import com.pyonsnalcolor.member.auth.jwt.JwtTokenProvider;
 import com.pyonsnalcolor.domain.member.MemberRepository;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -36,13 +36,13 @@ public class MemberService {
     public TokenDto login(OAuthType oAuthType, String email) {
         String oauthId = oAuthType.addOAuthTypeHeaderWithEmail(email);
 
-        return memberRepository.findByOauthId(oauthId)
+        return memberRepository.findByoAuthId(oauthId)
                 .map(this::updateAccessToken)
                 .orElseGet(() ->  join(oAuthType, email));
     }
 
     private TokenDto updateAccessToken(Member member) {
-        String oauthId = member.getOauthId();
+        String oauthId = member.getOAuthId();
         String refreshToken = member.getRefreshToken();
         String newAccessToken = jwtTokenProvider.createTokenWithValidity(oauthId, accessTokenValidity);
 
@@ -63,7 +63,7 @@ public class MemberService {
                 .email(email)
                 .nickname(Nickname.getRandomNickname())
                 .refreshToken(refreshToken)
-                .oauthId(oauthId)
+                .oAuthId(oauthId)
                 .OAuthType(OAuthType)
                 .role(Role.ROLE_USER)
                 .build();
@@ -72,13 +72,15 @@ public class MemberService {
         return tokenDto;
     }
 
-    public TokenDto reissueAccessToken(CustomUserDetails customUserDetails) {
-        Member member = customUserDetails.getMember();
+    public TokenDto reissueAccessToken(TokenDto tokenDto) {
+        String refreshToken = tokenDto.getRefreshToken();
+        Member member = memberRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new JwtException("해당 refresh token을 가진 사용자가 존재하지 않습니다."));
         return updateAccessToken(member);
     }
 
     private void validateRefreshToken(String oauthId, String refreshToken) {
-        String findRefreshToken = memberRepository.findRefreshTokenByOauthId(oauthId)
+        String findRefreshToken = memberRepository.findRefreshTokenByoAuthId(oauthId)
                 .orElseThrow(() -> new JwtException("사용자의 refresh token이 존재하지 않습니다."));
 
         if (!findRefreshToken.equals(refreshToken)) {

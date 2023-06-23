@@ -1,7 +1,7 @@
-package com.pyonsnalcolor.member.jwt;
+package com.pyonsnalcolor.member.auth.jwt;
 
-import com.pyonsnalcolor.member.entity.CustomUserDetails;
-import com.pyonsnalcolor.member.service.CustomUserDetailsService;
+import com.pyonsnalcolor.member.auth.CustomUserDetails;
+import com.pyonsnalcolor.member.auth.CustomUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +35,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    private String OAUTH_ID = "oAuthId";
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -54,8 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public Authentication createAuthentication(String token) {
-        String oauthId = (String) jwtTokenProvider.getClaims(token).get("oauthId");
-        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(oauthId);
+        String oAuthId = (String) jwtTokenProvider.getClaims(token).get(OAUTH_ID);
+        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(oAuthId);
         return new UsernamePasswordAuthenticationToken(customUserDetails, "", customUserDetails.getAuthorities());
     }
 

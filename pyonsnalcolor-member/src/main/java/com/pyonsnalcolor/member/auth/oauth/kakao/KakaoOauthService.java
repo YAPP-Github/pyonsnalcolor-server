@@ -1,7 +1,7 @@
-package com.pyonsnalcolor.member.oauth.kakao;
+package com.pyonsnalcolor.member.auth.oauth.kakao;
 
-import com.pyonsnalcolor.member.dto.LoginRequestDto;
-import com.pyonsnalcolor.member.oauth.kakao.dto.KakaoUserInfoDto;
+import com.pyonsnalcolor.member.auth.dto.LoginRequestDto;
+import com.pyonsnalcolor.member.auth.oauth.kakao.dto.KakaoUserInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

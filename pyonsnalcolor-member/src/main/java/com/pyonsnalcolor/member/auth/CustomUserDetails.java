@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.member.entity;
+package com.pyonsnalcolor.member.auth;
 
 import com.pyonsnalcolor.domain.member.Member;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return member.getOauthId();
+        return member.getOAuthId();
     }
 
     @Override
