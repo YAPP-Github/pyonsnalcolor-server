@@ -13,3 +13,6 @@ spring:
     hibernate:
       ddl-auto: create
       show-sql: true
+fcm:
+  key: fcm-key.json
+  scope: https://www.googleapis.com/auth/firebase.messaging
