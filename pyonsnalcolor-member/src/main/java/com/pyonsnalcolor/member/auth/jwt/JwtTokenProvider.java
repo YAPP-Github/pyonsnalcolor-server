@@ -100,4 +100,23 @@ public class JwtTokenProvider {
     private String createBearerHeader (String token) {
         return bearerHeader + token;
     }
+
+    public String resolveBearerToken(String token) {
+        if (token != null && token.startsWith(bearerHeader)) {
+            return token.substring(bearerHeader.length());
+        }
+        return null;
+    }
+
+    public Long getExpirationTime(String accessToken) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(accessToken)
+                .getBody()
+                .getExpiration();
+
+        long now = new Date().getTime();
+        return expiration.getTime() - now;
+    }
 }
