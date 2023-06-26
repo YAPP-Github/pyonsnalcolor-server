@@ -71,7 +71,7 @@ public class GS25PbBatchService extends PbBatchService {
             log.error("fail getAllProducts", e);
         }
 
-        return Collections.emptyList();
+        return results;
     }
 
     private List<BasePbProduct> parseProductsData(Object data) throws JsonProcessingException {
