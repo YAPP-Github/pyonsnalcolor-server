@@ -13,13 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventProductController {
     private final EventProductService eventProductService;
 
-    @GetMapping("/v1/products/event-products")
+    @GetMapping("/products/event-products")
     public Page<BaseEventProduct> getEventProducts(@RequestParam("pageNumber") int pageNumber,
                                                    @RequestParam("pageSize") int pageSize,
                                                    @RequestParam(
                                                            value = "storeType",
                                                            defaultValue = "all"
-                                                   ) String storeType) {
-        return eventProductService.getProductsWithPaging(pageNumber, pageSize, storeType);
+                                                   ) String storeType,
+                                                   @RequestParam(
+                                                           value = "sorted",
+                                                           defaultValue = "updatedTime"
+                                                   ) String sorted) {
+        return eventProductService.getProductsWithPaging(pageNumber, pageSize, storeType, sorted);
     }
 }
