@@ -12,7 +12,7 @@ import org.springframework.data.domain.Sort;
 public class ProductService<T extends BaseProduct> {
     protected BasicProductRepository basicProductRepository;
 
-    public Page<T> getProductsWithPaging(int pageNumber, int pageSize, String storeType) {
+    public Page<T> getProductsWithPaging(int pageNumber, int pageSize, String storeType, String sorted) {
         switch (storeType.toUpperCase()) {
             case "CU":
             case "GS25":
@@ -20,7 +20,7 @@ public class ProductService<T extends BaseProduct> {
             case "SEVEN_ELEVEN":
                 return basicProductRepository.findByStoreType(
                         Enum.valueOf(StoreType.class, storeType.toUpperCase()),
-                        PageRequest.of(pageNumber, pageSize, Sort.by("updatedTime"))
+                        PageRequest.of(pageNumber, pageSize, Sort.by(sorted))
                 );
             default:
                 return basicProductRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("updatedTime")));
