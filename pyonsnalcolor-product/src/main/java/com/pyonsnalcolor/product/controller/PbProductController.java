@@ -15,13 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class PbProductController {
     private final PbProductService pbProductService;
 
-    @GetMapping("/v1/products/pb-products")
+    @GetMapping("/products/pb-products")
     public Page<BasePbProduct> getPbProducts(@RequestParam("pageNumber") int pageNumber,
                                              @RequestParam("pageSize") int pageSize,
                                              @RequestParam(
                                                      value = "storeType",
                                                      defaultValue = "all"
-                                             ) String storeType) {
-        return pbProductService.getProductsWithPaging(pageNumber, pageSize, storeType);
+                                             ) String storeType,
+                                             @RequestParam(
+                                                     value = "sorted",
+                                                     defaultValue = "updatedTime"
+                                             ) String sorted) {
+        return pbProductService.getProductsWithPaging(pageNumber, pageSize, storeType, sorted);
     }
 }
