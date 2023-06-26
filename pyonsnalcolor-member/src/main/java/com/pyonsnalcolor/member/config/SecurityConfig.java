@@ -1,9 +1,9 @@
 package com.pyonsnalcolor.member.config;
 
+import com.pyonsnalcolor.member.auth.CustomUserDetailsService;
+import com.pyonsnalcolor.member.auth.jwt.JwtAuthenticationFilter;
 import com.pyonsnalcolor.member.handler.CustomAccessDeniedHandler;
 import com.pyonsnalcolor.member.handler.CustomAuthenticationEntryPoint;
-import com.pyonsnalcolor.member.jwt.JwtAuthenticationFilter;
-import com.pyonsnalcolor.member.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

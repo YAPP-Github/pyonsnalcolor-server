@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.domain.alarm;
 
-import com.pyonsnalcolor.domain.alarm.enumtype.ProductStoreType;
+import com.pyonsnalcolor.domain.product.enumtype.ProductStoreType;
 import com.pyonsnalcolor.domain.member.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -20,6 +20,8 @@ public class PushProductStore {
     @Column(name = "push_product_store_id")
     private Long id;
 
+    @Column(name = "product_store_type")
+    @Enumerated(EnumType.STRING)
     private ProductStoreType productStoreType;
 
     @Column(name = "is_subscribed")

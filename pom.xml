@@ -37,7 +37,6 @@
   <modules>
     <module>pyonsnalcolor-product</module>
     <module>pyonsnalcolor-batch</module>
-    <module>pyonsnalcolor-gateway</module>
     <module>pyonsnalcolor-domain</module>
     <module>pyonsnalcolor-member</module>
     <module>pyonsnalcolor-alarm</module>

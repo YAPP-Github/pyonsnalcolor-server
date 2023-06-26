@@ -27,12 +27,12 @@ public class Member {
     private Long id;
 
     @Column(unique = true)
-    private String oauthId; // {Oauth 타입 + 사용자 정보}
+    private String oAuthId; // {Oauth 타입 + 사용자 정보}
 
     @Email
     private String email;
 
-    @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣 ]*${1,15}")
+    @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣 ]{1,15}")
     private String nickname;
 
     private String refreshToken;
