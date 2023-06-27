@@ -16,10 +16,9 @@ dependencies {
 
 description = 'pyonsnalcolor-domain'
 
-bootJar {
-    enabled(false)
-}
-
 jar {
-    enabled(true)
+    enabled = true
+}
+bootJar {
+    enabled = false
 }

@@ -2,8 +2,8 @@ spring:
   security:
     oauth2:
       kakao:
-        request-uri: ${KAKAO_REQUEST_URI}
+        request-uri: https://kapi.kakao.com/v2/user/me
       apple:
-        key-uri: ${APPLE_KEY_URI}
-        issuer: ${APPLE_ISSUER}
+        key-uri: https://appleid.apple.com/auth/keys
+        issuer: https://appleid.apple.com
         client-id: ${APPLE_CLIENT_ID}
