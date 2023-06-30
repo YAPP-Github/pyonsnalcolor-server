@@ -41,3 +41,7 @@ jwt:
   refresh-token:
     header: Refresh
     validity: ${JWT_REFRESH_TOKEN_VALIDITY}
+springdoc:
+  swagger-ui:
+    enabled: true
+    try-it-out-enabled: false
