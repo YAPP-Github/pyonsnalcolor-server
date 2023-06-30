@@ -1,7 +1,4 @@
 spring:
-  server:
-    address: localhost
-    port: 8081
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
@@ -9,7 +6,7 @@ spring:
     password: ${DB_PASSWORD}
   data:
     mongodb:
-      uri: mongodb://localhost:27017/pyonsnal
+      uri: ${MONGODB_URL}
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect

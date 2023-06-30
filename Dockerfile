@@ -1,6 +1,6 @@
 FROM openjdk:11
-COPY pyonsnalcolor-member/build/libs/pyonsnalcolor-member-1.0-SNAPSHOT.jar member.jar
+COPY pyonsnalcolor-api/build/libs/pyonsnalcolor-api-1.0-SNAPSHOT.jar api.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/member.jar"]
+ENTRYPOINT ["java", "-jar", "/api.jar"]
 
-RUN echo "pyonsnalcolor-member start"
+RUN echo "pyonsnalcolor server start"
