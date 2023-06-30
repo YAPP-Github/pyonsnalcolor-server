@@ -33,6 +33,8 @@ dependencies {
 
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+    implementation 'org.springdoc:springdoc-openapi-security:1.2.15'
+
 
     // Batch
     implementation 'org.springframework.boot:spring-boot-starter-batch:2.7.12'
