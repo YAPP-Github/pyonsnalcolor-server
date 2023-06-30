@@ -1,5 +1,8 @@
 package com.pyonsnalcolor.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +26,7 @@ public class BaseProduct {
     @Indexed
     private String name;
     private String price;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedTime;
 }
