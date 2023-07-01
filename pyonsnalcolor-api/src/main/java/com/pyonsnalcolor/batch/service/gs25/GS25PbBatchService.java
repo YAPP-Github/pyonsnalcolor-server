@@ -14,7 +14,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,8 +25,6 @@ import java.util.Map;
 import static com.pyonsnalcolor.batch.service.gs25.GS25Constant.GS_MAIN_PAGE_URL;
 import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 
-// GS25Client을 못 찾아서 추가
-@EnableFeignClients(basePackageClasses = com.pyonsnalcolor.batch.client.GS25Client.class)
 @Service("GS25Pb")
 @Slf4j
 public class GS25PbBatchService extends PbBatchService {
