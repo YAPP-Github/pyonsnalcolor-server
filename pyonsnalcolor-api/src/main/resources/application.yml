@@ -33,6 +33,10 @@ spring:
     init:
       mode: always
       encoding: UTF-8
+  task:
+    scheduling:
+      pool:
+        size: 4
 jwt:
   issuer: ${JWT_ISSUER}
   secret: ${JWT_SECRET}
