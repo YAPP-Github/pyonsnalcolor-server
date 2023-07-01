@@ -3,7 +3,7 @@ spring:
     import:
       - optional:classpath:/application-oauth.yml
   server:
-    address: localhost
+    # address: localhost
     port: 8080
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -17,13 +17,13 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   redis:
-    host: localhost
+    host: ${REDIS_HOST}
     port: 6379
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: none # create
       show-sql: true
     properties:
       hibernate:
