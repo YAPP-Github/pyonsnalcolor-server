@@ -33,7 +33,7 @@ public class MemberController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @Operation(summary = "사용자 정보 조회", description = "사용자의 Access Token을 무효화합니다.")
+    @Operation(summary = "사용자 정보 조회", description = "사용자의 정보를 조회합니다.")
     @GetMapping("/infos")
     public ResponseEntity<MemberInfoResponseDto> getMemberInfo(
             @Parameter(hidden = true)
