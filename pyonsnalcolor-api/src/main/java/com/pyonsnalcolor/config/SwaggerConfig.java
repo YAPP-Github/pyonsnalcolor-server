@@ -13,28 +13,25 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-
         SecurityScheme bearerAuth = new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
-                .name("bearerAuth");
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.HEADER)
+                .name("Authorization");
 
-        SecurityScheme bearerRef = new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
-                .name("bearerRef");
+        SecurityScheme bearerRefresh = new SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.HEADER)
+                .name("Refresh");
 
-        SecurityRequirement addSecurityItem = new SecurityRequirement();
-        addSecurityItem.addList("Authorization");
-        addSecurityItem.addList("Refresh");
+        SecurityRequirement securityRequirement = new SecurityRequirement()
+                .addList("Authorization")
+                .addList("Refresh");
 
         return new OpenAPI()
                 .components(new Components()
                         .addSecuritySchemes("Authorization", bearerAuth)
-                        .addSecuritySchemes("Refresh", bearerRef))
-                .addSecurityItem(addSecurityItem)
+                        .addSecuritySchemes("Refresh", bearerRefresh))
+                .addSecurityItem(securityRequirement)
                 .info(apiInfo());
     }
 
