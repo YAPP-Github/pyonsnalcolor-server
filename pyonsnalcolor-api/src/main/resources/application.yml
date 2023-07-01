@@ -7,12 +7,12 @@ spring:
     port: 8080
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: "jdbc:mysql://127.0.0.1:3306/pyonsnal"
-    username: "root"
-    password: "root"
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   data:
     mongodb:
-      uri: "mongodb://localhost:27017/pyonsnal"
+      uri: ${MONGODB_URL}
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
