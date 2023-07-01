@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.batch.schedule;
 
 import com.pyonsnalcolor.batch.service.BatchService;
+import org.springframework.scheduling.annotation.Scheduled;
 
 public abstract class Scheduler {
     private BatchService pbProductBatchService;
@@ -11,7 +12,7 @@ public abstract class Scheduler {
         this.eventProductBatchService = eventProductBatchService;
     }
 
-    //@Scheduled(fixedRate = 10000)
+    @Scheduled(cron = "0 1 0 */3 * *")
     public void run() {
         pbProductBatchService.execute();
         eventProductBatchService.execute();
