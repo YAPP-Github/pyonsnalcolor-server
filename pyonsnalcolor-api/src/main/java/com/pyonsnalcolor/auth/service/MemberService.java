@@ -1,5 +1,6 @@
 package com.pyonsnalcolor.auth.service;
 
+import com.pyonsnalcolor.auth.dto.LoginResponseDto;
 import com.pyonsnalcolor.member.Member;
 import com.pyonsnalcolor.member.enumtype.Nickname;
 import com.pyonsnalcolor.member.enumtype.OAuthType;
@@ -37,30 +38,29 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
 
-    public TokenDto login(OAuthType oAuthType, String email) {
+    public LoginResponseDto oAuthLogin(OAuthType oAuthType, String email) {
         String oauthId = oAuthType.addOAuthTypeHeaderWithEmail(email);
 
         return memberRepository.findByoAuthId(oauthId)
-                .map(this::updateAccessToken)
+                .map(this::reLogin)
                 .orElseGet(() ->  join(oAuthType, email));
     }
 
-    private TokenDto updateAccessToken(Member member) {
-        String oauthId = member.getOAuthId();
+    private LoginResponseDto reLogin(Member member) {
+        String newAccessToken = updateAccessToken(member);
         String refreshToken = member.getRefreshToken();
-        String newAccessToken = jwtTokenProvider.createTokenWithValidity(oauthId, accessTokenValidity);
 
-        validateRefreshToken(oauthId, refreshToken);
-
-        return TokenDto.builder()
+        return LoginResponseDto.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(refreshToken)
+                .isFirstLogin(false)
                 .build();
     }
 
-    private TokenDto join(OAuthType OAuthType, String email) {
+    private LoginResponseDto join(OAuthType OAuthType, String email) {
         String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
         TokenDto tokenDto = jwtTokenProvider.createAccessAndRefreshTokenDto(oauthId);
+        String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
 
         Member member = Member.builder()
@@ -73,14 +73,34 @@ public class MemberService {
                 .build();
         memberRepository.save(member);
 
-        return tokenDto;
+        return LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .isFirstLogin(true)
+                .build();
+    }
+
+    private String updateAccessToken(Member member) {
+        String oauthId = member.getOAuthId();
+        String refreshToken = member.getRefreshToken();
+        String newAccessToken = jwtTokenProvider.createTokenWithValidity(oauthId, accessTokenValidity);
+
+        validateRefreshToken(oauthId, refreshToken);
+
+        return newAccessToken;
     }
 
     public TokenDto reissueAccessToken(TokenDto tokenDto) {
         String refreshToken = tokenDto.getRefreshToken();
         Member member = memberRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new JwtException("해당 refresh token을 가진 사용자가 존재하지 않습니다."));
-        return updateAccessToken(member);
+
+        String newAccessToken = updateAccessToken(member);
+
+        return TokenDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     private void validateRefreshToken(String oauthId, String refreshToken) {
