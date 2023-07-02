@@ -1,5 +1,6 @@
 package com.pyonsnalcolor.auth.controller;
 
+import com.pyonsnalcolor.auth.dto.LoginResponseDto;
 import com.pyonsnalcolor.member.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.dto.LoginRequestDto;
 import com.pyonsnalcolor.auth.dto.TokenDto;
@@ -29,44 +30,44 @@ public class AuthController {
     @Operation(summary = "Kakao 인증", description = "Kakao Access Token으로 이메일 정보를 얻어 회원가입/재로그인 합니다.")
     @Parameter(name = "loginRequestDto", description = "Kakao에서 받은 Access Token")
     @PostMapping("/kakao")
-    public ResponseEntity<TokenDto> loginWithKakao(
+    public ResponseEntity<LoginResponseDto> loginWithKakao(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
         String email = kakaoOauthService.getEmail(loginRequestDto);
-        TokenDto tokenDto = memberService.login(OAuthType.KAKAO, email);
-        return new ResponseEntity(tokenDto, HttpStatus.OK);
+        LoginResponseDto loginResponseDto = memberService.oAuthLogin(OAuthType.KAKAO, email);
+        return new ResponseEntity(loginResponseDto, HttpStatus.OK);
     }
 
     @Operation(summary = "Apple 인증", description = "Apple Identity Token으로 이메일 정보를 얻어 회원가입/재로그인 합니다.")
     @Parameter(name = "loginRequestDto", description = "Apple에서 받은 Identity Token")
     @PostMapping("/apple")
-    public ResponseEntity<TokenDto> loginWithApple(
+    public ResponseEntity<LoginResponseDto> loginWithApple(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
         String email = appleOauthService.getEmail(loginRequestDto);
-        TokenDto tokenDto = memberService.login(OAuthType.APPLE, email);
-        return new ResponseEntity(tokenDto, HttpStatus.OK);
+        LoginResponseDto loginResponseDto = memberService.oAuthLogin(OAuthType.APPLE, email);
+        return new ResponseEntity(loginResponseDto, HttpStatus.OK);
     }
 
     @Operation(summary = "JWT 토큰 재발급", description = "Access Token의 만료 기한이 지났을 때, 재로그인합니다.")
     @Parameter(name = "tokenDto", description = "Access Token은 만료기한 지났고, Refresh Token은 유효한 상태")
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissueAccessToken(
-            @RequestBody TokenDto tokenDto
+    public ResponseEntity<LoginResponseDto> reissueAccessToken(
+            @RequestBody TokenDto tokenRequestDto
     ) {
-        TokenDto newTokenDto = memberService.reissueAccessToken(tokenDto);
-        return new ResponseEntity(newTokenDto, HttpStatus.OK);
+        TokenDto tokenResponseDto = memberService.reissueAccessToken(tokenRequestDto);
+        return new ResponseEntity(tokenResponseDto, HttpStatus.OK);
     }
 
     @Operation(summary = "테스트 인증", description = "이메일만으로 로그인하기")
     @Parameter(name = "loginRequestDto", description = "예시 이메일")
     @PostMapping("/test/login")
-    public ResponseEntity<TokenDto> testLogin(
+    public ResponseEntity<LoginResponseDto> testLogin(
             @RequestBody LoginRequestDto loginRequestDto
     ) {
         String email = loginRequestDto.getToken();
-        TokenDto tokenDto = memberService.login(OAuthType.APPLE, email);
-        return new ResponseEntity(tokenDto, HttpStatus.OK);
+        LoginResponseDto loginResponseDto = memberService.oAuthLogin(OAuthType.APPLE, email);
+        return new ResponseEntity(loginResponseDto, HttpStatus.OK);
     }
 
     @GetMapping("/test")

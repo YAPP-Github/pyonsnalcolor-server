@@ -1,12 +1,12 @@
 package com.pyonsnalcolor.auth.service;
 
+import com.pyonsnalcolor.auth.dto.LoginResponseDto;
 import com.pyonsnalcolor.member.Member;
 import com.pyonsnalcolor.member.MemberRepository;
 import com.pyonsnalcolor.member.enumtype.OAuthType;
 import com.pyonsnalcolor.member.enumtype.Role;
 import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
-import com.pyonsnalcolor.auth.dto.TokenDto;
 import com.pyonsnalcolor.auth.CustomUserDetails;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +52,13 @@ class MemberServiceTest {
     @Test
     @Order(1)
     @DisplayName("첫 OAuth 로그인일 경우, 회원가입")
-    void join() {
+    void oAuthLogin_join() {
         // given
-        memberService.login(oAuthType, email);
+        memberService.oAuthLogin(oAuthType, email);
 
         // when
-        Member member = memberRepository.findByoAuthId(oAuthId).get();
+        Member member = memberRepository.findByoAuthId(oAuthId)
+                .orElseThrow(IllegalArgumentException::new);
 
         // then
         Assertions.assertAll(
@@ -70,13 +71,15 @@ class MemberServiceTest {
     @Test
     @Order(2)
     @DisplayName("OAuth 재로그인일 경우, access token만 갱신")
-    void updateAccessToken() {
+    void oAuthLogin_reLogin() {
         // given
-        memberRepository.save(member);
-        TokenDto tokenDto = memberService.login(oAuthType, email);
+        memberRepository.save(member); // 회원 가입 미리 되어있는 경우
+        LoginResponseDto loginResponseDto = memberService.oAuthLogin(oAuthType, email);
 
         // when
-        Member member = memberRepository.findByoAuthId(oAuthId).get();
+        String refreshToken = loginResponseDto.getRefreshToken();
+        Member member = memberRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(IllegalArgumentException::new);
 
         // then
         Assertions.assertAll(
