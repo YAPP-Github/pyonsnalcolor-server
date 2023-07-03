@@ -2,8 +2,8 @@ package com.pyonsnalcolor.config;
 
 import com.pyonsnalcolor.auth.CustomUserDetailsService;
 import com.pyonsnalcolor.auth.jwt.JwtAuthenticationFilter;
-import com.pyonsnalcolor.handler.CustomAccessDeniedHandler;
-import com.pyonsnalcolor.handler.CustomAuthenticationEntryPoint;
+import com.pyonsnalcolor.handler.JwtAccessDeniedHandler;
+import com.pyonsnalcolor.handler.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +25,12 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Autowired
+    JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -48,10 +54,9 @@ public class SecurityConfig {
                 .antMatchers("/member/**").hasRole("USER")
                 .anyRequest().authenticated()
             .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 인증X
-                .accessDeniedHandler(new CustomAccessDeniedHandler())           // 인증O, 인가X
-            .and()
+                .exceptionHandling((exceptions) -> exceptions
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

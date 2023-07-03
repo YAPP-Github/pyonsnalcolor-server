@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.auth.service;
 
 import com.pyonsnalcolor.auth.dto.LoginResponseDto;
+import com.pyonsnalcolor.exception.ApiException;
 import com.pyonsnalcolor.member.Member;
 import com.pyonsnalcolor.member.enumtype.Nickname;
 import com.pyonsnalcolor.member.enumtype.OAuthType;
@@ -12,13 +13,14 @@ import com.pyonsnalcolor.auth.dto.TokenDto;
 import com.pyonsnalcolor.auth.CustomUserDetails;
 import com.pyonsnalcolor.auth.jwt.JwtTokenProvider;
 import com.pyonsnalcolor.member.MemberRepository;
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import static com.pyonsnalcolor.exception.model.AuthErrorCode.*;
 
 @Slf4j
 @Service
@@ -83,7 +85,7 @@ public class MemberService {
     private String updateAccessToken(Member member) {
         String oauthId = member.getOAuthId();
         String refreshToken = member.getRefreshToken();
-        String newAccessToken = jwtTokenProvider.createTokenWithValidity(oauthId, accessTokenValidity);
+        String newAccessToken = jwtTokenProvider.createBearerTokenWithValidity(oauthId, accessTokenValidity);
 
         validateRefreshToken(oauthId, refreshToken);
 
@@ -93,7 +95,7 @@ public class MemberService {
     public TokenDto reissueAccessToken(TokenDto tokenDto) {
         String refreshToken = tokenDto.getRefreshToken();
         Member member = memberRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new JwtException("해당 refresh token을 가진 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new ApiException(REFRESH_TOKEN_NOT_EXIST));
 
         String newAccessToken = updateAccessToken(member);
 
@@ -105,10 +107,10 @@ public class MemberService {
 
     private void validateRefreshToken(String oauthId, String refreshToken) {
         String findRefreshToken = memberRepository.findRefreshTokenByoAuthId(oauthId)
-                .orElseThrow(() -> new JwtException("사용자의 refresh token이 존재하지 않습니다."));
+                .orElseThrow(() -> new ApiException(INVALID_OAUTH_ID));
 
         if (!findRefreshToken.equals(refreshToken)) {
-            throw new JwtException("사용자의 refresh token과 일치하지 않습니다.");
+            throw new ApiException(REFRESH_TOKEN_MISMATCH);
         }
     }
 

@@ -3,7 +3,7 @@ package com.pyonsnalcolor.auth.jwt;
 import com.pyonsnalcolor.auth.CustomUserDetails;
 import com.pyonsnalcolor.auth.CustomUserDetailsService;
 import com.pyonsnalcolor.auth.RedisUtil;
-import io.jsonwebtoken.JwtException;
+import com.pyonsnalcolor.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +19,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static com.pyonsnalcolor.exception.model.AuthErrorCode.MEMBER_LOGOUT;
 
 @Slf4j
 @Component
@@ -47,14 +49,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = resolveBearerTokenFromHeader(request, accessTokenHeader);
+        try {
+            String accessToken = resolveBearerTokenFromHeader(request, accessTokenHeader);
 
-        if (accessToken != null && redisUtil.isTokenBlackList(accessToken)) {
-            throw new JwtException("로그아웃된 사용자입니다."); // 이후에 응답 변경
+            if (accessToken != null && redisUtil.isTokenBlackList(accessToken)) {
+                throw new ApiException(MEMBER_LOGOUT);
+            }
+            if (accessToken != null && jwtTokenProvider.validateAccessToken(accessToken)) {
+                saveAuthentication(accessToken);
+            }
+        } catch (Exception e) {
+            request.setAttribute("exception", e);	// 예외를 request에 set
         }
-        if (accessToken != null && jwtTokenProvider.validateToken(accessToken)) {
-            saveAuthentication(accessToken);
-        }
+
         filterChain.doFilter(request, response);
     }
 
