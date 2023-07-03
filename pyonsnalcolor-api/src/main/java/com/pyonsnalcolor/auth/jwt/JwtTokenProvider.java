@@ -57,15 +57,9 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expirationAt = new Date(now.getTime() + tokenValidity);
 
-        Claims claims = Jwts.claims()
-                .setIssuer(jwtIssuer)
-                .setIssuedAt(now)
-                .setExpiration(expirationAt);
-        claims.put(OAUTH_ID, oAuthId);
-
         return Jwts.builder()
+                .claim(OAUTH_ID, oAuthId)
                 .setIssuer(jwtIssuer)
-                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expirationAt)
                 .signWith(secretKey)
