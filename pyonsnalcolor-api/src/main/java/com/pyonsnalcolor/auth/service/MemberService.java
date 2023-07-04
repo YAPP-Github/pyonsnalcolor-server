@@ -10,7 +10,7 @@ import com.pyonsnalcolor.auth.RedisUtil;
 import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
 import com.pyonsnalcolor.auth.dto.TokenDto;
-import com.pyonsnalcolor.auth.CustomUserDetails;
+import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.jwt.JwtTokenProvider;
 import com.pyonsnalcolor.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -114,23 +114,23 @@ public class MemberService {
         }
     }
 
-    public void withdraw(CustomUserDetails customUserDetails) {
-        Member member = customUserDetails.getMember();
+    public void withdraw(AuthUserDetails authUserDetails) {
+        Member member = authUserDetails.getMember();
         memberRepository.delete(member);
 
         SecurityContextHolder.clearContext();
     }
 
-    public MemberInfoResponseDto getMemberInfo(CustomUserDetails customUserDetails) {
-        Member member = customUserDetails.getMember();
+    public MemberInfoResponseDto getMemberInfo(AuthUserDetails authUserDetails) {
+        Member member = authUserDetails.getMember();
         return new MemberInfoResponseDto(member);
     }
 
     public void updateNickname(
-            CustomUserDetails customUserDetails,
+            AuthUserDetails authUserDetails,
             NicknameRequestDto nicknameRequestDto
     ) {
-        Member member = customUserDetails.getMember();
+        Member member = authUserDetails.getMember();
         String updatedNickname = nicknameRequestDto.getNickname();
 
         member.updateNickname(updatedNickname);

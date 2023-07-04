@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.auth.jwt;
 
-import com.pyonsnalcolor.auth.CustomUserDetails;
-import com.pyonsnalcolor.auth.CustomUserDetailsService;
+import com.pyonsnalcolor.auth.AuthUserDetails;
+import com.pyonsnalcolor.auth.AuthUserDetailsService;
 import com.pyonsnalcolor.auth.RedisUtil;
 import com.pyonsnalcolor.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private AuthUserDetailsService authUserDetailsService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -72,11 +72,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     public Authentication createAuthentication(String token) {
         String oAuthId = (String) jwtTokenProvider.getClaims(token).get(OAUTH_ID);
-        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(oAuthId);
+        AuthUserDetails authUserDetails = authUserDetailsService.loadUserByUsername(oAuthId);
         return new UsernamePasswordAuthenticationToken(
-                customUserDetails,
+                authUserDetails,
                 "",
-                customUserDetails.getAuthorities());
+                authUserDetails.getAuthorities());
     }
 
     private String resolveBearerTokenFromHeader(HttpServletRequest request, String header) {

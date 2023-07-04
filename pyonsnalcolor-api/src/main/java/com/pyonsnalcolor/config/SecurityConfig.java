@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.config;
 
-import com.pyonsnalcolor.auth.CustomUserDetailsService;
+import com.pyonsnalcolor.auth.AuthUserDetailsService;
 import com.pyonsnalcolor.auth.jwt.JwtAuthenticationFilter;
 import com.pyonsnalcolor.handler.JwtAccessDeniedHandler;
 import com.pyonsnalcolor.handler.JwtAuthenticationEntryPoint;
@@ -69,7 +69,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
+        return new AuthUserDetailsService();
     }
 
     @Bean

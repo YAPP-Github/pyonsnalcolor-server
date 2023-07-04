@@ -10,16 +10,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CustomUserDetailsService implements UserDetailsService {
+public class AuthUserDetailsService implements UserDetailsService {
 
     @Autowired
     private MemberRepository memberRepository;
 
     @Override
-    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public AuthUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByoAuthId(username)
                 .orElseThrow(() -> new ApiException(AuthErrorCode.INVALID_OAUTH_ID));
 
-        return new CustomUserDetails(member);
+        return new AuthUserDetails(member);
     }
 }
