@@ -21,6 +21,7 @@ dependencies {
     implementation 'org.springframework.security:spring-security-core:5.5.0'
     implementation 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
     implementation 'org.springframework.security:spring-security-config:5.5.0'
+    testImplementation 'org.springframework.security:spring-security-test:4.2.1.RELEASE'
 
     // parsing
     implementation 'com.google.code.gson:gson:2.10.1'
