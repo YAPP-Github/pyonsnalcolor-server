@@ -3,7 +3,7 @@ package com.pyonsnalcolor.auth.jwt;
 import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.AuthUserDetailsService;
 import com.pyonsnalcolor.auth.RedisUtil;
-import com.pyonsnalcolor.exception.AuthException;
+import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,7 +82,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void validateBlackList(String accessToken) {
         if (redisUtil.isTokenBlackList(accessToken)) {
-            throw new AuthException(MEMBER_LOGOUT);
+            throw new PyonsnalcolorAuthException(MEMBER_LOGOUT);
         }
     }
 

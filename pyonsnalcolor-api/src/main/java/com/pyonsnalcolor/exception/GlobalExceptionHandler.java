@@ -11,9 +11,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<Object> handleAuthException(AuthException e) {
-        log.error("GlobalExceptionHandler catch AuthException: {}", e.getErrorCode().name());
+    @ExceptionHandler(PyonsnalcolorAuthException.class)
+    public ResponseEntity<Object> handleAuthException(PyonsnalcolorAuthException e) {
+        log.error("GlobalExceptionHandler catch PyonsnalcolorAuthException: {}", e.getErrorCode().name());
         ErrorCode errorCode = e.getErrorCode();
         return createResponseEntity(errorCode);
     }

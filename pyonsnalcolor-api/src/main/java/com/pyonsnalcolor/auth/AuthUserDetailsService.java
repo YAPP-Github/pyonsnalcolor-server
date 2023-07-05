@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.auth;
 
-import com.pyonsnalcolor.exception.AuthException;
+import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import com.pyonsnalcolor.exception.model.AuthErrorCode;
 import com.pyonsnalcolor.member.Member;
 import com.pyonsnalcolor.member.MemberRepository;
@@ -18,7 +18,7 @@ public class AuthUserDetailsService implements UserDetailsService {
     @Override
     public AuthUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByoAuthId(username)
-                .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_OAUTH_ID));
+                .orElseThrow(() -> new PyonsnalcolorAuthException(AuthErrorCode.INVALID_OAUTH_ID));
 
         return new AuthUserDetails(member);
     }

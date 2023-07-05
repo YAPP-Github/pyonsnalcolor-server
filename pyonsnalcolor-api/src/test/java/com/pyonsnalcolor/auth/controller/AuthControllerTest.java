@@ -3,7 +3,7 @@ package com.pyonsnalcolor.auth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pyonsnalcolor.auth.dto.TokenDto;
 import com.pyonsnalcolor.auth.service.MemberService;
-import com.pyonsnalcolor.exception.AuthException;
+import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import com.pyonsnalcolor.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -65,7 +65,7 @@ public class AuthControllerTest {
                                 .refreshToken("refreshToken")
                                 .build();
         Mockito.when(memberService.reissueAccessToken(any()))
-                .thenThrow(new AuthException(REFRESH_TOKEN_NOT_EXIST));
+                .thenThrow(new PyonsnalcolorAuthException(REFRESH_TOKEN_NOT_EXIST));
 
         // when & then
         mockMvc.perform(

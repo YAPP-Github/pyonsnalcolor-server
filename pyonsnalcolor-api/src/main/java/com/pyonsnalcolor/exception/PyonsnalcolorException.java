@@ -6,8 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class AuthException extends RuntimeException {
+public class PyonsnalcolorException extends RuntimeException {
 
     private final ErrorCode errorCode;
-
 }
