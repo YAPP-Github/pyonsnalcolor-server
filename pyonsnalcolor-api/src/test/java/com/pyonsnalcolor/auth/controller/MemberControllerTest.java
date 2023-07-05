@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.auth.controller;
 
 import com.pyonsnalcolor.auth.service.MemberService;
-import com.pyonsnalcolor.exception.ApiException;
+import com.pyonsnalcolor.exception.AuthException;
 import com.pyonsnalcolor.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,16 +54,16 @@ public class MemberControllerTest {
                 .build();
     }
 
-    @DisplayName(value = "사용자 정보 요청 실패")
+    @DisplayName(value = "사용자 정보 요청 실패 - Access 토큰이 Bearer 형식이 아닐 때")
     @WithAnonymousUser
     @Test
-    public void fail_getMemberInfo() throws Exception {
-        //when
+    public void getMemberInfo_ThrowsException_AccessTokenNotBearerFormat() throws Exception {
+        // given
         Mockito.when(memberService.getMemberInfo(any()))
-                .thenThrow(new ApiException(ACCESS_TOKEN_NOT_BEARER));
+                .thenThrow(new AuthException(ACCESS_TOKEN_NOT_BEARER));
 
-        // then
-        mockMvc.perform(get("/member/infos"))
+        // when & then
+        mockMvc.perform(get("/member/info"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(ACCESS_TOKEN_NOT_BEARER.name()))
                 .andExpect(jsonPath("$.message").value(ACCESS_TOKEN_NOT_BEARER.getMessage()))

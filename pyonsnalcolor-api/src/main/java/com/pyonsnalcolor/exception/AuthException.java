@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ApiException extends RuntimeException {
+public class AuthException extends RuntimeException {
 
     private final ErrorCode errorCode;
 

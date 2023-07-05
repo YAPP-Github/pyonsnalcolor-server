@@ -3,7 +3,7 @@ package com.pyonsnalcolor.auth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pyonsnalcolor.auth.dto.TokenDto;
 import com.pyonsnalcolor.auth.service.MemberService;
-import com.pyonsnalcolor.exception.ApiException;
+import com.pyonsnalcolor.exception.AuthException;
 import com.pyonsnalcolor.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,19 +57,17 @@ public class AuthControllerTest {
                 .build();
     }
 
-    @DisplayName(value = "Access Token 재발급 요청 실패")
+    @DisplayName(value = "Access 토큰 재발급 요청 실패 - 존재하지 않는 Refresh 토큰일 경우 회원 조회 실패")
     @Test
-    public void fail_reissueAccessToken() throws Exception {
+    public void reissueAccessToken_ThrowsException_RefreshTokenNotFound() throws Exception {
         // given
         TokenDto tokenDto = TokenDto.builder().accessToken("accessToken")
                                 .refreshToken("refreshToken")
                                 .build();
-
-        //when
         Mockito.when(memberService.reissueAccessToken(any()))
-                .thenThrow(new ApiException(REFRESH_TOKEN_NOT_EXIST));
+                .thenThrow(new AuthException(REFRESH_TOKEN_NOT_EXIST));
 
-        // then
+        // when & then
         mockMvc.perform(
                     post("/auth/reissue")
                         .content(new ObjectMapper().writeValueAsString(tokenDto))

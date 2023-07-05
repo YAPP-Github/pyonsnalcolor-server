@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.auth.service;
 
 import com.pyonsnalcolor.auth.dto.LoginResponseDto;
-import com.pyonsnalcolor.exception.ApiException;
+import com.pyonsnalcolor.exception.AuthException;
 import com.pyonsnalcolor.member.Member;
 import com.pyonsnalcolor.member.enumtype.Nickname;
 import com.pyonsnalcolor.member.enumtype.OAuthType;
@@ -95,7 +95,7 @@ public class MemberService {
     public TokenDto reissueAccessToken(TokenDto tokenDto) {
         String refreshToken = tokenDto.getRefreshToken();
         Member member = memberRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new ApiException(REFRESH_TOKEN_NOT_EXIST));
+                .orElseThrow(() -> new AuthException(REFRESH_TOKEN_NOT_EXIST));
 
         String newAccessToken = updateAccessToken(member);
 
@@ -107,10 +107,10 @@ public class MemberService {
 
     private void validateRefreshToken(String oauthId, String refreshToken) {
         String findRefreshToken = memberRepository.findRefreshTokenByoAuthId(oauthId)
-                .orElseThrow(() -> new ApiException(INVALID_OAUTH_ID));
+                .orElseThrow(() -> new AuthException(INVALID_OAUTH_ID));
 
         if (!findRefreshToken.equals(refreshToken)) {
-            throw new ApiException(REFRESH_TOKEN_MISMATCH);
+            throw new AuthException(REFRESH_TOKEN_MISMATCH);
         }
     }
 

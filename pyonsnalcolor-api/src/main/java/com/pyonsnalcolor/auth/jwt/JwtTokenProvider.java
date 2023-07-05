@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.auth.jwt;
 
 import com.pyonsnalcolor.auth.dto.TokenDto;
-import com.pyonsnalcolor.exception.ApiException;
+import com.pyonsnalcolor.exception.AuthException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -69,16 +69,16 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public boolean validateAccessToken(String token) {
+    public boolean validateAccessToken(String token) throws AuthException {
         try {
             getClaims(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw new ApiException(ACCESS_TOKEN_EXPIRED);
+            throw new AuthException(ACCESS_TOKEN_EXPIRED);
         } catch (MalformedJwtException e) {
-            throw new ApiException(ACCESS_TOKEN_MALFORMED);
+            throw new AuthException(ACCESS_TOKEN_MALFORMED);
         } catch (Exception e) {
-            throw new ApiException(ACCESS_TOKEN_INVALID);
+            throw new AuthException(ACCESS_TOKEN_INVALID);
         }
     }
 
@@ -100,7 +100,7 @@ public class JwtTokenProvider {
         if (token != null && token.startsWith(bearerHeader)) {
             return token.substring(bearerHeader.length());
         }
-        throw new ApiException(ACCESS_TOKEN_NOT_BEARER);
+        throw new AuthException(ACCESS_TOKEN_NOT_BEARER);
     }
 
     public Long getExpirationTime(String accessToken) {

@@ -3,7 +3,7 @@ package com.pyonsnalcolor.auth.jwt;
 import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.AuthUserDetailsService;
 import com.pyonsnalcolor.auth.RedisUtil;
-import com.pyonsnalcolor.exception.ApiException;
+import com.pyonsnalcolor.exception.AuthException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,14 +50,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            String accessToken = resolveBearerTokenFromHeader(request, accessTokenHeader);
+            String accessToken = resolveBearerTokenFromHeader(request);
+            validateBlackList(accessToken);
+            saveAuthenticationIfValidate(accessToken);
 
-            if (accessToken != null && redisUtil.isTokenBlackList(accessToken)) {
-                throw new ApiException(MEMBER_LOGOUT);
-            }
-            if (accessToken != null && jwtTokenProvider.validateAccessToken(accessToken)) {
-                saveAuthentication(accessToken);
-            }
         } catch (Exception e) {
             request.setAttribute("exception", e);	// 예외를 request에 set
         }
@@ -79,8 +75,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authUserDetails.getAuthorities());
     }
 
-    private String resolveBearerTokenFromHeader(HttpServletRequest request, String header) {
-        String bearerToken = request.getHeader(header);
+    private String resolveBearerTokenFromHeader(HttpServletRequest request) {
+        String bearerToken = request.getHeader(accessTokenHeader);
         return jwtTokenProvider.resolveBearerToken(bearerToken);
+    }
+
+    private void validateBlackList(String accessToken) {
+        if (redisUtil.isTokenBlackList(accessToken)) {
+            throw new AuthException(MEMBER_LOGOUT);
+        }
+    }
+
+    private void saveAuthenticationIfValidate(String accessToken) {
+        if (jwtTokenProvider.validateAccessToken(accessToken)) {
+            saveAuthentication(accessToken);
+        }
     }
 }

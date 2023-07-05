@@ -34,7 +34,7 @@ public class MemberController {
     }
 
     @Operation(summary = "사용자 정보 조회", description = "사용자의 정보를 조회합니다.")
-    @GetMapping("/infos")
+    @GetMapping("/info")
     public ResponseEntity<MemberInfoResponseDto> getMemberInfo(
             @Parameter(hidden = true)
             @AuthenticationPrincipal AuthUserDetails authUserDetails
