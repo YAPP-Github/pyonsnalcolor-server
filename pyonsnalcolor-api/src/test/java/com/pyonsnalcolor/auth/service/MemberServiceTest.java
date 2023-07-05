@@ -7,7 +7,7 @@ import com.pyonsnalcolor.member.enumtype.OAuthType;
 import com.pyonsnalcolor.member.enumtype.Role;
 import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
-import com.pyonsnalcolor.auth.CustomUserDetails;
+import com.pyonsnalcolor.auth.AuthUserDetails;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,20 +20,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
-@SpringBootTest
+@SpringBootTest(classes = MemberService.class)
 class MemberServiceTest {
 
     @Autowired
-    private MemberService memberService;
+    private MemberRepository memberRepository;
 
     @Autowired
-    private MemberRepository memberRepository;
+    private MemberService memberService;
 
     private String email;
     private OAuthType oAuthType;
     private String oAuthId;
     private Member member;
-    private CustomUserDetails customUserDetails;
+    private AuthUserDetails authUserDetails;
 
     @BeforeEach
     void setUp() {
@@ -98,7 +98,7 @@ class MemberServiceTest {
         setAuthentication();
 
         // when
-        MemberInfoResponseDto memberInfoResponseDto = memberService.getMemberInfo(customUserDetails);
+        MemberInfoResponseDto memberInfoResponseDto = memberService.getMemberInfo(authUserDetails);
 
         // then
         Assertions.assertAll(
@@ -116,7 +116,7 @@ class MemberServiceTest {
         memberRepository.save(member);
         setAuthentication();
         String updatedNickname = "새로운 닉네임";
-        memberService.updateNickname(customUserDetails, new NicknameRequestDto(updatedNickname));
+        memberService.updateNickname(authUserDetails, new NicknameRequestDto(updatedNickname));
 
         // when
         Member findMember = memberRepository.findByoAuthId(oAuthId)
@@ -129,10 +129,10 @@ class MemberServiceTest {
     // CustomUserDetails로 Member 객체를 매핑하기 때문에 필요
     private void setAuthentication(){
         SecurityContext context = SecurityContextHolder.getContext();
-        customUserDetails = new CustomUserDetails(member);
+        authUserDetails = new AuthUserDetails(member);
         context.setAuthentication(new UsernamePasswordAuthenticationToken(
-                customUserDetails,
+                authUserDetails,
                 "",
-                customUserDetails.getAuthorities()));
+                authUserDetails.getAuthorities()));
     }
 }

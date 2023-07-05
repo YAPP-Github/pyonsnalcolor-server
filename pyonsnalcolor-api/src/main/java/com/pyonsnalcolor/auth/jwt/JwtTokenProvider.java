@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.auth.jwt;
 
 import com.pyonsnalcolor.auth.dto.TokenDto;
+import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+
+import static com.pyonsnalcolor.exception.model.AuthErrorCode.*;
 
 @Slf4j
 @Component
@@ -39,8 +42,8 @@ public class JwtTokenProvider {
     }
 
     public TokenDto createAccessAndRefreshTokenDto(String oauthId) {
-        String accessToken = createTokenWithValidity(oauthId, accessTokenValidity);
-        String refreshToken = createTokenWithValidity(oauthId, refreshTokenValidity);
+        String accessToken = createBearerTokenWithValidity(oauthId, accessTokenValidity);
+        String refreshToken = createBearerTokenWithValidity(oauthId, refreshTokenValidity);
 
         return TokenDto.builder()
                 .accessToken(accessToken)
@@ -48,42 +51,34 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public String createTokenWithValidity(String oauthId, long tokenValidity){
-        String accessToken = createJwtTokenWithValidity(oauthId, tokenValidity);
+    public String createBearerTokenWithValidity(String oauthId, long tokenValidity){
+        String accessToken = createTokenWithValidity(oauthId, tokenValidity);
         return createBearerHeader(accessToken);
     }
 
-    private String createJwtTokenWithValidity(String oAuthId, long tokenValidity){
+    private String createTokenWithValidity(String oAuthId, long tokenValidity){
         Date now = new Date();
         Date expirationAt = new Date(now.getTime() + tokenValidity);
 
-        Claims claims = Jwts.claims()
-                .setIssuer(jwtIssuer)
-                .setIssuedAt(now)
-                .setExpiration(expirationAt);
-        claims.put(OAUTH_ID, oAuthId);
-
         return Jwts.builder()
+                .claim(OAUTH_ID, oAuthId)
                 .setIssuer(jwtIssuer)
-                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expirationAt)
                 .signWith(secretKey)
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) throws PyonsnalcolorAuthException {
         try {
             getClaims(token);
             return true;
-        } catch (MalformedJwtException e) {
-            throw new MalformedJwtException("토큰 형식이 잘못되어 있습니다.");
         } catch (ExpiredJwtException e) {
-            throw new JwtException("만료된 토큰입니다.");
-        } catch (UnsupportedJwtException e) {
-            throw new UnsupportedJwtException("지원하지 않는 형식의 토큰입니다.");
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Claim이 유효하지 않은 토큰입니다.");
+            throw new PyonsnalcolorAuthException(ACCESS_TOKEN_EXPIRED);
+        } catch (MalformedJwtException e) {
+            throw new PyonsnalcolorAuthException(ACCESS_TOKEN_MALFORMED);
+        } catch (Exception e) {
+            throw new PyonsnalcolorAuthException(ACCESS_TOKEN_INVALID);
         }
     }
 
@@ -105,7 +100,7 @@ public class JwtTokenProvider {
         if (token != null && token.startsWith(bearerHeader)) {
             return token.substring(bearerHeader.length());
         }
-        return null;
+        throw new PyonsnalcolorAuthException(ACCESS_TOKEN_NOT_BEARER);
     }
 
     public Long getExpirationTime(String accessToken) {

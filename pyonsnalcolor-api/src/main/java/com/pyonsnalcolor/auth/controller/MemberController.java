@@ -3,7 +3,7 @@ package com.pyonsnalcolor.auth.controller;
 import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
 import com.pyonsnalcolor.auth.dto.TokenDto;
-import com.pyonsnalcolor.auth.CustomUserDetails;
+import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,12 +34,12 @@ public class MemberController {
     }
 
     @Operation(summary = "사용자 정보 조회", description = "사용자의 정보를 조회합니다.")
-    @GetMapping("/infos")
+    @GetMapping("/info")
     public ResponseEntity<MemberInfoResponseDto> getMemberInfo(
             @Parameter(hidden = true)
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
+            @AuthenticationPrincipal AuthUserDetails authUserDetails
     ) {
-        MemberInfoResponseDto memberInfoResponseDto = memberService.getMemberInfo(customUserDetails);
+        MemberInfoResponseDto memberInfoResponseDto = memberService.getMemberInfo(authUserDetails);
         return new ResponseEntity(memberInfoResponseDto, HttpStatus.OK);
     }
 
@@ -48,9 +48,9 @@ public class MemberController {
     @PatchMapping("/nickname")
     public ResponseEntity<TokenDto> updateNickname(
             @RequestBody @Valid NicknameRequestDto nicknameRequestDto,
-            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails customUserDetails
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthUserDetails authUserDetails
     ) {
-        memberService.updateNickname(customUserDetails, nicknameRequestDto);
+        memberService.updateNickname(authUserDetails, nicknameRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -58,9 +58,9 @@ public class MemberController {
     @DeleteMapping("/withdraw")
     public ResponseEntity<TokenDto> withdraw(
             @Parameter(hidden = true)
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
+            @AuthenticationPrincipal AuthUserDetails authUserDetails
     ) {
-        memberService.withdraw(customUserDetails);
+        memberService.withdraw(authUserDetails);
         return new ResponseEntity(HttpStatus.OK);
     }
 }
