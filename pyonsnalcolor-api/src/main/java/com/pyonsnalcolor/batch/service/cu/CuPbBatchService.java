@@ -67,7 +67,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
                     .map(this::convertToBasePbProduct)
                     .collect(Collectors.toList());
             products.addAll(pagedProducts);
-            pageIndex++;
+            pageIndex += 1;
         }
         return products;
     }

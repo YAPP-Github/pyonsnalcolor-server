@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "AuthController", description = "사용자 인증/인가용 api")
+@Tag(name = "사용자 인증/인가용 api")
 @Slf4j
 @RestController
 @RequiredArgsConstructor

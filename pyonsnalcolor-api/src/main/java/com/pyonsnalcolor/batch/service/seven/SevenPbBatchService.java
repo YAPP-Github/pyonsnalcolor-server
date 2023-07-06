@@ -61,7 +61,7 @@ public class SevenPbBatchService extends PbBatchService {
                     .map(this::convertToBasePbProduct)
                     .collect(Collectors.toList());
             products.addAll(pagedProducts);
-            pageIndex++;
+            pageIndex += 1;
         }
         return products;
     }
