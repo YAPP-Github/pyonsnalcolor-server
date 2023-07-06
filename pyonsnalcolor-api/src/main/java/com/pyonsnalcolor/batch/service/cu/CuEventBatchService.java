@@ -13,21 +13,21 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 
 @Service("CuEvent")
 @Slf4j
-public class CuEventBatchService extends EventBatchService {
+public class CuEventBatchService extends EventBatchService implements CuDescriptionBatch {
 
-    private static final String CU_URL = "https://cu.bgfretail.com/event/plusAjax.do?";
+    private static final String CU_EVENT_URL = "https://cu.bgfretail.com/event/plusAjax.do?!!!";
     private static final String DOC_SELECT_TAG = "a.prod_item";
-    private static final int TIMEOUT = 5000;
+    private static final int TIMEOUT = 15000;
 
     public CuEventBatchService(EventProductRepository eventProductRepository) {
         super(eventProductRepository);
@@ -39,17 +39,17 @@ public class CuEventBatchService extends EventBatchService {
         try {
             return getProducts();
         } catch (Exception e) {
-            log.error("CU 행사 상품 조회하는 데 실패했습니다.", e);
+            log.error("CU 이벤트 상품 조회하는 데 실패했습니다.", e);
         }
         return null; // 이후에 에러 처리 관련 수정 - getAllProducts() 호출하는 쪽에 throw
     }
 
-    private List<BaseEventProduct> getProducts() throws IOException {
+    private List<BaseEventProduct> getProducts() throws Exception {
         List<BaseEventProduct> products = new ArrayList<>();
 
         int pageIndex = 1;
         while (true) {
-            String pagedCuEventUrl = getSevenEventUrlByPageIndex(pageIndex);
+            String pagedCuEventUrl = getCuEventUrlByPageIndex(pageIndex);
             Document doc = Jsoup.connect(pagedCuEventUrl).timeout(TIMEOUT).get();
             Elements elements = doc.select(DOC_SELECT_TAG);
 
@@ -57,11 +57,11 @@ public class CuEventBatchService extends EventBatchService {
                 break;
             }
 
-            List<BaseEventProduct> tmp = elements.stream()
+            List<BaseEventProduct> pagedProducts = elements.stream()
                     .map(this::convertToBaseEventProduct)
                     .collect(Collectors.toList());
-            products.addAll(tmp);
-            pageIndex++;
+            products.addAll(pagedProducts);
+            pageIndex += 1;
         }
         return products;
     }
@@ -73,22 +73,40 @@ public class CuEventBatchService extends EventBatchService {
         String eventTypeTag = element.select("div.badge").first().text();
         EventType eventType = EventType.getEventTypeWithValue(eventTypeTag);
         
+        String description = null;
+        try {
+            description = getDescription(element, "event");
+        } catch (Exception e) {
+            log.error("CU 이벤트 상품의 상세 정보를 조회할 수 없습니다.", e);
+        }
+
         return BaseEventProduct.builder()
+                .id((generateId()))
                 .name(name)
                 .image(image)
                 .price(price)
-                .id((generateId()))
+                .description(description)
                 .eventType(eventType)
                 .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
                 .build();
     }
 
-    private String getSevenEventUrlByPageIndex(int pageIndex) {
+    private String getCuEventUrlByPageIndex(int pageIndex) {
         return UriComponentsBuilder
-                .fromUriString(CU_URL)
+                .fromUriString(CU_EVENT_URL)
                 .queryParam("pageIndex", pageIndex)
                 .build()
                 .toString();
+    }
+
+    private EventType getCuEventType(String eventTypeTag) {
+        if (eventTypeTag.equals("1+1")) {
+            return EventType.ONE_TO_ONE;
+        }
+        if (eventTypeTag.equals("2+1")) {
+            return EventType.TWO_TO_ONE;
+        }
+        throw new IllegalArgumentException("CU 이벤트 타입을 찾을 수 없습니다.");
     }
 }

@@ -12,15 +12,16 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
+
 @Service("CuPb")
 @Slf4j
-public class CuPbBatchService extends PbBatchService {
+public class CuPbBatchService extends PbBatchService implements CuDescriptionBatch {
 
     private static final String CU_PB_URL = "https://cu.bgfretail.com/product/pbAjax.do";
     private static final String CU_CATEGORY_PB = "PBG";
@@ -42,14 +43,14 @@ public class CuPbBatchService extends PbBatchService {
         return null; // 이후에 에러 처리 관련 수정 - getAllProducts() 호출하는 쪽에 throw
     }
 
-    private List<BasePbProduct> getProductsByCategoryAll() throws IOException {
+    private List<BasePbProduct> getProductsByCategoryAll() throws Exception {
         List<BasePbProduct> products = new ArrayList<>();
         products.addAll(getProductsByCategory(CU_CATEGORY_PB));
         products.addAll(getProductsByCategory(CU_CATEGORY_CU_ONLY));
         return products;
     }
 
-    private List<BasePbProduct> getProductsByCategory(String category) throws IOException {
+    private List<BasePbProduct> getProductsByCategory(String category) throws Exception {
         List<BasePbProduct> products = new ArrayList<>();
 
         int pageIndex = 1;
@@ -62,10 +63,10 @@ public class CuPbBatchService extends PbBatchService {
                 break;
             }
 
-            List<BasePbProduct> productsTmp = elements.stream()
+            List<BasePbProduct> pagedProducts = elements.stream()
                     .map(this::convertToBasePbProduct)
                     .collect(Collectors.toList());
-            products.addAll(productsTmp);
+            products.addAll(pagedProducts);
             pageIndex++;
         }
         return products;
@@ -75,11 +76,19 @@ public class CuPbBatchService extends PbBatchService {
         String name = element.select("div.name").first().text();
         String image = element.select("img.prod_img").first().attr("src");
         String price = element.select("div.price > strong").first().text();
+        String description = null;
+        try {
+            description = getDescription(element, "product");
+        } catch (Exception e) {
+            log.error("CU PB 상품의 상세 정보를 조회할 수 없습니다.", e);
+        }
 
         return BasePbProduct.builder()
+                .id((generateId()))
                 .name(name)
                 .image(image)
                 .price(price)
+                .description(description)
                 .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
                 .build();
