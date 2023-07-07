@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
+
 @Service("SevenPb")
 @Slf4j
 public class SevenPbBatchService extends PbBatchService {
@@ -59,7 +61,7 @@ public class SevenPbBatchService extends PbBatchService {
                     .map(this::convertToBasePbProduct)
                     .collect(Collectors.toList());
             products.addAll(pagedProducts);
-            pageIndex++;
+            pageIndex += 1;
         }
         return products;
     }
@@ -70,6 +72,7 @@ public class SevenPbBatchService extends PbBatchService {
         String price = element.select("div.price").text();
 
         return BasePbProduct.builder()
+                .id(generateId())
                 .name(name)
                 .image(image)
                 .price(price)

@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Tag(name = "MemberController", description = "(인증 제외)사용자 관련 api")
-@RestController
+
+@Tag(name = "(인증 제외)사용자 관련 api")
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
