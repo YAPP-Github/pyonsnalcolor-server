@@ -1,6 +1,6 @@
-package com.pyonsnalcolor.alarm.repository;
+package com.pyonsnalcolor.push.repository;
 
-import com.pyonsnalcolor.alarm.PushProductStore;
+import com.pyonsnalcolor.push.PushProductStore;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

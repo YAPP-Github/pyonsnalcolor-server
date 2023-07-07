@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.alarm;
+package com.pyonsnalcolor.push;
 
 import com.pyonsnalcolor.product.enumtype.ProductStoreType;
 import com.pyonsnalcolor.member.Member;
