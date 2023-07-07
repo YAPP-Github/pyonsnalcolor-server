@@ -1,8 +1,8 @@
 package com.pyonsnalcolor.member;
 
-import com.pyonsnalcolor.alarm.PushProductStore;
-import com.pyonsnalcolor.alarm.PushKeyword;
-import com.pyonsnalcolor.alarm.PushRecord;
+import com.pyonsnalcolor.push.PushProductStore;
+import com.pyonsnalcolor.push.PushKeyword;
+import com.pyonsnalcolor.push.PushRecord;
 import com.pyonsnalcolor.member.enumtype.OAuthType;
 import com.pyonsnalcolor.member.enumtype.Role;
 import lombok.*;

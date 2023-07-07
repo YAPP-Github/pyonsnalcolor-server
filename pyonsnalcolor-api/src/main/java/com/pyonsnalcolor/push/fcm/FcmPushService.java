@@ -1,11 +1,11 @@
-package com.pyonsnalcolor.alarm.fcm;
+package com.pyonsnalcolor.push.fcm;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
-import com.pyonsnalcolor.alarm.dto.DeviceTokenRequestDto;
+import com.pyonsnalcolor.push.dto.DeviceTokenRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
-import static com.pyonsnalcolor.alarm.dto.FcmMessageType.PB;
+import static com.pyonsnalcolor.push.dto.FcmMessageType.PB;
 
 @Slf4j
 @Service

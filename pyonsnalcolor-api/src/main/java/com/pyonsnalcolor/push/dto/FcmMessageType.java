@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.alarm.dto;
+package com.pyonsnalcolor.push.dto;
 
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;

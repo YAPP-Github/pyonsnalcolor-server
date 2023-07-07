@@ -1,6 +1,6 @@
-package com.pyonsnalcolor.alarm.fcm;
+package com.pyonsnalcolor.push.fcm;
 
-import com.pyonsnalcolor.alarm.dto.DeviceTokenRequestDto;
+import com.pyonsnalcolor.push.dto.DeviceTokenRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
