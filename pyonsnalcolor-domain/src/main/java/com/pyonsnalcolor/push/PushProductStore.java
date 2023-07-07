@@ -34,4 +34,8 @@ public class PushProductStore {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void updateSubscribedStatus(boolean updatedStatus) {
+        isSubscribed = updatedStatus;
+    }
 }
