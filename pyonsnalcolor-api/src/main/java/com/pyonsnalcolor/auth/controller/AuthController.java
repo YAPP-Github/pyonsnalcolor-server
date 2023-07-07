@@ -55,7 +55,7 @@ public class AuthController {
     public ResponseEntity<LoginResponseDto> reissueAccessToken(
             @RequestBody TokenDto tokenRequestDto
     ) {
-        TokenDto tokenResponseDto = memberService.reissueAccessToken(tokenRequestDto);
+        LoginResponseDto tokenResponseDto = memberService.reissueAccessToken(tokenRequestDto);
         return new ResponseEntity(tokenResponseDto, HttpStatus.OK);
     }
 
