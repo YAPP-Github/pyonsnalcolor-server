@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "PbProductController", description = "PB 상품 api")
+@Tag(name = "PB 상품 api")
 @RestController
 @RequiredArgsConstructor
 public class PbProductController {
@@ -21,8 +21,8 @@ public class PbProductController {
     @Operation(summary = "PB 상품 조회", description = "PB 상품을 조회합니다.")
     @Parameter(name = "pageNumber", description = "조회할 페이지 번호")
     @Parameter(name = "pageSize", description = "페이지별 상품 갯수")
-    @Parameter(name = "storeType", description = "편의점 종류, default는 모든 편의점")
-    @Parameter(name = "sorted", description = "정렬순서, default는 최신순")
+    @Parameter(name = "storeType", description = "편의점 종류(seven_eleven, cu, gs25, emart24, all)")
+    @Parameter(name = "sorted", description = "정렬순서")
     @GetMapping("/products/pb-products")
     public Page<BasePbProduct> getPbProducts(@RequestParam("pageNumber") int pageNumber,
                                              @RequestParam("pageSize") int pageSize,

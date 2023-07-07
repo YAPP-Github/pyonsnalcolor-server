@@ -66,7 +66,7 @@ public class SevenEventBatchService extends EventBatchService {
 
             List<BaseEventProduct> pagedProducts = sevenEventTab.getPagedProducts(elements, detailPageElements);
             products.addAll(pagedProducts);
-            pageIndex++;
+            pageIndex += 1;
         }
         return products;
     }

@@ -103,8 +103,8 @@ class MemberServiceTest {
         // then
         Assertions.assertAll(
                 () -> assertEquals(memberInfoResponseDto.getEmail(), email),
-                () -> assertEquals(memberInfoResponseDto.getOAuthId(), oAuthId),
-                () -> assertEquals(memberInfoResponseDto.getOAuthType(), oAuthType.toString())
+                () -> assertEquals(memberInfoResponseDto.getOauthId(), oAuthId),
+                () -> assertEquals(memberInfoResponseDto.getOauthType(), oAuthType.toString())
         );
     }
 

@@ -32,4 +32,5 @@ public class BaseProduct {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedTime;
+    private String description;
 }
