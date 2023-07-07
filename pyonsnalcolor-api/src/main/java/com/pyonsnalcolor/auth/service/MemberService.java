@@ -95,14 +95,15 @@ public class MemberService {
         return newAccessToken;
     }
 
-    public TokenDto reissueAccessToken(TokenDto tokenDto) {
+    public LoginResponseDto reissueAccessToken(TokenDto tokenDto) {
         String refreshToken = tokenDto.getRefreshToken();
         Member member = memberRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new PyonsnalcolorAuthException(REFRESH_TOKEN_NOT_EXIST));
 
         String newAccessToken = updateAccessToken(member);
 
-        return TokenDto.builder()
+        return LoginResponseDto.builder()
+                .isFirstLogin(false)
                 .accessToken(newAccessToken)
                 .refreshToken(refreshToken)
                 .build();

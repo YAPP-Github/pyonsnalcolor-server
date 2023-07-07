@@ -1,5 +1,6 @@
 package com.pyonsnalcolor.exception;
 
+import com.pyonsnalcolor.exception.model.CommonErrorCode;
 import com.pyonsnalcolor.exception.model.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,13 @@ import static com.pyonsnalcolor.exception.model.CommonErrorCode.INVALID_PARAMETE
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleException(Exception e) {
+        log.error("GlobalExceptionHandler catch Exception ", e);
+        ErrorCode errorCode = CommonErrorCode.SERVER_UNAVAILABLE;
+        return createResponseEntity(errorCode);
+    }
 
     @ExceptionHandler(PyonsnalcolorAuthException.class)
     public ResponseEntity<Object> handleAuthException(PyonsnalcolorAuthException e) {
