@@ -68,7 +68,7 @@ public class PushProductStoreService {
             PushProductStoreRequestDto pushProductStoreRequestDtos,
             boolean updatedSubscribedStatus)
     {
-        pushProductStoreRequestDtos.getPushProductStores().stream()
+        pushProductStoreRequestDtos.getProductStores().stream()
                 .map(pushProductStoreString -> {
                     PushProductStore pushProductStore = pushProductStoreRepository
                             .findByMemberAndProductStoreType(member, ProductStoreType.valueOf(pushProductStoreString));

@@ -15,11 +15,11 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class PushProductStoreResponseDto {
 
-    @Schema(description = "편의점, 상품별 이름", example = "EVENT_CU")
+    @Schema(description = "상품종류_편의점명", example = "EVENT_CU")
     @NotBlank
     private String productStore;
 
-    @Schema(description = "구독 여부")
+    @Schema(description = "구독 여부", example = "true")
     @NotBlank
     private Boolean isSubscribed;
 }

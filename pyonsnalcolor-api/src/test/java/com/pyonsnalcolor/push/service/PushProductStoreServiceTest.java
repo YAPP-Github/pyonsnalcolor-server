@@ -69,7 +69,7 @@ class PushProductStoreServiceTest {
         AuthUserDetails authUserDetails = getAuthentication(member);
 
         PushProductStoreRequestDto requestDto = PushProductStoreRequestDto.builder()
-                .pushProductStores(List.of("EVENT_CU", "PB_CU"))
+                .productStores(List.of("EVENT_CU", "PB_CU"))
                 .build();
 
         pushProductStoreService.unsubscribePushProductStores(authUserDetails, requestDto);
