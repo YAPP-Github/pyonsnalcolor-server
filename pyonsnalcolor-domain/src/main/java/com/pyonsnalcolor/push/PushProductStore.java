@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.alarm;
+package com.pyonsnalcolor.push;
 
 import com.pyonsnalcolor.product.enumtype.ProductStoreType;
 import com.pyonsnalcolor.member.Member;
@@ -34,4 +34,8 @@ public class PushProductStore {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void updateSubscribedStatus(boolean updatedStatus) {
+        isSubscribed = updatedStatus;
+    }
 }

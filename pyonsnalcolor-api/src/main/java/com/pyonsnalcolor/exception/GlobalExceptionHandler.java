@@ -2,10 +2,17 @@ package com.pyonsnalcolor.exception;
 
 import com.pyonsnalcolor.exception.model.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import static com.pyonsnalcolor.exception.model.CommonErrorCode.INVALID_PARAMETER;
 
 @Slf4j
 @RestControllerAdvice
@@ -16,6 +23,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("GlobalExceptionHandler catch PyonsnalcolorAuthException: {}", e.getErrorCode().name());
         ErrorCode errorCode = e.getErrorCode();
         return createResponseEntity(errorCode);
+    }
+
+    @ExceptionHandler(PyonsnalcolorPushException.class)
+    public ResponseEntity<Object> handlePushException(PyonsnalcolorPushException e) {
+        log.error("GlobalExceptionHandler catch PyonsnalcolorPushException: {}", e.getErrorCode().name());
+        ErrorCode errorCode = e.getErrorCode();
+        return createResponseEntity(errorCode);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+        log.error("GlobalExceptionHandler catch MethodArgumentNotValidException: {}", e.getMessage());
+        ErrorResponse errorResponse = createErrorResponse(e.getBindingResult());
+        return new ResponseEntity<Object>(errorResponse, INVALID_PARAMETER.getHttpStatus());
+    }
+
+    private ErrorResponse createErrorResponse(BindingResult bindingResult){
+        String errorMessage = bindingResult.getFieldErrors().get(0).getDefaultMessage();
+        return new ErrorResponse(INVALID_PARAMETER.name(), errorMessage);
     }
 
     private ResponseEntity<Object> createResponseEntity(ErrorCode errorCode) {

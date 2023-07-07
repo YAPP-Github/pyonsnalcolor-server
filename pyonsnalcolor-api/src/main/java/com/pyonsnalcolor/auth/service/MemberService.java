@@ -13,6 +13,7 @@ import com.pyonsnalcolor.auth.dto.TokenDto;
 import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.jwt.JwtTokenProvider;
 import com.pyonsnalcolor.member.MemberRepository;
+import com.pyonsnalcolor.push.service.PushProductStoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
+    private final PushProductStoreService pushProductStoreService;
 
     public LoginResponseDto oAuthLogin(OAuthType oAuthType, String email) {
         String oauthId = oAuthType.addOAuthTypeHeaderWithEmail(email);
@@ -74,6 +76,7 @@ public class MemberService {
                 .role(Role.ROLE_USER)
                 .build();
         memberRepository.save(member);
+        pushProductStoreService.createPushProductStores(member);
 
         return LoginResponseDto.builder()
                 .accessToken(accessToken)

@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.alarm.dto;
+package com.pyonsnalcolor.push.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

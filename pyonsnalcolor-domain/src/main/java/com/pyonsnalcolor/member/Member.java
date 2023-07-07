@@ -1,10 +1,10 @@
 package com.pyonsnalcolor.member;
 
-import com.pyonsnalcolor.alarm.PushProductStore;
-import com.pyonsnalcolor.alarm.PushKeyword;
-import com.pyonsnalcolor.alarm.PushRecord;
+import com.pyonsnalcolor.push.PushProductStore;
+import com.pyonsnalcolor.push.PushKeyword;
 import com.pyonsnalcolor.member.enumtype.OAuthType;
 import com.pyonsnalcolor.member.enumtype.Role;
+import com.pyonsnalcolor.push.PushRecord;
 import lombok.*;
 
 import javax.persistence.*;
@@ -34,6 +34,7 @@ public class Member {
     @Pattern(regexp="^[0-9a-zA-Zㄱ-ㅎ가-힣 ]{1,15}")
     private String nickname;
 
+    @Column(length = 500)
     private String refreshToken;
 
     private String deviceToken; // FCM용 디바이스 토큰

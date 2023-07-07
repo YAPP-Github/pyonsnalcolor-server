@@ -37,7 +37,8 @@ public class SecurityConfig {
         return (web) -> web.ignoring()
                 .antMatchers( "/resources/**",
                         "/v3/api-docs/**",
-                        "/swagger-ui/**"
+                        "/swagger-ui/**",
+                        "/health-check"
                 );
     }
 
