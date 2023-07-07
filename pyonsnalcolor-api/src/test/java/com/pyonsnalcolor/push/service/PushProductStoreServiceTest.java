@@ -1,14 +1,12 @@
 package com.pyonsnalcolor.push.service;
 
 import com.pyonsnalcolor.auth.AuthUserDetails;
-import com.pyonsnalcolor.auth.service.MemberService;
 import com.pyonsnalcolor.member.Member;
 import com.pyonsnalcolor.member.MemberRepository;
 import com.pyonsnalcolor.member.enumtype.OAuthType;
 import com.pyonsnalcolor.member.enumtype.Role;
 import com.pyonsnalcolor.push.dto.PushProductStoreRequestDto;
 import com.pyonsnalcolor.push.dto.PushProductStoreResponseDto;
-import com.pyonsnalcolor.push.repository.PushProductStoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +69,7 @@ class PushProductStoreServiceTest {
         AuthUserDetails authUserDetails = getAuthentication(member);
 
         PushProductStoreRequestDto requestDto = PushProductStoreRequestDto.builder()
-                .pushProductStores(List.of("EVENT_CU", "PB_CU"))
+                .productStores(List.of("EVENT_CU", "PB_CU"))
                 .build();
 
         pushProductStoreService.unsubscribePushProductStores(authUserDetails, requestDto);
