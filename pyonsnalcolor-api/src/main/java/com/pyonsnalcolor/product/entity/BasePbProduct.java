@@ -24,6 +24,7 @@ public class BasePbProduct extends BaseProduct {
                 .storeType(getStoreType())
                 .price(getPrice())
                 .updatedTime(getUpdatedTime())
+                .isNew(true)
                 .build();
     }
 }
