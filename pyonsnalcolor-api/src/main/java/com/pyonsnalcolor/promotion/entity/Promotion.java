@@ -1,9 +1,9 @@
 package com.pyonsnalcolor.promotion.entity;
 
 import com.pyonsnalcolor.product.enumtype.StoreType;
+import com.pyonsnalcolor.promotion.dto.PromotionResponseDto;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -24,4 +24,16 @@ public class Promotion {
     private String image;
     private String title;
     private LocalDateTime updatedTime;
+
+    public PromotionResponseDto convertToDto() {
+        PromotionResponseDto promotionResponseDto = new PromotionResponseDto();
+        promotionResponseDto.setId(id);
+        promotionResponseDto.setStoreType(storeType);
+        promotionResponseDto.setThumbnailImage(thumbnailImage);
+        promotionResponseDto.setImage(image);
+        promotionResponseDto.setTitle(title);
+        promotionResponseDto.setUpdatedTime(updatedTime);
+
+        return promotionResponseDto;
+    }
 }
