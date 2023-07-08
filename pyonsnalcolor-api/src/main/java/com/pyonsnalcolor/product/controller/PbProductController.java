@@ -42,6 +42,9 @@ public class PbProductController {
     @Operation(summary = "PB 상품 단건 조회", description = "id 바탕으로 PB 상품을 조회합니다.")
     @GetMapping("/products/pb-products/{id}")
     public ProductResponseDto getPbProducts(@PathVariable String id) throws Throwable {
-        return pbProductService.getProduct(id);
+        ProductResponseDto product = pbProductService.getProduct(id);
+        pbProductService.setEventType(product);
+
+        return product;
     }
 }

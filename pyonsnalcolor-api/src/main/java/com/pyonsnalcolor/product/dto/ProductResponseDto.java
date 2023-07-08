@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.pyonsnalcolor.product.enumtype.EventType;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @ToString
 @Getter
+@Setter
 @NoArgsConstructor
 public class ProductResponseDto {
     @NotBlank
@@ -31,6 +34,8 @@ public class ProductResponseDto {
     private String name;
     @NotBlank
     private String price;
+    @NotBlank
+    private EventType eventType;
     @NotBlank
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
