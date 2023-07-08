@@ -36,6 +36,7 @@ public class BaseProduct {
                 .storeType(storeType)
                 .price(price)
                 .updatedTime(updatedTime)
+                .isNew(true)
                 .build();
     }
 }

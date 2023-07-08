@@ -33,6 +33,7 @@ public class BaseEventProduct extends BaseProduct {
                 .eventType(getEventType())
                 .originPrice(getOriginPrice())
                 .giftImage(getGiftImage())
+                .isNew(true)
                 .build();
     }
 }
