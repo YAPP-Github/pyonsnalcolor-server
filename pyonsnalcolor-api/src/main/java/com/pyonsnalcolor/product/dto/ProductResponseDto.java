@@ -34,7 +34,6 @@ public class ProductResponseDto {
     private String name;
     @NotBlank
     private String price;
-    @NotBlank
     private EventType eventType;
     @NotBlank
     @JsonFormat(pattern = "yyyy-MM-dd")
