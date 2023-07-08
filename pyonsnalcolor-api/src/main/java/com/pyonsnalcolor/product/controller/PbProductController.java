@@ -43,8 +43,7 @@ public class PbProductController {
     @GetMapping("/products/pb-products/{id}")
     public ProductResponseDto getPbProducts(@PathVariable String id) throws Throwable {
         ProductResponseDto product = pbProductService.getProduct(id);
-        pbProductService.setEventType(product);
 
-        return product;
+   return product;
     }
 }
