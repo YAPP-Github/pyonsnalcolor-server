@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.push;
 
-import com.pyonsnalcolor.member.Member;
+
+import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import lombok.*;
 

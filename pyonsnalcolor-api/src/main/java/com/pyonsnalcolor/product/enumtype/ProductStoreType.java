@@ -2,7 +2,8 @@ package com.pyonsnalcolor.product.enumtype;
 
 import lombok.Getter;
 
-import static com.pyonsnalcolor.product.enumtype.ProductType.*;
+import static com.pyonsnalcolor.product.enumtype.ProductType.EVENT;
+import static com.pyonsnalcolor.product.enumtype.ProductType.PB;
 import static com.pyonsnalcolor.product.enumtype.StoreType.*;
 
 @Getter

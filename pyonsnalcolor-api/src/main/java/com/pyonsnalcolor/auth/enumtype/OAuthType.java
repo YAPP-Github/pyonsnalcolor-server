@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.member.enumtype;
+package com.pyonsnalcolor.auth.enumtype;
 
 public enum OAuthType {
     APPLE("apple-"), KAKAO("kakao-");

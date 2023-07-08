@@ -1,9 +1,9 @@
-package com.pyonsnalcolor.member;
+package com.pyonsnalcolor.auth;
 
-import com.pyonsnalcolor.push.PushProductStore;
+import com.pyonsnalcolor.auth.enumtype.OAuthType;
+import com.pyonsnalcolor.auth.enumtype.Role;
 import com.pyonsnalcolor.push.PushKeyword;
-import com.pyonsnalcolor.member.enumtype.OAuthType;
-import com.pyonsnalcolor.member.enumtype.Role;
+import com.pyonsnalcolor.push.PushProductStore;
 import com.pyonsnalcolor.push.PushRecord;
 import lombok.*;
 

@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.push;
 
+import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.product.enumtype.ProductStoreType;
-import com.pyonsnalcolor.member.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 

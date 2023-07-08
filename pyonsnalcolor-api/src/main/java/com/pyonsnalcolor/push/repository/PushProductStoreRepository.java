@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.push.repository;
 
-import com.pyonsnalcolor.member.Member;
+import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.product.enumtype.ProductStoreType;
 import com.pyonsnalcolor.push.PushProductStore;
 import org.springframework.data.jpa.repository.JpaRepository;

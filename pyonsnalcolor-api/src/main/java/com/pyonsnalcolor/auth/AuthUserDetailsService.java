@@ -2,8 +2,6 @@ package com.pyonsnalcolor.auth;
 
 import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import com.pyonsnalcolor.exception.model.AuthErrorCode;
-import com.pyonsnalcolor.member.Member;
-import com.pyonsnalcolor.member.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

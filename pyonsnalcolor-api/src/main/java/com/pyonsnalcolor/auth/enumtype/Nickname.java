@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.member.enumtype;
+package com.pyonsnalcolor.auth.enumtype;
 
 import lombok.Getter;
 

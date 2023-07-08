@@ -1,9 +1,9 @@
 package com.pyonsnalcolor.auth.controller;
 
 import com.pyonsnalcolor.auth.dto.LoginResponseDto;
-import com.pyonsnalcolor.member.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.dto.LoginRequestDto;
 import com.pyonsnalcolor.auth.dto.TokenDto;
+import com.pyonsnalcolor.auth.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.oauth.apple.AppleOauthService;
 import com.pyonsnalcolor.auth.oauth.kakao.KakaoOauthService;
 import com.pyonsnalcolor.auth.service.MemberService;

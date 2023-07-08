@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.member;
+package com.pyonsnalcolor.auth;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

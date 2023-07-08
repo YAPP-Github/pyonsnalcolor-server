@@ -1,18 +1,18 @@
 package com.pyonsnalcolor.auth.service;
 
+import com.pyonsnalcolor.auth.Member;
+import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.dto.LoginResponseDto;
+import com.pyonsnalcolor.auth.enumtype.Nickname;
+import com.pyonsnalcolor.auth.enumtype.OAuthType;
+import com.pyonsnalcolor.auth.enumtype.Role;
 import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
-import com.pyonsnalcolor.member.Member;
-import com.pyonsnalcolor.member.enumtype.Nickname;
-import com.pyonsnalcolor.member.enumtype.OAuthType;
-import com.pyonsnalcolor.member.enumtype.Role;
 import com.pyonsnalcolor.auth.RedisUtil;
 import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
 import com.pyonsnalcolor.auth.dto.TokenDto;
 import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.jwt.JwtTokenProvider;
-import com.pyonsnalcolor.member.MemberRepository;
 import com.pyonsnalcolor.push.service.PushProductStoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
