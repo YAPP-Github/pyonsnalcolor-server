@@ -1,13 +1,13 @@
 package com.pyonsnalcolor.auth.service;
 
+import com.pyonsnalcolor.auth.Member;
+import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.dto.LoginResponseDto;
-import com.pyonsnalcolor.member.Member;
-import com.pyonsnalcolor.member.MemberRepository;
-import com.pyonsnalcolor.member.enumtype.OAuthType;
-import com.pyonsnalcolor.member.enumtype.Role;
 import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
 import com.pyonsnalcolor.auth.AuthUserDetails;
+import com.pyonsnalcolor.auth.enumtype.OAuthType;
+import com.pyonsnalcolor.auth.enumtype.Role;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

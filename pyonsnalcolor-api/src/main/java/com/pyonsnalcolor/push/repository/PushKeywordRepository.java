@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.push.repository;
 
-import com.pyonsnalcolor.member.Member;
+
+import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.push.PushKeyword;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

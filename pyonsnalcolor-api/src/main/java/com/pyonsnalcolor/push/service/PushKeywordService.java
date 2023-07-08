@@ -1,8 +1,8 @@
 package com.pyonsnalcolor.push.service;
 
 import com.pyonsnalcolor.auth.AuthUserDetails;
+import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.exception.PyonsnalcolorPushException;
-import com.pyonsnalcolor.member.Member;
 import com.pyonsnalcolor.push.PushKeyword;
 import com.pyonsnalcolor.push.dto.PushKeywordRequestDto;
 import com.pyonsnalcolor.push.dto.PushKeywordResponseDto;

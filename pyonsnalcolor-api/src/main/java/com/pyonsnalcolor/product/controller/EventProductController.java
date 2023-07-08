@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,5 +35,11 @@ public class EventProductController {
                                                            defaultValue = "updatedTime"
                                                    ) String sorted) {
         return eventProductService.getProductsWithPaging(pageNumber, pageSize, storeType, sorted);
+    }
+
+    @Operation(summary = "이벤트 상품 단건 조회", description = "id 바탕으로 이벤트 상품을 조회합니다.")
+    @GetMapping("/products/event-products/{id}")
+    public Page<BaseEventProduct> getEventProducts(@PathVariable String id) {
+        eventProductService.getProduct(id);
     }
 }

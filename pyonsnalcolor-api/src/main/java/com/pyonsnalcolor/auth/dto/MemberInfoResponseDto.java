@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.auth.dto;
 
-import com.pyonsnalcolor.member.Member;
+import com.pyonsnalcolor.auth.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
