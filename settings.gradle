@@ -1,4 +1,3 @@
 rootProject.name = 'pyonsnalcolor'
 
-include(':pyonsnalcolor-domain')
 include(':pyonsnalcolor-api')
