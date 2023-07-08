@@ -6,23 +6,32 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.pyonsnalcolor.product.enumtype.StoreType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+@Schema(description = "상품 조회 Response DTO")
 @SuperBuilder
 @ToString
 @Getter
 @NoArgsConstructor
 public class ProductResponseDto {
+    @NotBlank
     private String id;
+    @NotBlank
     private StoreType storeType;
+    @NotBlank
     private String image;
+    @NotBlank
     private String name;
+    @NotBlank
     private String price;
+    @NotBlank
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

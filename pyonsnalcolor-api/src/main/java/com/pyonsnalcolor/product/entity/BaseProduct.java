@@ -1,5 +1,6 @@
 package com.pyonsnalcolor.product.entity;
 
+import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,16 @@ public class BaseProduct {
     private String price;
     private LocalDateTime updatedTime;
     private String description;
+
+    public ProductResponseDto convertToDto() {
+        return ProductResponseDto.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .image(image)
+                .storeType(storeType)
+                .price(price)
+                .updatedTime(updatedTime)
+                .build();
+    }
 }

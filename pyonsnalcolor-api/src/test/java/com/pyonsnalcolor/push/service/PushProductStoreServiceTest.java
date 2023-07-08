@@ -1,10 +1,11 @@
 package com.pyonsnalcolor.push.service;
 
 import com.pyonsnalcolor.auth.AuthUserDetails;
-import com.pyonsnalcolor.member.Member;
-import com.pyonsnalcolor.member.MemberRepository;
-import com.pyonsnalcolor.member.enumtype.OAuthType;
-import com.pyonsnalcolor.member.enumtype.Role;
+
+import com.pyonsnalcolor.auth.Member;
+import com.pyonsnalcolor.auth.MemberRepository;
+import com.pyonsnalcolor.auth.enumtype.OAuthType;
+import com.pyonsnalcolor.auth.enumtype.Role;
 import com.pyonsnalcolor.push.dto.PushProductStoreRequestDto;
 import com.pyonsnalcolor.push.dto.PushProductStoreResponseDto;
 import org.junit.jupiter.api.DisplayName;

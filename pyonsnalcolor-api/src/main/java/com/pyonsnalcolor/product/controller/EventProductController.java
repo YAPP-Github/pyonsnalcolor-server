@@ -1,5 +1,7 @@
 package com.pyonsnalcolor.product.controller;
 
+import com.pyonsnalcolor.product.dto.EventProductResponseDto;
+import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.service.EventProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,13 +26,13 @@ public class EventProductController {
     @Parameter(name = "storeType", description = "편의점 종류(seven_eleven, cu, gs25, emart24, all)")
     @Parameter(name = "sorted", description = "정렬순서")
     @GetMapping("/products/event-products")
-    public Page<BaseEventProduct> getEventProducts(@RequestParam("pageNumber") int pageNumber,
-                                                   @RequestParam("pageSize") int pageSize,
-                                                   @RequestParam(
+    public Page<ProductResponseDto> getEventProducts(@RequestParam("pageNumber") int pageNumber,
+                                                     @RequestParam("pageSize") int pageSize,
+                                                     @RequestParam(
                                                            value = "storeType",
                                                            defaultValue = "all"
                                                    ) String storeType,
-                                                   @RequestParam(
+                                                     @RequestParam(
                                                            value = "sorted",
                                                            defaultValue = "updatedTime"
                                                    ) String sorted) {
@@ -39,7 +41,7 @@ public class EventProductController {
 
     @Operation(summary = "이벤트 상품 단건 조회", description = "id 바탕으로 이벤트 상품을 조회합니다.")
     @GetMapping("/products/event-products/{id}")
-    public Page<BaseEventProduct> getEventProducts(@PathVariable String id) {
-        eventProductService.getProduct(id);
+    public ProductResponseDto getEventProducts(@PathVariable String id) throws Throwable {
+        return eventProductService.getProduct(id);
     }
 }

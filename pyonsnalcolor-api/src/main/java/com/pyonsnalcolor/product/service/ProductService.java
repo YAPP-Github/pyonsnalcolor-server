@@ -6,10 +6,13 @@ import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class ProductService<T extends BaseProduct> {
@@ -26,33 +29,23 @@ public class ProductService<T extends BaseProduct> {
                         Enum.valueOf(StoreType.class, storeType.toUpperCase()),
                         PageRequest.of(pageNumber, pageSize, Sort.by(sorted))
                 );
+                break;
             default:
                 products = basicProductRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("updatedTime")));
+                break;
         }
-        products.getContent()
-                .stream()
-                .map( p ->
-                        p.toDto()
-                )
 
-        List<Dto> dtoList = entityPage.getContent()
-                .stream()
-                .map(mapper::mapEntityToDto)
-                .collect(Collectors.toList());
+        List<ProductResponseDto> productResponseDtos = products.getContent().stream()
+                .map(
+                        p -> p.convertToDto()
+                ).collect(Collectors.toList());
 
-        return new PageImpl<>(dtoList, entityPage.getPageable(), entityPage.getTotalElements());
-
-    }
-
-    public ProductResponseDto convert(BaseProduct baseProduct) {
-        if(baseProduct instanceof ) {
-
-        } else if() {
-
-        }
+        return new PageImpl<>(productResponseDtos, products.getPageable(), products.getTotalElements());
     }
 
     public ProductResponseDto getProduct(String id) throws Throwable {
         T product = (T) basicProductRepository.findById(id).orElseThrow(NoSuchElementException::new);
+
+        return product.convertToDto();
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.NoSuchElementException;
+
 import static com.pyonsnalcolor.exception.model.CommonErrorCode.INVALID_PARAMETER;
 
 @Slf4j
@@ -39,6 +41,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = e.getErrorCode();
         return createResponseEntity(errorCode);
     }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<Object> handleNoSuchElementException(PyonsnalcolorPushException e) {
+        log.error("GlobalExceptionHandler catch NoSuchElementException: {}", e.getErrorCode().name());
+        ErrorCode errorCode = CommonErrorCode.NOT_FOUND_ERROR;
+
+        return createResponseEntity(errorCode);
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
