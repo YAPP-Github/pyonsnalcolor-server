@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 @Getter
-@NoArgsConstructor
 @Document(collection = "promotion")
 public class Promotion {
     @Id
