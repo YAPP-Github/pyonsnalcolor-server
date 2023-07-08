@@ -41,4 +41,6 @@ public class ProductResponseDto {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedTime;
     private String description;
+    @NotBlank
+    private Boolean isNew = false;
 }
