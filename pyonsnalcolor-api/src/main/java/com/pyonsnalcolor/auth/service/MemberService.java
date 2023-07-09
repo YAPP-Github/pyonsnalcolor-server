@@ -13,6 +13,8 @@ import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
 import com.pyonsnalcolor.auth.dto.TokenDto;
 import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.jwt.JwtTokenProvider;
+import com.pyonsnalcolor.push.repository.PushKeywordRepository;
+import com.pyonsnalcolor.push.repository.PushProductStoreRepository;
 import com.pyonsnalcolor.push.service.PushProductStoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,8 @@ public class MemberService {
     private static final String LOGOUT_BLACKLIST = "logout";
 
     private final MemberRepository memberRepository;
+    private final PushProductStoreRepository pushProductStoreRepository;
+    private final PushKeywordRepository pushKeywordRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
     private final PushProductStoreService pushProductStoreService;
@@ -120,9 +124,23 @@ public class MemberService {
 
     public void withdraw(AuthUserDetails authUserDetails) {
         Member member = authUserDetails.getMember();
+        deletePushKeyword(member);
+        deletePushProductStore(member);
         memberRepository.delete(member);
 
         SecurityContextHolder.clearContext();
+    }
+
+    private void deletePushKeyword(Member member) {
+        pushKeywordRepository.findByMember(member)
+                .stream()
+                .forEach(pushKeywordRepository::delete);
+    }
+
+    private void deletePushProductStore(Member member) {
+        pushProductStoreRepository.findByMember(member)
+                .stream()
+                .forEach(pushProductStoreRepository::delete);
     }
 
     public MemberInfoResponseDto getMemberInfo(AuthUserDetails authUserDetails) {
