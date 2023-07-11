@@ -20,6 +20,8 @@ public class ProductService<T extends BaseProduct> {
 
     public Page<ProductResponseDto> getProductsWithPaging(int pageNumber, int pageSize, String storeType, String sorted) {
         Page<T> products;
+        Sort idSort = Sort.by("id");
+
         switch (storeType.toUpperCase()) {
             case "CU":
             case "GS25":
@@ -27,11 +29,12 @@ public class ProductService<T extends BaseProduct> {
             case "SEVEN_ELEVEN":
                 products = basicProductRepository.findByStoreType(
                         Enum.valueOf(StoreType.class, storeType.toUpperCase()),
-                        PageRequest.of(pageNumber, pageSize, Sort.by(sorted))
+                        PageRequest.of(pageNumber, pageSize, Sort.by(sorted).and(idSort))
                 );
                 break;
             default:
-                products = basicProductRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("updatedTime")));
+                products = basicProductRepository.findAll(
+                        PageRequest.of(pageNumber, pageSize, Sort.by("updatedTime").descending().and(idSort)));
                 break;
         }
 

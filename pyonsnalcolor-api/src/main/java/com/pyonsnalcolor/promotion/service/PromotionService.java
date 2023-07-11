@@ -15,8 +15,9 @@ public class PromotionService {
     @Autowired
     private PromotionRepository promotionRepository;
 
-    public List<PromotionResponseDto> getPromotions(StoreType storeTYpe) {
-        List<Promotion> promotions = promotionRepository.findByStoreType(storeTYpe);
+    public List<PromotionResponseDto> getPromotions(String storeTypeStr) {
+        StoreType storeType = StoreType.valueOf(storeTypeStr.toUpperCase());
+        List<Promotion> promotions = promotionRepository.findByStoreType(storeType);
 
         return promotions.stream()
                 .map(p -> p.convertToDto())
