@@ -28,6 +28,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
     private static final String CU_CATEGORY_CU_ONLY = "CUG";
     private static final String DOC_SELECT_TAG = "a.prod_item";
     private static final int TIMEOUT = 5000;
+    private static final String SCHEMA = "https:";
 
     public CuPbBatchService(PbProductRepository pbProductRepository) {
         super(pbProductRepository);
@@ -75,6 +76,9 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
     private BasePbProduct convertToBasePbProduct(Element element) {
         String name = element.select("div.name").first().text();
         String image = element.select("img.prod_img").first().attr("src");
+        if (!image.contains("http")) {
+            image = SCHEMA + image;
+        }
         String price = element.select("div.price > strong").first().text();
         String description = null;
         try {

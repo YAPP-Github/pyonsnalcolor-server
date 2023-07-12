@@ -12,7 +12,7 @@ import java.net.SocketTimeoutException;
 public interface CuDescriptionBatch {
 
     String CU_DESCRIPTION_PAGE_URL = "https://cu.bgfretail.com/product/view.do";
-    int TIMEOUT = 5000;
+    int TIMEOUT = 15000;
 
     default String getDescription(Element element, String productType) throws Exception {
         String productCode = getProductCode(element);
