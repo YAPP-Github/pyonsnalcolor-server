@@ -25,9 +25,10 @@ import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 @Slf4j
 public class CuEventBatchService extends EventBatchService implements CuDescriptionBatch {
 
-    private static final String CU_EVENT_URL = "https://cu.bgfretail.com/event/plusAjax.do?!!!";
+    private static final String CU_EVENT_URL = "https://cu.bgfretail.com/event/plusAjax.do?";
     private static final String DOC_SELECT_TAG = "a.prod_item";
     private static final int TIMEOUT = 15000;
+    private static final String SCHEMA = "https:";
 
     public CuEventBatchService(EventProductRepository eventProductRepository) {
         super(eventProductRepository);
@@ -68,11 +69,15 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
 
     private BaseEventProduct convertToBaseEventProduct(Element element) {
         String name = element.select("div.name").first().text();
-        String image = element.select("img.prod_img").first().attr("src");
+        String image =element.select("img.prod_img").first().attr("src");
+        if (!image.contains("http")) {
+            image = SCHEMA + image;
+        }
+
         String price = element.select("div.price > strong").first().text();
         String eventTypeTag = element.select("div.badge").first().text();
-        EventType eventType = EventType.getEventTypeWithValue(eventTypeTag);
-        
+        EventType eventType = getCuEventType(eventTypeTag);
+
         String description = null;
         try {
             description = getDescription(element, "event");
