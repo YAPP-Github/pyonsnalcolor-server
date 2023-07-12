@@ -43,11 +43,4 @@ public enum Category {
                 .findFirst()
                 .orElse(null);
     }
-//
-//    public static Category getCategory(String categoryStr) {
-//        return Arrays.stream(Category.values())
-//                .filter(c -> c.korean.equals(categoryStr))
-//                .findFirst()
-//                .orElse(null);
-//    }
 }
