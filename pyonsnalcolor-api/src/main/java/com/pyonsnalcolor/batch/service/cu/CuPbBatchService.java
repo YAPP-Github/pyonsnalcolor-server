@@ -2,7 +2,9 @@ package com.pyonsnalcolor.batch.service.cu;
 
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
+import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.StoreType;
+import com.pyonsnalcolor.product.enumtype.Tag;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -86,6 +88,8 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
         } catch (Exception e) {
             log.error("CU PB 상품의 상세 정보를 조회할 수 없습니다.", e);
         }
+        Category category = Category.matchCategoryByProductName(name);
+        Tag tag = Tag.findTag(name);
 
         return BasePbProduct.builder()
                 .id((generateId()))
@@ -95,6 +99,8 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
                 .description(description)
                 .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
+                .category(category)
+                .tag(tag)
                 .build();
     }
 

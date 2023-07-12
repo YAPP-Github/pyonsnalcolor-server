@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GS25EventBatchServiceTest {
+class GS25PbBatchServiceTest {
     @Autowired
-    @Qualifier("GS25Event")
+    @Qualifier("GS25Pb")
     private BatchService batchService;
 
     @Test

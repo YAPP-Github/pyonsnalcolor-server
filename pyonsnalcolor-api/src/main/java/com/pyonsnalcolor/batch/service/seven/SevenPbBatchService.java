@@ -2,7 +2,9 @@ package com.pyonsnalcolor.batch.service.seven;
 
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
+import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.StoreType;
+import com.pyonsnalcolor.product.enumtype.Tag;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -70,6 +72,8 @@ public class SevenPbBatchService extends PbBatchService {
         String name = element.select("div.name").first().text();
         String image = IMG_PREFIX + element.select("img").first().attr("src");
         String price = element.select("div.price").text();
+        Category category = Category.matchCategoryByProductName(name);
+        Tag tag = Tag.findTag(name);
 
         return BasePbProduct.builder()
                 .id(generateId())
@@ -78,6 +82,8 @@ public class SevenPbBatchService extends PbBatchService {
                 .price(price)
                 .updatedTime(LocalDateTime.now())
                 .storeType(StoreType.SEVEN_ELEVEN)
+                .category(category)
+                .tag(tag)
                 .build();
     }
 
