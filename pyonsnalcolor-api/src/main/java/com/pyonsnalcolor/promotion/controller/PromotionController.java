@@ -1,6 +1,5 @@
 package com.pyonsnalcolor.promotion.controller;
 
-import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.promotion.dto.PromotionResponseDto;
 import com.pyonsnalcolor.promotion.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ public class PromotionController {
     private PromotionService promotionService;
 
     @GetMapping("/promotions")
-    public List<PromotionResponseDto> getPromotions(@RequestParam("storeType") StoreType storeType) {
+    public List<PromotionResponseDto> getPromotions(@RequestParam("storeType") String storeType) {
         return promotionService.getPromotions(storeType);
     }
 }
