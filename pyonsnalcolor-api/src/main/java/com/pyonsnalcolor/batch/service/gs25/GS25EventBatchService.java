@@ -6,8 +6,10 @@ import com.pyonsnalcolor.batch.client.GS25Client;
 import com.pyonsnalcolor.batch.client.GS25EventRequestBody;
 import com.pyonsnalcolor.batch.service.EventBatchService;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
+import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.EventType;
 import com.pyonsnalcolor.product.enumtype.StoreType;
+import com.pyonsnalcolor.product.enumtype.Tag;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
@@ -101,6 +103,8 @@ public class GS25EventBatchService extends EventBatchService {
         String price = Double.toString((Double) productMap.get("price"));
         String eventType = (String) ((Map) productMap.get("eventTypeSp")).get("code");
         String giftImage = (String) productMap.get("giftAttFileNm");
+        Category category = Category.matchCategoryByProductName(name);
+        Tag tag = Tag.findTag(name);
 
         BaseEventProduct baseEventProduct = BaseEventProduct.builder()
                 .originPrice(NOT_EXIST)
@@ -112,6 +116,8 @@ public class GS25EventBatchService extends EventBatchService {
                 .image(image)
                 .price(price)
                 .name(name)
+                .category(category)
+                .tag(tag)
                 .build();
 
         return baseEventProduct;

@@ -2,8 +2,10 @@ package com.pyonsnalcolor.batch.service.cu;
 
 import com.pyonsnalcolor.batch.service.EventBatchService;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
+import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.EventType;
 import com.pyonsnalcolor.product.enumtype.StoreType;
+import com.pyonsnalcolor.product.enumtype.Tag;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -16,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
@@ -73,7 +74,6 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
         if (!image.contains("http")) {
             image = SCHEMA + image;
         }
-
         String price = element.select("div.price > strong").first().text();
         String eventTypeTag = element.select("div.badge").first().text();
         EventType eventType = getCuEventType(eventTypeTag);
@@ -84,6 +84,8 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
         } catch (Exception e) {
             log.error("CU 이벤트 상품의 상세 정보를 조회할 수 없습니다.", e);
         }
+        Category category = Category.matchCategoryByProductName(name);
+        Tag tag = Tag.findTag(name);
 
         return BaseEventProduct.builder()
                 .id((generateId()))
@@ -94,6 +96,8 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
                 .eventType(eventType)
                 .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
+                .category(category)
+                .tag(tag)
                 .build();
     }
 

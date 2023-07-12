@@ -2,8 +2,10 @@ package com.pyonsnalcolor.batch.service.emart24;
 
 import com.pyonsnalcolor.batch.service.EventBatchService;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
+import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.EventType;
 import com.pyonsnalcolor.product.enumtype.StoreType;
+import com.pyonsnalcolor.product.enumtype.Tag;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -66,7 +68,7 @@ public class Emart24EventBatchService extends EventBatchService {
             String originPrice = parseOriginPrice(productElement);
             String image = productElement.getElementsByTag("img").attr("src");
 
-            results.add(convertToBasePbProduct(image, name, price, originPrice, giftImage, eventType));
+            results.add(convertToBaseEventProduct(image, name, price, originPrice, giftImage, eventType));
         }
         return results;
     }
@@ -132,7 +134,10 @@ public class Emart24EventBatchService extends EventBatchService {
         }
     }
 
-    private BaseEventProduct convertToBasePbProduct(String image, String name, String price, String originPrice, String giftImage, EventType eventType) {
+    private BaseEventProduct convertToBaseEventProduct(String image, String name, String price, String originPrice, String giftImage, EventType eventType) {
+        Category category = Category.matchCategoryByProductName(name);
+        Tag tag = Tag.findTag(name);
+
         BaseEventProduct baseEventProduct = BaseEventProduct.builder()
                 .originPrice(originPrice) //변경
                 .storeType(StoreType.EMART24)
@@ -143,6 +148,8 @@ public class Emart24EventBatchService extends EventBatchService {
                 .image(image)
                 .price(price)
                 .name(name)
+                .category(category)
+                .tag(tag)
                 .build();
 
         return baseEventProduct;
