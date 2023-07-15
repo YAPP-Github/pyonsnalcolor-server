@@ -64,20 +64,13 @@ public class Emart24EventBatchService extends EventBatchService {
             String giftImage = parseGiftImage(productElement);
             EventType eventType = parseEventType(productElement);
             String name = parseName(productElement);
-            String price = convertToNum(productElement.getElementsByClass("price").get(0).text());
+            String price = productElement.getElementsByClass("price").get(0).text().split(" ")[0];
             String originPrice = parseOriginPrice(productElement);
             String image = productElement.getElementsByTag("img").attr("src");
 
             results.add(convertToBaseEventProduct(image, name, price, originPrice, giftImage, eventType));
         }
         return results;
-    }
-
-    private String convertToNum(String price) {
-        String priceInfo = price.split(" ")[0];
-        String result = priceInfo.replace(",", "");
-
-        return result;
     }
 
     private String parseGiftImage(Element productElement) {
@@ -97,7 +90,8 @@ public class Emart24EventBatchService extends EventBatchService {
             originPrice = originPriceElement.get(0).text();
         }
 
-        return originPrice;
+        String parsedOriginPrice = originPrice.split(" ")[0];
+        return parsedOriginPrice;
     }
 
     private String parseName(Element productElement) {

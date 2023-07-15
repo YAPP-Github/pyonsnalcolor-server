@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,14 +92,17 @@ public class GS25PbBatchService extends PbBatchService {
         Map<String, Object> productMap = objectMapper.convertValue(product, Map.class);
         String image = (String) productMap.get("attFileNm");
         String name = (String) productMap.get("goodsNm");
-        String price = Double.toString((Double) productMap.get("price"));
+        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0];;
+        int priceInt = Integer.parseInt(price);
+        String formattedPrice = NumberFormat.getInstance().format(priceInt);
+
         Category category = Category.matchCategoryByProductName(name);
         Tag tag = Tag.findTag(name);
 
         BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
-                .price(price)
+                .price(formattedPrice)
                 .storeType(StoreType.GS25)
                 .updatedTime(LocalDateTime.now())
                 .image(image)
