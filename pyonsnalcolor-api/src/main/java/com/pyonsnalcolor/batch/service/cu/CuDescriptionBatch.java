@@ -18,7 +18,7 @@ public interface CuDescriptionBatch {
     String CU_DESCRIPTION_PAGE_URL = "https://cu.bgfretail.com/product/view.do";
     int TIMEOUT = 15000;
 
-    default String getDescription(Element element, String productType) throws Exception {
+    default String getDescription(Element element, String productType) {
         String productCode = getProductCode(element);
 
         try {

@@ -10,6 +10,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,8 @@ import java.util.List;
 @Component
 public class BatchExceptionAspect {
 
-    private static final String SLACK_URL = "https://hooks.slack.com/services/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";
+    @Value("${slack.url}")
+    private String SLACK_URL;
 
     @Pointcut("execution(* com.pyonsnalcolor.batch.service..*(..))")
     private void allBatchService() {}
@@ -48,7 +50,7 @@ public class BatchExceptionAspect {
     private SlackMessage createErrorSlackMessage(JoinPoint joinPoint, PyonsnalcolorBatchException exception) {
         SlackMessage slackMessage = new SlackMessage();
         slackMessage.setText("Batch Error Occur");
-        slackMessage.setIcon(":ghost:");
+        slackMessage.setIcon(":beverage_box:");
         slackMessage.setUsername("pyonsnalcolor");
 
         SlackAttachment slackAttachment = new SlackAttachment();

@@ -91,12 +91,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
             image = SCHEMA + image;
         }
         String price = element.select("div.price > strong").first().text();
-        String description = null;
-        try {
-            description = getDescription(element, "product");
-        } catch (Exception e) {
-            log.error("CU PB 상품의 상세 정보를 조회할 수 없습니다.", e);
-        }
+        String description = getDescription(element, "product");
         Category category = Category.matchCategoryByProductName(name);
         Tag tag = Tag.findTag(name);
 

@@ -87,18 +87,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
         String eventTypeTag = element.select("div.badge").first().text();
         EventType eventType = getCuEventType(eventTypeTag);
 
-        String description = null;
-        try {
-            description = getDescription(element, "event");
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BATCH_UNAVAILABLE, e);
-        }
+        String description = getDescription(element, "event");
         Category category = Category.matchCategoryByProductName(name);
         Tag tag = Tag.findTag(name);
 
