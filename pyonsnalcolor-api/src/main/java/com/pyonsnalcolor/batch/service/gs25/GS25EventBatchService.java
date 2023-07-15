@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +101,9 @@ public class GS25EventBatchService extends EventBatchService {
         Map<String, Object> productMap = objectMapper.convertValue(product, Map.class);
         String image = (String) productMap.get("attFileNm");
         String name = (String) productMap.get("goodsNm");
-        String price = Double.toString((Double) productMap.get("price"));
+        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0];
+        int priceInt = Integer.parseInt(price);
+        String formattedPrice = NumberFormat.getInstance().format(priceInt);
         String eventType = (String) ((Map) productMap.get("eventTypeSp")).get("code");
         String giftImage = (String) productMap.get("giftAttFileNm");
         Category category = Category.matchCategoryByProductName(name);
@@ -114,7 +117,7 @@ public class GS25EventBatchService extends EventBatchService {
                 .id(generateId())
                 .giftImage(giftImage)
                 .image(image)
-                .price(price)
+                .price(formattedPrice)
                 .name(name)
                 .category(category)
                 .tag(tag)
