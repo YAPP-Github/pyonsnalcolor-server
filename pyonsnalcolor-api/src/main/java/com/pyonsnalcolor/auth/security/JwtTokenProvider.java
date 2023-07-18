@@ -1,4 +1,4 @@
-package com.pyonsnalcolor.auth.jwt;
+package com.pyonsnalcolor.auth.security;
 
 import com.pyonsnalcolor.auth.dto.TokenDto;
 import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;

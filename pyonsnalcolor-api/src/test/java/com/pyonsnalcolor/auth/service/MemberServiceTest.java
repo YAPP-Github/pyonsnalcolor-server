@@ -6,15 +6,11 @@ import com.pyonsnalcolor.auth.dto.LoginRequestDto;
 import com.pyonsnalcolor.auth.dto.LoginResponseDto;
 import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
-import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.enumtype.Role;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +30,6 @@ class MemberServiceTest {
     private OAuthType oAuthType;
     private String oAuthId;
     private Member member;
-    private AuthUserDetails authUserDetails;
 
     @BeforeEach
     void setUp() {
@@ -101,11 +96,11 @@ class MemberServiceTest {
     @DisplayName("사용자 정보 조회하기")
     void getMemberInfo() {
         // given
-        memberRepository.save(member);
-        setAuthentication();
+        Member savedMember = memberRepository.save(member);
+        Long memberId = savedMember.getId();
 
         // when
-        MemberInfoResponseDto memberInfoResponseDto = memberService.getMemberInfo(authUserDetails);
+        MemberInfoResponseDto memberInfoResponseDto = memberService.getMemberInfo(memberId);
 
         // then
         Assertions.assertAll(
@@ -120,26 +115,15 @@ class MemberServiceTest {
     @DisplayName("닉네임 변경하기")
     void updateNickname() throws Exception {
         // given
-        memberRepository.save(member);
-        setAuthentication();
+        Member savedMember = memberRepository.save(member);
+        Long memberId = savedMember.getId();
         String updatedNickname = "새로운 닉네임";
-        memberService.updateNickname(authUserDetails, new NicknameRequestDto(updatedNickname));
+        memberService.updateNickname(memberId, new NicknameRequestDto(updatedNickname));
 
         // when
-        Member findMember = memberRepository.findByoAuthId(oAuthId)
-                .orElseThrow(Exception::new);
+        Member findMember = memberRepository.getReferenceById(memberId);
 
         // then
         assertEquals(findMember.getNickname(), updatedNickname);
-    }
-
-    // CustomUserDetails로 Member 객체를 매핑하기 때문에 필요
-    private void setAuthentication(){
-        SecurityContext context = SecurityContextHolder.getContext();
-        authUserDetails = new AuthUserDetails(member);
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(
-                authUserDetails,
-                "",
-                authUserDetails.getAuthorities()));
     }
 }

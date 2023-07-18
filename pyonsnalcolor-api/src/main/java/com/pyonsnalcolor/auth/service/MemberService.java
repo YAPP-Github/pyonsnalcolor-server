@@ -10,8 +10,7 @@ import com.pyonsnalcolor.auth.oauth.OAuthClient;
 import com.pyonsnalcolor.auth.oauth.OAuthLoginService;
 import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import com.pyonsnalcolor.auth.RedisUtil;
-import com.pyonsnalcolor.auth.AuthUserDetails;
-import com.pyonsnalcolor.auth.jwt.JwtTokenProvider;
+import com.pyonsnalcolor.auth.security.JwtTokenProvider;
 import com.pyonsnalcolor.product.enumtype.ProductStoreType;
 import com.pyonsnalcolor.push.PushProductStore;
 import com.pyonsnalcolor.push.repository.PushKeywordRepository;
@@ -141,8 +140,8 @@ public class MemberService {
         }
     }
 
-    public void withdraw(AuthUserDetails authUserDetails) {
-        Member member = authUserDetails.getMember();
+    public void withdraw(Long memberId) {
+        Member member = memberRepository.getReferenceById(memberId);
         deletePushKeyword(member);
         deletePushProductStore(member);
         memberRepository.delete(member);
@@ -160,16 +159,16 @@ public class MemberService {
                 .forEach(pushProductStoreRepository::delete);
     }
 
-    public MemberInfoResponseDto getMemberInfo(AuthUserDetails authUserDetails) {
-        Member member = authUserDetails.getMember();
+    public MemberInfoResponseDto getMemberInfo(Long memberId) {
+        Member member = memberRepository.getReferenceById(memberId);
         return new MemberInfoResponseDto(member);
     }
 
     public void updateNickname(
-            AuthUserDetails authUserDetails,
+            Long memberId,
             NicknameRequestDto nicknameRequestDto
     ) {
-        Member member = authUserDetails.getMember();
+        Member member = memberRepository.getReferenceById(memberId);
         String updatedNickname = nicknameRequestDto.getNickname();
 
         member.updateNickname(updatedNickname);

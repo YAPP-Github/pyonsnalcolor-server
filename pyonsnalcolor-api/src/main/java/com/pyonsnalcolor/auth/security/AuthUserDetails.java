@@ -1,6 +1,7 @@
-package com.pyonsnalcolor.auth;
+package com.pyonsnalcolor.auth.security;
 
 
+import com.pyonsnalcolor.auth.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

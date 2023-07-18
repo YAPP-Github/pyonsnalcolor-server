@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.push.service;
 
-import com.pyonsnalcolor.auth.AuthUserDetails;
+import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.exception.PyonsnalcolorPushException;
 import com.pyonsnalcolor.push.PushKeyword;
@@ -19,11 +19,13 @@ import static com.pyonsnalcolor.exception.model.PushErrorCode.*;
 @RequiredArgsConstructor
 public class PushKeywordService {
 
-    private final PushKeywordRepository pushKeywordRepository;
     private static final int PUSH_KEYWORD_NUMBER = 3;
 
-    public PushKeyword createPushKeyword(AuthUserDetails authUserDetails, PushKeywordRequestDto pushKeywordRequestDto) {
-        Member member = authUserDetails.getMember();
+    private final MemberRepository memberRepository;
+    private final PushKeywordRepository pushKeywordRepository;
+
+    public PushKeyword createPushKeyword(Long memberId, PushKeywordRequestDto pushKeywordRequestDto) {
+        Member member = memberRepository.getReferenceById(memberId);
         String pushKeywordName = pushKeywordRequestDto.getName();
 
         validatePushKeywordExist(member, pushKeywordName);
@@ -50,15 +52,15 @@ public class PushKeywordService {
         }
     }
 
-    public void deletePushKeyword(AuthUserDetails authUserDetails, Long keywordId) {
-        Member member = authUserDetails.getMember();
+    public void deletePushKeyword(Long memberId, Long keywordId) {
+        Member member = memberRepository.getReferenceById(memberId);
         PushKeyword pushKeyword = pushKeywordRepository.findByMemberAndId(member, keywordId)
                 .orElseThrow(() -> new PyonsnalcolorPushException(KEYWORD_NOT_EXIST));
         pushKeywordRepository.delete(pushKeyword);
     }
 
-    public List<PushKeywordResponseDto> getPushKeywordResponseDto(AuthUserDetails authUserDetails) {
-        Member member = authUserDetails.getMember();
+    public List<PushKeywordResponseDto> getPushKeywordResponseDto(Long memberId) {
+        Member member = memberRepository.getReferenceById(memberId);
         List<PushKeyword> pushKeywords = pushKeywordRepository.findByMember(member);
 
         return  pushKeywords.stream()

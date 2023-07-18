@@ -1,5 +1,7 @@
-package com.pyonsnalcolor.auth;
+package com.pyonsnalcolor.auth.security;
 
+import com.pyonsnalcolor.auth.Member;
+import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import com.pyonsnalcolor.exception.model.AuthErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
 package com.pyonsnalcolor.auth.controller;
 
+import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.dto.*;
 import com.pyonsnalcolor.auth.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @Operation(summary = "OAuth 인증", description = "Token으로 이메일 정보를 얻어 회원가입/재로그인합니다.")
     @Parameter(name = "loginRequestDto", description = "OAuth Token과 OAuth 타입(Apple, Kakao)")
