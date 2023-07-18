@@ -21,18 +21,6 @@ public class PushProductStoreService {
 
     private final PushProductStoreRepository pushProductStoreRepository;
 
-    public void createPushProductStores (Member member) {
-        List<PushProductStore> pushProductStores = Arrays.stream(ProductStoreType.values())
-                .map( i -> PushProductStore.builder()
-                        .productStoreType(i)
-                        .member(member)
-                        .isSubscribed(true)
-                        .updatedTime(LocalDateTime.now())
-                        .build())
-                .collect(Collectors.toList());
-        pushProductStoreRepository.saveAll(pushProductStores);
-    }
-
     public List<PushProductStoreResponseDto> getPushProductStores (AuthUserDetails authUserDetails) {
         Member member = authUserDetails.getMember();
         List<PushProductStore> pushProductStores = pushProductStoreRepository.findByMember(member);

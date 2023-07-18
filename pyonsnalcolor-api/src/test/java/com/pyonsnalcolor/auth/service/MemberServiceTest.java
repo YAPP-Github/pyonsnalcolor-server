@@ -2,6 +2,7 @@ package com.pyonsnalcolor.auth.service;
 
 import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.auth.MemberRepository;
+import com.pyonsnalcolor.auth.dto.LoginRequestDto;
 import com.pyonsnalcolor.auth.dto.LoginResponseDto;
 import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
 import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
@@ -54,7 +55,10 @@ class MemberServiceTest {
     @DisplayName("첫 OAuth 로그인일 경우, 회원가입")
     void oAuthLogin_join() {
         // given
-        memberService.oAuthLogin(oAuthType, email);
+        LoginRequestDto loginRequestDto = LoginRequestDto.builder()
+                .token("token")
+                .oauthType("apple").build();
+        memberService.oAuthLogin(loginRequestDto);
 
         // when
         Member member = memberRepository.findByoAuthId(oAuthId)
@@ -74,7 +78,10 @@ class MemberServiceTest {
     void oAuthLogin_reLogin() {
         // given
         memberRepository.save(member); // 회원 가입 미리 되어있는 경우
-        LoginResponseDto loginResponseDto = memberService.oAuthLogin(oAuthType, email);
+        LoginRequestDto loginRequestDto = LoginRequestDto.builder()
+                .token("token")
+                .oauthType("apple").build();
+        LoginResponseDto loginResponseDto = memberService.oAuthLogin(loginRequestDto);
 
         // when
         String refreshToken = loginResponseDto.getRefreshToken();

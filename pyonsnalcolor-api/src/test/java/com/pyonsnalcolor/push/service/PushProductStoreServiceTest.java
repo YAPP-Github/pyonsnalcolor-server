@@ -6,6 +6,7 @@ import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.enumtype.Role;
+import com.pyonsnalcolor.auth.service.MemberService;
 import com.pyonsnalcolor.push.dto.PushProductStoreRequestDto;
 import com.pyonsnalcolor.push.dto.PushProductStoreResponseDto;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,10 @@ class PushProductStoreServiceTest {
     @Autowired
     private PushProductStoreService pushProductStoreService;
 
+
+    @Autowired
+    private MemberService memberService;
+
     @Autowired
     private MemberRepository memberRepository;
 
@@ -42,7 +47,7 @@ class PushProductStoreServiceTest {
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
         memberRepository.save(member);
-        pushProductStoreService.createPushProductStores(member);
+        memberService.createPushProductStores(member);
         AuthUserDetails authUserDetails = getAuthentication(member);
 
         List<PushProductStoreResponseDto> result = pushProductStoreService.getPushProductStores(authUserDetails);
@@ -66,7 +71,7 @@ class PushProductStoreServiceTest {
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
         memberRepository.save(member);
-        pushProductStoreService.createPushProductStores(member);
+        memberService.createPushProductStores(member);
         AuthUserDetails authUserDetails = getAuthentication(member);
 
         PushProductStoreRequestDto requestDto = PushProductStoreRequestDto.builder()
