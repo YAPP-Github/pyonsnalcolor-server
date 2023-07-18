@@ -1,6 +1,5 @@
 package com.pyonsnalcolor.push.service;
 
-import com.pyonsnalcolor.auth.AuthUserDetails;
 import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.enumtype.OAuthType;
@@ -13,9 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolationException;
@@ -48,14 +44,13 @@ class PushKeywordServiceTest {
                 .oAuthId("apple-sample@gmail.com")
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
-        memberRepository.save(member);
-        AuthUserDetails authUserDetails = getAuthentication(member);
-        pushKeywordService.createPushKeyword(authUserDetails, new PushKeywordRequestDto("포켓몬"));
-        pushKeywordService.createPushKeyword(authUserDetails, new PushKeywordRequestDto("짱구"));
-        pushKeywordService.createPushKeyword(authUserDetails, new PushKeywordRequestDto("제로"));
+        Member savedMember = memberRepository.save(member);
+
+        pushKeywordService.createPushKeyword(savedMember.getId(), new PushKeywordRequestDto("포켓몬"));
+        pushKeywordService.createPushKeyword(savedMember.getId(), new PushKeywordRequestDto("짱구"));
+        pushKeywordService.createPushKeyword(savedMember.getId(), new PushKeywordRequestDto("제로"));
 
         List<PushKeyword> result = pushKeywordRepository.findByMember(member);
-
         assertAll(
                 () -> assertThat(result.size()).isEqualTo(3),
                 () -> assertThat(result.contains("포켓몬")),
@@ -72,12 +67,11 @@ class PushKeywordServiceTest {
                 .oAuthId("apple-sample@gmail.com")
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
-        memberRepository.save(member);
-        AuthUserDetails authUserDetails = getAuthentication(member);
+        Member savedMember = memberRepository.save(member);
 
         PushKeywordRequestDto pushKeywordRequestDto = PushKeywordRequestDto.builder().name("!@초코").build();
 
-        assertThatThrownBy(() -> pushKeywordService.createPushKeyword(authUserDetails, pushKeywordRequestDto))
+        assertThatThrownBy(() -> pushKeywordService.createPushKeyword(savedMember.getId(), pushKeywordRequestDto))
                 .isInstanceOf(ConstraintViolationException.class);
     }
 
@@ -90,13 +84,12 @@ class PushKeywordServiceTest {
                 .oAuthId("apple-sample@gmail.com")
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
-        memberRepository.save(member);
-        AuthUserDetails authUserDetails = getAuthentication(member);
+        Member savedMember = memberRepository.save(member);
 
         PushKeywordRequestDto pushKeywordRequestDto = PushKeywordRequestDto.builder().name("초코").build();
-        pushKeywordService.createPushKeyword(authUserDetails, pushKeywordRequestDto);
+        pushKeywordService.createPushKeyword(savedMember.getId(), pushKeywordRequestDto);
 
-        assertThatThrownBy(() -> pushKeywordService.createPushKeyword(authUserDetails, pushKeywordRequestDto))
+        assertThatThrownBy(() -> pushKeywordService.createPushKeyword(savedMember.getId(), pushKeywordRequestDto))
                 .isInstanceOf(PyonsnalcolorPushException.class);
     }
 
@@ -109,26 +102,14 @@ class PushKeywordServiceTest {
                 .oAuthId("apple-sample@gmail.com")
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
-        memberRepository.save(member);
-        AuthUserDetails authUserDetails = getAuthentication(member);
+        Member savedMember = memberRepository.save(member);
 
-        pushKeywordService.createPushKeyword(authUserDetails, new PushKeywordRequestDto("포켓몬"));
-        pushKeywordService.createPushKeyword(authUserDetails, new PushKeywordRequestDto("짱구"));
-        pushKeywordService.createPushKeyword(authUserDetails, new PushKeywordRequestDto("제로"));
+        pushKeywordService.createPushKeyword(savedMember.getId(), new PushKeywordRequestDto("포켓몬"));
+        pushKeywordService.createPushKeyword(savedMember.getId(), new PushKeywordRequestDto("짱구"));
+        pushKeywordService.createPushKeyword(savedMember.getId(), new PushKeywordRequestDto("제로"));
 
         assertThatThrownBy(() -> pushKeywordService
-                .createPushKeyword(authUserDetails, new PushKeywordRequestDto("슈가")))
+                .createPushKeyword(savedMember.getId(), new PushKeywordRequestDto("슈가")))
                 .isInstanceOf(PyonsnalcolorPushException.class);
-    }
-
-    // CustomUserDetails로 Member 객체를 매핑하기 때문에 필요 - 이후 수정
-    private AuthUserDetails getAuthentication(Member member){
-        SecurityContext context = SecurityContextHolder.getContext();
-        AuthUserDetails authUserDetails = new AuthUserDetails(member);
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(
-                authUserDetails,
-                "",
-                authUserDetails.getAuthorities()));
-        return authUserDetails;
     }
 }

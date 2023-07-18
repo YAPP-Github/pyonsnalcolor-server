@@ -3,8 +3,12 @@ package com.pyonsnalcolor.auth.oauth.apple;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pyonsnalcolor.auth.dto.LoginRequestDto;
+import com.pyonsnalcolor.auth.enumtype.OAuthType;
+import com.pyonsnalcolor.auth.oauth.OAuthClient;
 import com.pyonsnalcolor.auth.oauth.apple.dto.ApplePublicKeyDto;
 import com.pyonsnalcolor.auth.oauth.apple.dto.ApplePublicKeysDto;
+import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
+import com.pyonsnalcolor.exception.model.AuthErrorCode;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +30,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @PropertySource("classpath:application-oauth.yml")
-public class AppleOauthService {
+public class AppleOauthClient implements OAuthClient {
 
     private static final String EMAIL = "email";
     private static final String ALGORITHM = "alg";
@@ -44,12 +48,22 @@ public class AppleOauthService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Override
+    public OAuthType oAuthType() {
+        return OAuthType.APPLE;
+    }
+
+    @Override
     public String getEmail(LoginRequestDto loginRequestDto) {
         String identityToken = loginRequestDto.getToken();
         PublicKey publicKeyForParseIdentityToken = createPublicKeyForParseIdentityToken(identityToken);
 
         Claims claims = parseClaims(identityToken, publicKeyForParseIdentityToken);
-        return claims.get(EMAIL, String.class);
+        String email = claims.get(EMAIL, String.class);
+        if (email == null) {
+            throw new PyonsnalcolorAuthException(AuthErrorCode.EMAIL_UNAUTHORIZED);
+        }
+        return email;
     }
 
     private PublicKey createPublicKeyForParseIdentityToken(String identityToken) {

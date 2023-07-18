@@ -24,7 +24,8 @@ public enum AuthErrorCode implements ErrorCode {
 
     // OAuth
     OAUTH_UNAUTHORIZED(UNAUTHORIZED, "OAuth 인증에 실패했습니다."),
-    EMAIL_UNAUTHORIZED(UNAUTHORIZED, "이메일이 유효하지 않습니다.");
+    EMAIL_UNAUTHORIZED(UNAUTHORIZED, "이메일이 유효하지 않습니다."),
+    OAUTH_UNSUPPORTED(UNAUTHORIZED, "해당 OAuth 타입은 지원하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

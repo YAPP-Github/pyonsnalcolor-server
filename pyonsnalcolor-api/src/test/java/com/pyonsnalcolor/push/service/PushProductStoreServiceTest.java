@@ -1,20 +1,16 @@
 package com.pyonsnalcolor.push.service;
 
-import com.pyonsnalcolor.auth.AuthUserDetails;
-
 import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.enumtype.Role;
+import com.pyonsnalcolor.auth.service.MemberService;
 import com.pyonsnalcolor.push.dto.PushProductStoreRequestDto;
 import com.pyonsnalcolor.push.dto.PushProductStoreResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,6 +25,10 @@ class PushProductStoreServiceTest {
     @Autowired
     private PushProductStoreService pushProductStoreService;
 
+
+    @Autowired
+    private MemberService memberService;
+
     @Autowired
     private MemberRepository memberRepository;
 
@@ -41,11 +41,10 @@ class PushProductStoreServiceTest {
                 .oAuthId("apple-sample@gmail.com")
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
-        memberRepository.save(member);
-        pushProductStoreService.createPushProductStores(member);
-        AuthUserDetails authUserDetails = getAuthentication(member);
+        Member savedMember = memberRepository.save(member);
+        memberService.createPushProductStores(member);
 
-        List<PushProductStoreResponseDto> result = pushProductStoreService.getPushProductStores(authUserDetails);
+        List<PushProductStoreResponseDto> result = pushProductStoreService.getPushProductStores(savedMember.getId());
 
         assertAll(
                 () -> assertThat(result.size()).isEqualTo(8),
@@ -65,32 +64,20 @@ class PushProductStoreServiceTest {
                 .oAuthId("apple-sample@gmail.com")
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
-        memberRepository.save(member);
-        pushProductStoreService.createPushProductStores(member);
-        AuthUserDetails authUserDetails = getAuthentication(member);
+        Member savedMember = memberRepository.save(member);
+        memberService.createPushProductStores(savedMember);
 
         PushProductStoreRequestDto requestDto = PushProductStoreRequestDto.builder()
                 .productStores(List.of("EVENT_CU", "PB_CU"))
                 .build();
 
-        pushProductStoreService.unsubscribePushProductStores(authUserDetails, requestDto);
-        List<PushProductStoreResponseDto> result = pushProductStoreService.getPushProductStores(authUserDetails);
+        pushProductStoreService.unsubscribePushProductStores(savedMember.getId(), requestDto);
+        List<PushProductStoreResponseDto> result = pushProductStoreService.getPushProductStores(savedMember.getId());
 
         assertAll(
                 () -> assertThat(result).filteredOn(PushProductStoreResponseDto::getProductStore, "PB_CU")
                         .filteredOn(PushProductStoreResponseDto::getIsSubscribed, false),
                 () -> assertThat(result).filteredOn(PushProductStoreResponseDto::getProductStore,"EVENT_CU")
                         .filteredOn(PushProductStoreResponseDto::getIsSubscribed, false));
-    }
-
-    // CustomUserDetails로 Member 객체를 매핑하기 때문에 필요 - 이후 수정
-    private AuthUserDetails getAuthentication(Member member){
-        SecurityContext context = SecurityContextHolder.getContext();
-        AuthUserDetails authUserDetails = new AuthUserDetails(member);
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(
-                authUserDetails,
-                "",
-                authUserDetails.getAuthorities()));
-        return authUserDetails;
     }
 }

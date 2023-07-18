@@ -2,26 +2,30 @@ package com.pyonsnalcolor.auth.service;
 
 import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.auth.MemberRepository;
-import com.pyonsnalcolor.auth.dto.LoginResponseDto;
+import com.pyonsnalcolor.auth.dto.*;
 import com.pyonsnalcolor.auth.enumtype.Nickname;
 import com.pyonsnalcolor.auth.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.enumtype.Role;
+import com.pyonsnalcolor.auth.oauth.OAuthClient;
+import com.pyonsnalcolor.auth.oauth.OAuthLoginService;
 import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import com.pyonsnalcolor.auth.RedisUtil;
-import com.pyonsnalcolor.auth.dto.MemberInfoResponseDto;
-import com.pyonsnalcolor.auth.dto.NicknameRequestDto;
-import com.pyonsnalcolor.auth.dto.TokenDto;
-import com.pyonsnalcolor.auth.AuthUserDetails;
-import com.pyonsnalcolor.auth.jwt.JwtTokenProvider;
+import com.pyonsnalcolor.auth.security.JwtTokenProvider;
+import com.pyonsnalcolor.product.enumtype.ProductStoreType;
+import com.pyonsnalcolor.push.PushProductStore;
 import com.pyonsnalcolor.push.repository.PushKeywordRepository;
 import com.pyonsnalcolor.push.repository.PushProductStoreRepository;
-import com.pyonsnalcolor.push.service.PushProductStoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.pyonsnalcolor.exception.model.AuthErrorCode.*;
 
@@ -44,9 +48,12 @@ public class MemberService {
     private final PushKeywordRepository pushKeywordRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
-    private final PushProductStoreService pushProductStoreService;
+    private final OAuthLoginService oAuthLoginService;
 
-    public LoginResponseDto oAuthLogin(OAuthType oAuthType, String email) {
+    public LoginResponseDto oAuthLogin(LoginRequestDto loginRequestDto) {
+        OAuthClient oAuthClient = oAuthLoginService.getOAuthLoginClient(loginRequestDto);
+        String email = oAuthClient.getEmail(loginRequestDto);
+        OAuthType oAuthType = oAuthClient.oAuthType();
         String oauthId = oAuthType.addOAuthTypeHeaderWithEmail(email);
 
         return memberRepository.findByoAuthId(oauthId)
@@ -65,8 +72,8 @@ public class MemberService {
                 .build();
     }
 
-    private LoginResponseDto join(OAuthType OAuthType, String email) {
-        String oauthId = OAuthType.addOAuthTypeHeaderWithEmail(email);
+    public LoginResponseDto join(OAuthType oAuthType, String email) {
+        String oauthId = oAuthType.addOAuthTypeHeaderWithEmail(email);
         TokenDto tokenDto = jwtTokenProvider.createAccessAndRefreshTokenDto(oauthId);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
@@ -76,11 +83,11 @@ public class MemberService {
                 .nickname(Nickname.getRandomNickname())
                 .refreshToken(refreshToken)
                 .oAuthId(oauthId)
-                .OAuthType(OAuthType)
+                .OAuthType(oAuthType)
                 .role(Role.ROLE_USER)
                 .build();
         memberRepository.save(member);
-        pushProductStoreService.createPushProductStores(member);
+        createPushProductStores(member);
 
         return LoginResponseDto.builder()
                 .accessToken(accessToken)
@@ -89,13 +96,24 @@ public class MemberService {
                 .build();
     }
 
+    public void createPushProductStores (Member member) {
+        List<PushProductStore> pushProductStores = Arrays.stream(ProductStoreType.values())
+                .map( i -> PushProductStore.builder()
+                        .productStoreType(i)
+                        .member(member)
+                        .isSubscribed(true)
+                        .updatedTime(LocalDateTime.now())
+                        .build())
+                .collect(Collectors.toList());
+        pushProductStoreRepository.saveAll(pushProductStores);
+    }
+
     private String updateAccessToken(Member member) {
         String oauthId = member.getOAuthId();
         String refreshToken = member.getRefreshToken();
         String newAccessToken = jwtTokenProvider.createBearerTokenWithValidity(oauthId, accessTokenValidity);
 
         validateRefreshToken(oauthId, refreshToken);
-
         return newAccessToken;
     }
 
@@ -122,8 +140,8 @@ public class MemberService {
         }
     }
 
-    public void withdraw(AuthUserDetails authUserDetails) {
-        Member member = authUserDetails.getMember();
+    public void withdraw(Long memberId) {
+        Member member = memberRepository.getReferenceById(memberId);
         deletePushKeyword(member);
         deletePushProductStore(member);
         memberRepository.delete(member);
@@ -133,26 +151,24 @@ public class MemberService {
 
     private void deletePushKeyword(Member member) {
         pushKeywordRepository.findByMember(member)
-                .stream()
                 .forEach(pushKeywordRepository::delete);
     }
 
     private void deletePushProductStore(Member member) {
         pushProductStoreRepository.findByMember(member)
-                .stream()
                 .forEach(pushProductStoreRepository::delete);
     }
 
-    public MemberInfoResponseDto getMemberInfo(AuthUserDetails authUserDetails) {
-        Member member = authUserDetails.getMember();
+    public MemberInfoResponseDto getMemberInfo(Long memberId) {
+        Member member = memberRepository.getReferenceById(memberId);
         return new MemberInfoResponseDto(member);
     }
 
     public void updateNickname(
-            AuthUserDetails authUserDetails,
+            Long memberId,
             NicknameRequestDto nicknameRequestDto
     ) {
-        Member member = authUserDetails.getMember();
+        Member member = memberRepository.getReferenceById(memberId);
         String updatedNickname = nicknameRequestDto.getNickname();
 
         member.updateNickname(updatedNickname);
@@ -165,5 +181,17 @@ public class MemberService {
         Long expirationTime = jwtTokenProvider.getExpirationTime(accessToken);
 
         redisUtil.setBlackList(accessToken, LOGOUT_BLACKLIST, expirationTime);
+    }
+
+    public JoinStatusResponseDto getJoinStatus(LoginRequestDto loginRequestDto) {
+        OAuthClient oAuthClient = oAuthLoginService.getOAuthLoginClient(loginRequestDto);
+        String email = oAuthClient.getEmail(loginRequestDto);
+        OAuthType oAuthType = oAuthClient.oAuthType();
+        String oauthId = oAuthType.addOAuthTypeHeaderWithEmail(email);
+
+        Boolean isJoined = memberRepository.findByoAuthId(oauthId).isPresent();
+        return JoinStatusResponseDto.builder()
+                .isJoined(isJoined)
+                .build();
     }
 }

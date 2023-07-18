@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.push.service;
 
-import com.pyonsnalcolor.auth.AuthUserDetails;
+import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.Member;
 import com.pyonsnalcolor.product.enumtype.ProductStoreType;
 import com.pyonsnalcolor.push.PushProductStore;
@@ -10,8 +10,6 @@ import com.pyonsnalcolor.push.repository.PushProductStoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,21 +18,10 @@ import java.util.stream.Collectors;
 public class PushProductStoreService {
 
     private final PushProductStoreRepository pushProductStoreRepository;
+    private final MemberRepository memberRepository;
 
-    public void createPushProductStores (Member member) {
-        List<PushProductStore> pushProductStores = Arrays.stream(ProductStoreType.values())
-                .map( i -> PushProductStore.builder()
-                        .productStoreType(i)
-                        .member(member)
-                        .isSubscribed(true)
-                        .updatedTime(LocalDateTime.now())
-                        .build())
-                .collect(Collectors.toList());
-        pushProductStoreRepository.saveAll(pushProductStores);
-    }
-
-    public List<PushProductStoreResponseDto> getPushProductStores (AuthUserDetails authUserDetails) {
-        Member member = authUserDetails.getMember();
+    public List<PushProductStoreResponseDto> getPushProductStores (Long memberId) {
+        Member member = memberRepository.getReferenceById(memberId);
         List<PushProductStore> pushProductStores = pushProductStoreRepository.findByMember(member);
 
         return pushProductStores.stream()
@@ -48,18 +35,18 @@ public class PushProductStoreService {
     }
 
     public void subscribePushProductStores (
-            AuthUserDetails authUserDetails,
+            Long memberId,
             PushProductStoreRequestDto pushProductStoreRequestDtos)
     {
-        Member member = authUserDetails.getMember();
+        Member member = memberRepository.getReferenceById(memberId);
         updateSubscribedStatus(member, pushProductStoreRequestDtos, true);
     }
 
     public void unsubscribePushProductStores (
-            AuthUserDetails authUserDetails,
+            Long memberId,
             PushProductStoreRequestDto pushProductStoreRequestDtos)
     {
-        Member member = authUserDetails.getMember();
+        Member member = memberRepository.getReferenceById(memberId);
         updateSubscribedStatus(member, pushProductStoreRequestDtos, false);
     }
 

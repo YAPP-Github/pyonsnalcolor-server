@@ -41,7 +41,7 @@ public enum SevenEventTab {
 
     private static final String SEVEN_DISCOUNT_URL = "https://www.7-eleven.co.kr/product/presentView.asp";
     private static final String IMG_PREFIX = "https://www.7-eleven.co.kr";
-    private static final int TIMEOUT = 10000;
+    private static final int TIMEOUT = 15000;
 
     SevenEventTab(int tab, int startPageIndex) {
         this.tab = tab;

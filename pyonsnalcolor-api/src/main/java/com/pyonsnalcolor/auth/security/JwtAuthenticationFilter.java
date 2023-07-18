@@ -1,7 +1,5 @@
-package com.pyonsnalcolor.auth.jwt;
+package com.pyonsnalcolor.auth.security;
 
-import com.pyonsnalcolor.auth.AuthUserDetails;
-import com.pyonsnalcolor.auth.AuthUserDetailsService;
 import com.pyonsnalcolor.auth.RedisUtil;
 import com.pyonsnalcolor.exception.PyonsnalcolorAuthException;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             saveAuthenticationIfValidate(accessToken);
 
         } catch (Exception e) {
-            request.setAttribute("exception", e);	// 예외를 request에 set
+            request.setAttribute("exception", e);
         }
 
         filterChain.doFilter(request, response);
