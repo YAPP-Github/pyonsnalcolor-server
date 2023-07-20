@@ -1,8 +1,6 @@
 package com.pyonsnalcolor.product.controller;
 
-
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
-import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.service.PbProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,7 +41,6 @@ public class PbProductController {
     @GetMapping("/products/pb-products/{id}")
     public ProductResponseDto getPbProducts(@PathVariable String id) throws Throwable {
         ProductResponseDto product = pbProductService.getProduct(id);
-
-   return product;
+        return product;
     }
 }
