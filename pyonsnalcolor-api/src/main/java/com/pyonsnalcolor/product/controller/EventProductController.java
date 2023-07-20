@@ -26,17 +26,17 @@ public class EventProductController {
     @Parameter(name = "storeType", description = "편의점 종류(seven_eleven, cu, gs25, emart24, all)")
     @Parameter(name = "sorted", description = "정렬순서")
     @GetMapping("/products/event-products")
-    public Page<ProductResponseDto> getEventProducts(@RequestParam("pageNumber") int pageNumber,
-                                                     @RequestParam("pageSize") int pageSize,
-                                                     @RequestParam(
+    public Page<EventProductResponseDto> getEventProducts(@RequestParam("pageNumber") int pageNumber,
+                                                          @RequestParam("pageSize") int pageSize,
+                                                          @RequestParam(
                                                            value = "storeType",
                                                            defaultValue = "all"
                                                    ) String storeType,
-                                                     @RequestParam(
+                                                          @RequestParam(
                                                            value = "sorted",
                                                            defaultValue = "updatedTime"
                                                    ) String sorted) {
-        return eventProductService.getProductsWithPaging(pageNumber, pageSize, storeType, sorted);
+        return eventProductService.getProductsByPaging(pageNumber, pageSize, storeType, sorted);
     }
 
     @Operation(summary = "이벤트 상품 단건 조회", description = "id 바탕으로 이벤트 상품을 조회합니다.")

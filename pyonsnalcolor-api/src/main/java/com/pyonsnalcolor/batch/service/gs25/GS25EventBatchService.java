@@ -35,7 +35,7 @@ public class GS25EventBatchService extends EventBatchService {
     private GS25Client gs25Client;
     private ObjectMapper objectMapper;
 
-    private static final String NOT_EXIST = "NONE";
+    private static final String NOT_EXIST = null;
 
     @Autowired
     public GS25EventBatchService(EventProductRepository eventProductRepository,
@@ -106,6 +106,15 @@ public class GS25EventBatchService extends EventBatchService {
         String formattedPrice = NumberFormat.getInstance().format(priceInt);
         String eventType = (String) ((Map) productMap.get("eventTypeSp")).get("code");
         String giftImage = (String) productMap.get("giftAttFileNm");
+        String giftTitle = (String) productMap.get("giftGoodsNm");
+        Double giftPriceDouble = (Double) productMap.get("giftPrice");
+        String formattedGiftPrice = null;
+        if (giftPriceDouble != null) {
+            String giftPrice =  Double.toString(giftPriceDouble).split("\\.")[0];
+            int giftPriceInt = Integer.parseInt(giftPrice);
+            formattedGiftPrice = NumberFormat.getInstance().format(giftPriceInt);
+        }
+
         Category category = Category.matchCategoryByProductName(name);
         Tag tag = Tag.findTag(name);
 
@@ -113,9 +122,11 @@ public class GS25EventBatchService extends EventBatchService {
                 .originPrice(NOT_EXIST)
                 .storeType(StoreType.GS25)
                 .updatedTime(LocalDateTime.now())
-                .eventType(EventType.getEventTypeWithValue(eventType))
+                .eventType(EventType.valueOf(eventType))
                 .id(generateId())
                 .giftImage(giftImage)
+                .giftTitle(giftTitle)
+                .giftPrice(formattedGiftPrice)
                 .image(image)
                 .price(formattedPrice)
                 .name(name)

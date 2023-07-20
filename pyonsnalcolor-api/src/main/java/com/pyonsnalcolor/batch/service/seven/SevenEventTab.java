@@ -71,7 +71,7 @@ public enum SevenEventTab {
         String name = originElement.select("div.name").first().text();
         String image = IMG_PREFIX + originElement.select("img").first().attr("src");
         String price = originElement.select("div.price").text();
-        EventType eventType = EventType.getEventTypeWithValue(this.name());
+        EventType eventType = EventType.valueOf(this.name());
 
         String originPrice = null;
         if (this == DISCOUNT) {
@@ -79,8 +79,12 @@ public enum SevenEventTab {
             originPrice = getOriginPrice(originProductCode);
         }
         String giftImage = null;
+        String giftTitle = null;
+        String giftPrice = null;
         if (this == GIFT) {
             giftImage = IMG_PREFIX + subElement.select("img").first().attr("src");
+            giftTitle = subElement.select("div.infowrap div.name").text();
+            giftPrice = subElement.select("div.infowrap div.price span").text();
         }
         Category category = Category.matchCategoryByProductName(name);
         Tag tag = Tag.findTag(name);
@@ -91,6 +95,8 @@ public enum SevenEventTab {
                 .image(image)
                 .price(price)
                 .giftImage(giftImage)
+                .giftTitle(giftTitle)
+                .giftPrice(giftPrice)
                 .originPrice(originPrice)
                 .updatedTime(LocalDateTime.now())
                 .eventType(eventType)
