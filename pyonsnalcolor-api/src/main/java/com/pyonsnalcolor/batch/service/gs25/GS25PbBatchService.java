@@ -34,7 +34,7 @@ public class GS25PbBatchService extends PbBatchService {
     private GS25Client gs25Client;
     private ObjectMapper objectMapper;
 
-    private static final String NOT_EXIST = "NONE";
+    private static final String NOT_EXIST = null;
 
     @Autowired
     public GS25PbBatchService(PbProductRepository pbProductRepository,

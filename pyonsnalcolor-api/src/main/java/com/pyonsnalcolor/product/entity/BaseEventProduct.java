@@ -1,7 +1,6 @@
 package com.pyonsnalcolor.product.entity;
 
 import com.pyonsnalcolor.product.dto.EventProductResponseDto;
-import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.enumtype.EventType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +18,11 @@ public class BaseEventProduct extends BaseProduct {
     private EventType eventType;
     private String originPrice;
     private String giftImage;
+    private String giftTitle;
+    private String giftPrice;
 
     @Override
-    public ProductResponseDto convertToDto() {
+    public EventProductResponseDto convertToDto() {
         return EventProductResponseDto.builder()
                 .id(getId())
                 .name(getName())
@@ -33,6 +34,8 @@ public class BaseEventProduct extends BaseProduct {
                 .eventType(getEventType())
                 .originPrice(getOriginPrice())
                 .giftImage(getGiftImage())
+                .giftPrice(getGiftPrice())
+                .giftTitle(getGiftTitle())
                 .isNew(true)
                 .build();
     }

@@ -26,7 +26,7 @@ import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 @Slf4j
 public class Emart24EventBatchService extends EventBatchService {
     private static final String EMART_EVENT_URL_TEMPLATE = "http://www.emart24.co.kr/goods/event?search=&page=%s&category_seq=&align=";
-    private static final String NOT_EXIST = "NONE";
+    private static final String NOT_EXIST = null;
 
     @Autowired
     public Emart24EventBatchService(EventProductRepository eventProductRepository) {
@@ -88,10 +88,9 @@ public class Emart24EventBatchService extends EventBatchService {
         Elements originPriceElement = productElement.getElementsByClass("priceOff");
         if(originPriceElement.size() > 0) {
             originPrice = originPriceElement.get(0).text();
+            return originPrice.split(" ")[0];
         }
-
-        String parsedOriginPrice = originPrice.split(" ")[0];
-        return parsedOriginPrice;
+        return null;
     }
 
     private String parseName(Element productElement) {
@@ -130,20 +129,20 @@ public class Emart24EventBatchService extends EventBatchService {
 
     private BaseEventProduct convertToBaseEventProduct(String image, String name, String price, String originPrice, String giftImage, EventType eventType) {
         Category category = Category.matchCategoryByProductName(name);
-        Tag tag = Tag.findTag(name);
 
         BaseEventProduct baseEventProduct = BaseEventProduct.builder()
+                .id(generateId())
                 .originPrice(originPrice) //변경
                 .storeType(StoreType.EMART24)
                 .updatedTime(LocalDateTime.now())
-                .eventType(eventType) //변경
-                .id(generateId())
-                .giftImage(giftImage) //변경
+                .eventType(eventType) // 변경
+                .giftImage(giftImage) // 변경
+                .giftPrice(null)
+                .giftTitle(null)
                 .image(image)
                 .price(price)
                 .name(name)
                 .category(category)
-                .tag(tag)
                 .build();
 
         return baseEventProduct;
