@@ -9,15 +9,16 @@ import java.util.stream.Collectors;
 
 @Getter
 public enum EventType {
-    ONE_TO_ONE(10001L),
-    TWO_TO_ONE(10002L),
-    THREE_TO_ONE(10003L),
-    GIFT(10004L),
-    DISCOUNT(10005L);
+    ONE_TO_ONE(10001),
+    TWO_TO_ONE(10002),
+    THREE_TO_ONE(10003),
+    GIFT(10004),
+    DISCOUNT(10005);
 
-    private final Long code;
+    public static final int DIVIDER = 100000;
+    private final int code;
 
-    EventType(Long code) {
+    EventType(int code) {
         this.code = code;
     }
 
@@ -29,5 +30,13 @@ public enum EventType {
                         .code(event.code)
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public static EventType findEventByCode(int code) {
+
+        return Arrays.stream(EventType.values())
+                .filter(c -> c.getCode() == code)
+                .findFirst()
+                .orElseThrow();
     }
 }

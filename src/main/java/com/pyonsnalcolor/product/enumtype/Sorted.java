@@ -10,17 +10,19 @@ import java.util.stream.Collectors;
 
 @Getter
 public enum Sorted {
-    LATEST(1L, "최신순", Sort.by("updatedTime").descending()),
-    VIEW(2L, "조회순", Sort.by("updatedTime")),
-    LOW_PRICE(3L, "가격낮은순", Sort.by("price").ascending()),
-    HIGH_PRICE(4L, "가격높은순", Sort.by("price").descending()),
-    REVIEW(5L, "리뷰순", Sort.by("updatedTime"));
+    LATEST(1, "최신순", Sort.by("updatedTime").descending()),
+    VIEW(2, "조회순", Sort.by("updatedTime")),
+    LOW_PRICE(3, "가격낮은순", Sort.by("price").ascending()),
+    HIGH_PRICE(4, "가격높은순", Sort.by("price").descending()),
+    REVIEW(5, "리뷰순", Sort.by("updatedTime"));
 
-    private final Long code;
+    public static final int DIVIDER = 10;
+
+    private final int code;
     private final String korean;
     private final Sort sort;
 
-    Sorted(Long code, String korean, Sort sort) {
+    Sorted(int code, String korean, Sort sort) {
         this.code = code;
         this.korean = korean;
         this.sort = sort;
@@ -36,10 +38,10 @@ public enum Sorted {
                 .collect(Collectors.toList());
     }
 
-    public static Sort getSortByCode(Long code) {
+    public static Sort findSortByCode(int code) {
 
         return Arrays.stream(Sorted.values())
-                .filter(sorted -> sorted.code.equals(code))
+                .filter(sorted -> sorted.code == code)
                 .findFirst()
                 .map(Sorted::getSort)
                 .orElseThrow();
