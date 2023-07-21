@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "pb_product")
 public class BasePbProduct extends BaseProduct {
     @Override
-    public ProductResponseDto convertToDto() {
+    public PbProductResponseDto convertToDto() {
         return PbProductResponseDto.builder()
                 .id(getId())
                 .name(getName())
