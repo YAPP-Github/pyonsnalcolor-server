@@ -27,10 +27,10 @@ public class PbProductController {
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
             @RequestParam(defaultValue = "all") String storeType,
-            @RequestParam(defaultValue = "updatedTime") String sorted
+            @RequestParam(defaultValue = "updatedTime") String filterList
     ) {
         Page<PbProductResponseDto> products =  pbProductService
-                .getProductsWithPaging(pageNumber, pageSize, storeType, sorted);
+                .getProductsWithPaging(pageNumber, pageSize, storeType, filterList);
         return new ResponseEntity(products, HttpStatus.OK);
     }
 
