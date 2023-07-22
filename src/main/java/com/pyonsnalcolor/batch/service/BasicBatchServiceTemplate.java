@@ -29,6 +29,7 @@ abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements Batch
 
     /**
      * event 상품에 대해서만 구현체 작성 필요
+     *
      * @param allProducts
      * @return
      */
@@ -37,21 +38,26 @@ abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements Batch
     }
 
     private final List<T> getNewProducts(List<T> allProducts) {
-        if(allProducts.isEmpty()) {
+        if (allProducts.isEmpty()) {
             return Collections.emptyList();
         }
         StoreType storeType = allProducts.get(0).getStoreType();
+
         List<T> alreadyExistProducts = basicProductRepository.findByStoreType(storeType);
+        List<String> alreadyExistProductNames = alreadyExistProducts.stream()
+                .map(a -> a.getName())
+                .collect(Collectors.toList());
 
         List<T> newProducts = allProducts.stream().filter(
-                p -> !alreadyExistProducts.contains(p)
+                p -> !alreadyExistProductNames.contains(p.getName())
         ).collect(Collectors.toList());
 
         return newProducts;
     }
 
     // TODO : Alarm 서비스 완성 시 구현
-    private final void sendAlarms(List<T> baseProducts) {}
+    private final void sendAlarms(List<T> baseProducts) {
+    }
 
     private final void saveProducts(List<T> baseProducts) {
         basicProductRepository.saveAll(baseProducts);
@@ -59,7 +65,9 @@ abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements Batch
 
     /**
      * event 상품에 대해서만 구현체 작성 필요
+     *
      * @param baseProducts
      */
-    protected void deleteProducts(List<T> baseProducts) {}
+    protected void deleteProducts(List<T> baseProducts) {
+    }
 }

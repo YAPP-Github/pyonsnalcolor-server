@@ -20,9 +20,11 @@ public abstract class EventBatchService extends BasicBatchServiceTemplate<BaseEv
             return Collections.emptyList();
         }
         StoreType storeType = allProducts.get(0).getStoreType();
+        List<String> allProductNames = allProducts.stream().map(p -> p.getName()).collect(Collectors.toList());
+
         List<BaseEventProduct> alreadyExistEventProducts = basicProductRepository.findByStoreType(storeType);
         List<BaseEventProduct> expiredEventProducts = alreadyExistEventProducts.stream().filter(
-                p -> !allProducts.contains(p)
+                p -> !allProductNames.contains(p.getName())
         ).collect(Collectors.toList());
 
         return expiredEventProducts;

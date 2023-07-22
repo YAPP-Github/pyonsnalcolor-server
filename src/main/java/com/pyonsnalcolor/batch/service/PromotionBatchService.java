@@ -43,9 +43,11 @@ public abstract class PromotionBatchService implements BatchService {
         }
         StoreType storeType = promotions.get(0).getStoreType();
 
+        List<String> promotionTitles = promotions.stream().map(p -> p.getTitle()).collect(Collectors.toList());
+
         List<Promotion> alreadyExistPromotions = promotionRepository.findByStoreType(storeType);
         List<Promotion> expiredPromotions = alreadyExistPromotions.stream().filter(
-                p -> !promotions.contains(p)
+                p -> !promotionTitles.contains(p.getTitle())
         ).collect(Collectors.toList());
 
         return expiredPromotions;
