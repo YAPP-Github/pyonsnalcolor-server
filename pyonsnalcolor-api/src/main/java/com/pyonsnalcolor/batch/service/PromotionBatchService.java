@@ -8,13 +8,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class PromotionBatchService {
+public abstract class PromotionBatchService implements BatchService {
     protected PromotionRepository promotionRepository;
 
     public PromotionBatchService(PromotionRepository promotionRepository) {
         this.promotionRepository = promotionRepository;
     }
 
+    @Override
     public void execute() {
         List<Promotion> promotions = getAllPromotions();
         List<Promotion> newPromotions = getNewPromotions(promotions);

@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SevenProductScheduler extends Scheduler {
+public class SevenScheduler extends Scheduler {
     @Autowired
-    public SevenProductScheduler(@Qualifier("SevenPb") BatchService gs25PbBatchService,
-                                 @Qualifier("SevenEvent") BatchService gs25EventBatchService) {
-        super(gs25PbBatchService, gs25EventBatchService);
+    public SevenScheduler(@Qualifier("SevenPb") BatchService gs25PbBatchService,
+                          @Qualifier("SevenEvent") BatchService gs25EventBatchService) {
+        //TODO : 추가 필요
+        super(gs25PbBatchService, gs25EventBatchService, null);
     }
 }

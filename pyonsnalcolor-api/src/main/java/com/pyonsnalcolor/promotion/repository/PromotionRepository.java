@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface PromotionRepository extends MongoRepository<Promotion, String> {
     List<Promotion> findByStoreType(StoreType storeType);
+
+    void deleteByStoreType(StoreType storeType);
 }

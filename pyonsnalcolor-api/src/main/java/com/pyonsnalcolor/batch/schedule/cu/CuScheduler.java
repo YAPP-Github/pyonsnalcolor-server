@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CuProductScheduler extends Scheduler {
+public class CuScheduler extends Scheduler {
     @Autowired
-    public CuProductScheduler(@Qualifier("CuPb") BatchService gs25PbBatchService,
-                              @Qualifier("CuEvent") BatchService gs25EventBatchService) {
-        super(gs25PbBatchService, gs25EventBatchService);
+    public CuScheduler(@Qualifier("CuPb") BatchService gs25PbBatchService,
+                       @Qualifier("CuEvent") BatchService gs25EventBatchService) {
+        //TODO : 추가 필요
+        super(gs25PbBatchService, gs25EventBatchService, null);
     }
 }

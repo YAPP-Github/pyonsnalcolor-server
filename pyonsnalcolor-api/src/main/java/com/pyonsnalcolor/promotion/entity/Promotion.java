@@ -36,4 +36,8 @@ public class Promotion {
 
         return promotionResponseDto;
     }
+
+    public void updateImage(String image) {
+        this.image = image;
+    }
 }
