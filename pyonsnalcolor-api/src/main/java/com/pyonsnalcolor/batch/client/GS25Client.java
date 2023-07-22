@@ -15,4 +15,10 @@ public interface GS25Client {
     Object getPbProducts(@RequestHeader("Cookie") String cookie,
                          @RequestParam("CSRFToken") String csrfToken,
                          @RequestBody GS25PbRequestBody requestBody);
+
+
+    @RequestMapping(method = RequestMethod.POST, value = "/board/boardList", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    Object getPromotions(@RequestHeader("Cookie") String cookie,
+                         @RequestParam("CSRFToken") String csrfToken,
+                         @RequestBody GS25PromotionRequestBody requestBody);
 }
