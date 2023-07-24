@@ -22,7 +22,10 @@ public class BasePbProduct extends BaseProduct {
                 .image(getImage())
                 .storeType(getStoreType())
                 .price(getPrice())
+                .eventType(getEventType())
                 .updatedTime(getUpdatedTime())
+                .category(getCategory())
+                .recommend(getRecommend())
                 .isNew(true)
                 .build();
     }

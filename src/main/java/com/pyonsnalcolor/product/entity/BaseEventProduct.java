@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Document(collection = "event_product")
 public class BaseEventProduct extends BaseProduct {
-    private EventType eventType;
     private String originPrice;
     private String giftImage;
     private String giftTitle;
@@ -32,6 +31,8 @@ public class BaseEventProduct extends BaseProduct {
                 .price(getPrice())
                 .updatedTime(getUpdatedTime())
                 .eventType(getEventType())
+                .category(getCategory())
+                .recommend(getRecommend())
                 .originPrice(getOriginPrice())
                 .giftImage(getGiftImage())
                 .giftPrice(getGiftPrice())

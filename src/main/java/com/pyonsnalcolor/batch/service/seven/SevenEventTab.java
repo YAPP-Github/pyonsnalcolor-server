@@ -4,8 +4,8 @@ import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.EventType;
+import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.enumtype.StoreType;
-import com.pyonsnalcolor.product.enumtype.Tag;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -86,7 +86,7 @@ public enum SevenEventTab {
             giftPrice = subElement.select("div.infowrap div.price span").text();
         }
         Category category = Category.matchCategoryByProductName(name);
-        Tag tag = Tag.findTag(name);
+        Recommend recommend = Recommend.matchRecommendByProductName(name);
 
         return BaseEventProduct.builder()
                 .name(name)
@@ -101,7 +101,7 @@ public enum SevenEventTab {
                 .eventType(eventType)
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .category(category)
-                .tag(tag)
+                .recommend(recommend)
                 .build();
     }
 

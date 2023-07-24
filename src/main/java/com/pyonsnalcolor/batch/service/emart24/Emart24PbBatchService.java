@@ -4,7 +4,7 @@ import com.pyonsnalcolor.batch.service.PbBatchService;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.StoreType;
-import com.pyonsnalcolor.product.enumtype.Tag;
+import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -72,7 +72,7 @@ public class Emart24PbBatchService extends PbBatchService {
 
     private BasePbProduct convertToBasePbProduct(String image, String name, String price) {
         Category category = Category.matchCategoryByProductName(name);
-        Tag tag = Tag.findTag(name);
+        Recommend recommend = Recommend.matchRecommendByProductName(name);
 
         BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())
@@ -82,7 +82,7 @@ public class Emart24PbBatchService extends PbBatchService {
                 .updatedTime(LocalDateTime.now())
                 .image(image)
                 .category(category)
-                .tag(tag)
+                .recommend(recommend)
                 .build();
 
         return basePbProduct;

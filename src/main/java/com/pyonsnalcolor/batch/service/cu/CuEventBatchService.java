@@ -5,8 +5,8 @@ import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.EventType;
+import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.enumtype.StoreType;
-import com.pyonsnalcolor.product.enumtype.Tag;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -89,7 +89,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
 
         String description = getDescription(element, "event");
         Category category = Category.matchCategoryByProductName(name);
-        Tag tag = Tag.findTag(name);
+        Recommend recommend = Recommend.matchRecommendByProductName(name);
 
         return BaseEventProduct.builder()
                 .id((generateId()))
@@ -101,7 +101,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
                 .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
                 .category(category)
-                .tag(tag)
+                .recommend(recommend)
                 .build();
     }
 

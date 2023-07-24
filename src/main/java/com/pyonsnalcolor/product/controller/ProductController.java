@@ -1,12 +1,8 @@
 package com.pyonsnalcolor.product.controller;
 
-import com.pyonsnalcolor.product.dto.ProductMetaDataDto;
-import com.pyonsnalcolor.product.dto.ProductMetaDataResponseDto;
+import com.pyonsnalcolor.product.metadata.FilterItems;
+import com.pyonsnalcolor.product.metadata.ProductMetaData;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
-import com.pyonsnalcolor.product.enumtype.Category;
-import com.pyonsnalcolor.product.enumtype.EventType;
-import com.pyonsnalcolor.product.enumtype.Sorted;
-import com.pyonsnalcolor.product.enumtype.Tag;
 import com.pyonsnalcolor.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 @io.swagger.v3.oas.annotations.tags.Tag(name = "상품 api")
 @RestController
@@ -35,20 +34,11 @@ public class ProductController {
         return new ResponseEntity(products, HttpStatus.OK);
     }
 
-    @Operation(summary = "상품 정렬 키값 조회", description = "정렬 관련 키값을 조회합니다.")
+    @Operation(summary = "상품 관련 메타 데이터 조회", description = "상품 항목별 메타 데이터를 조회합니다.")
     @GetMapping("/products/meta-data")
-    public ResponseEntity<ProductMetaDataDto> getProductsMetaDataList() {
-
-        ProductMetaDataDto productMetaDataDto = ProductMetaDataDto.builder()
-                .sortedMeta(Sorted.getSortedWithCodes())
-                .tagMetaData(Tag.getTagWithCodes())
-                .categoryMetaData(Category.getCategoryWithCodes())
-                .eventMetaData(EventType.getEventWithCodes())
-                .build();
-
-        ProductMetaDataResponseDto productMetaDataResponseDto = ProductMetaDataResponseDto.builder()
-                .metaDataList(productMetaDataDto)
-                .build();
-        return new ResponseEntity(productMetaDataResponseDto, HttpStatus.OK);
+    public ResponseEntity<Map<String, List<FilterItems>>> getProductMetaData() {
+        ProductMetaData productMetaData = ProductMetaData.getInstance();
+        Map<String, List<FilterItems>> productMetaDataMetadataList = productMetaData.getMetadataList();
+        return new ResponseEntity(productMetaDataMetadataList, HttpStatus.OK);
     }
 }

@@ -2,15 +2,16 @@ package com.pyonsnalcolor.product.entity;
 
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.enumtype.Category;
+import com.pyonsnalcolor.product.enumtype.EventType;
+import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.enumtype.StoreType;
-import com.pyonsnalcolor.product.enumtype.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @SuperBuilder
@@ -29,7 +30,9 @@ public class BaseProduct {
     private LocalDateTime updatedTime;
     private String description;
     private Category category;
-    private Tag tag;
+    private Recommend recommend;
+    private EventType eventType; // TODO: 이후 추가
+    private boolean isNew; // TODO: 이후 추가
 
     public ProductResponseDto convertToDto() {
         return ProductResponseDto.builder()
@@ -40,7 +43,9 @@ public class BaseProduct {
                 .storeType(storeType)
                 .price(price)
                 .updatedTime(updatedTime)
-                .isNew(true)
+                .isNew(isNew)
+                .category(category)
+                .recommend(recommend)
                 .build();
     }
 }

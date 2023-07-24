@@ -5,8 +5,8 @@ import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
 import com.pyonsnalcolor.exception.model.BatchErrorCode;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
+import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.enumtype.StoreType;
-import com.pyonsnalcolor.product.enumtype.Tag;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -93,7 +93,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
         String price = element.select("div.price > strong").first().text();
         String description = getDescription(element, "product");
         Category category = Category.matchCategoryByProductName(name);
-        Tag tag = Tag.findTag(name);
+        Recommend recommend = Recommend.matchRecommendByProductName(name);
 
         return BasePbProduct.builder()
                 .id((generateId()))
@@ -104,7 +104,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
                 .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())
                 .category(category)
-                .tag(tag)
+                .recommend(recommend)
                 .build();
     }
 
