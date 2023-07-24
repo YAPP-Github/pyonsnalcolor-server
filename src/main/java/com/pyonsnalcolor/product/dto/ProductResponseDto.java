@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.EventType;
+import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -34,6 +36,7 @@ public class ProductResponseDto {
     private String name;
     @NotBlank
     private String price;
+    @NotBlank
     private EventType eventType;
     @NotBlank
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -43,4 +46,8 @@ public class ProductResponseDto {
     private String description;
     @NotBlank
     private Boolean isNew = false;
+    @NotBlank
+    private Category category;
+    @NotBlank
+    private Recommend recommend;
 }
