@@ -35,7 +35,7 @@ public class BaseEventProduct extends BaseProduct {
                 .giftImage(getGiftImage())
                 .giftPrice(getGiftPrice())
                 .giftTitle(getGiftTitle())
-                .isNew(true)
+                .isNew(getIsNew())
                 .build();
     }
 }

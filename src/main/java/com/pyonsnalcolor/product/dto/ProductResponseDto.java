@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.EventType;
-import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.enumtype.StoreType;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +17,6 @@ import lombok.experimental.SuperBuilder;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-@Schema(description = "상품 조회 Response DTO")
 @SuperBuilder
 @ToString
 @Getter
@@ -45,9 +42,6 @@ public class ProductResponseDto {
     private LocalDateTime updatedTime;
     private String description;
     @NotBlank
-    private Boolean isNew = false;
-    @NotBlank
-    private Category category;
-    @NotBlank
-    private Recommend recommend;
+    private Boolean isNew;
+    private String category;
 }
