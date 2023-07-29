@@ -42,6 +42,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return createResponseEntity(errorCode);
     }
 
+    @ExceptionHandler(PyonsnalcolorProductException.class)
+    public ResponseEntity<Object> handleProductException(PyonsnalcolorProductException e) {
+        log.error("GlobalExceptionHandler catch PyonsnalcolorProductException: {}", e.getErrorCode().name());
+        ErrorCode errorCode = e.getErrorCode();
+        return createResponseEntity(errorCode);
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<Object> handleNoSuchElementException(PyonsnalcolorPushException e) {
         log.error("GlobalExceptionHandler catch NoSuchElementException: {}", e.getErrorCode().name());
