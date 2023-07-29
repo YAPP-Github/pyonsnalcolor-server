@@ -72,7 +72,7 @@ public enum Sorted implements Filter {
         return filter;
     }
 
-    private static Comparator<BaseProduct> findComparatorByFilterList(List<Integer> filterList) {
+    public static Comparator<BaseProduct> findComparatorByFilterList(List<Integer> filterList) {
         return filterList.stream()
                 .map(Sorted::matchSortedByCode)
                 .filter(Objects::nonNull)

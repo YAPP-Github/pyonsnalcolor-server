@@ -6,9 +6,11 @@ import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.entity.BaseProduct;
 import com.pyonsnalcolor.product.enumtype.Curation;
 import com.pyonsnalcolor.product.enumtype.Filter;
+import com.pyonsnalcolor.product.enumtype.Sorted;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,28 +18,26 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
-public class SearchProduct {
+public class SearchProductService {
     private final EventProductRepository eventProductRepository;
     private final PbProductRepository pbProductRepository;
 
-    public Page<ProductResponseDto> searchProduct(int pageNumber, int pageSize, String searchKeyword) {
+    public Page<ProductResponseDto> searchProduct(int pageNumber, int pageSize, int sorted, String searchKeyword) {
         List<BaseEventProduct> eventProducts = eventProductRepository.findByNameContaining(searchKeyword);
         List<BasePbProduct> pbProducts = pbProductRepository.findByNameContaining(searchKeyword);
 
-        Sort sort = Sort.by("updatedTime").descending().and(Sort.by("id"));
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
-
         List<BaseProduct> searchProducts = getProductsExceptDuplicate(eventProducts, pbProducts);
-        List<ProductResponseDto> productResponseDtos = convertToProductResponseDto(searchProducts);
+        Comparator comparator = Sorted.findComparatorByFilterList(List.of(sorted));
+        searchProducts.sort(comparator);
 
+        List<ProductResponseDto> productResponseDtos = convertToProductResponseDto(searchProducts);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         return convertToPage(productResponseDtos, pageRequest);
     }
 
