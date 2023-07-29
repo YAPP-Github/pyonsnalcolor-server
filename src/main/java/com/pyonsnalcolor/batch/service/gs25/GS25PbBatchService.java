@@ -7,6 +7,7 @@ import com.pyonsnalcolor.batch.client.GS25PbRequestBody;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
+import com.pyonsnalcolor.product.enumtype.Filter;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
@@ -96,8 +97,8 @@ public class GS25PbBatchService extends PbBatchService {
         int priceInt = Integer.parseInt(price);
         String formattedPrice = NumberFormat.getInstance().format(priceInt);
 
-        Category category = Category.matchCategoryByProductName(name);
-        Recommend recommend = Recommend.matchRecommendByProductName(name);
+        Category category = Filter.matchEnumTypeByProductName(Category.class, name);
+        Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
         BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())

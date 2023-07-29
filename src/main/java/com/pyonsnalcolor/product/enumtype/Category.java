@@ -1,16 +1,11 @@
 package com.pyonsnalcolor.product.enumtype;
 
-import com.pyonsnalcolor.product.metadata.FilterItems;
-import com.pyonsnalcolor.product.metadata.FilterItem;
 import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Getter
-public enum Category {
+public enum Category implements Filter {
 
     GOODS(1001, "생활용품", Arrays.asList("세제", "샴푸", "린스", "페브리즈", "좋은", "치약", "칫솔", "극세모",
             "미세모", "클렌징폼", "면도", "대형", "중형", "소형", "실내", "클렌징", "오일", "피죤", "유기농", "로션",
@@ -48,44 +43,14 @@ public enum Category {
     private final String korean;
     private final List<String> keywords;
 
-    public static FilterItems categoryMetaData = new FilterItems("category", getCategoryMetaData());
-
     Category(int code, String korean, List<String> keywords) {
         this.code = code;
         this.korean = korean;
         this.keywords = keywords;
     }
 
-    public static Category matchCategoryByProductName(String name) {
-        return Arrays.stream(values())
-                .filter(category -> category.getKeywords()
-                        .stream()
-                        .anyMatch(name::contains))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private static List<FilterItem> getCategoryMetaData() {
-        return Arrays.stream(values())
-                .map(category -> FilterItem.builder()
-                        .name(category.korean)
-                        .code(category.code)
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    public static List<Category> findCategoryByFilterList(String filterList) {
-        return Arrays.stream(filterList.split(","))
-                .map(Integer::parseInt)
-                .map(Category::matchCategoryByCode)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    private static Category matchCategoryByCode(int code) {
-        return Arrays.stream(values())
-                .filter(c -> c.code == code)
-                .findFirst()
-                .orElse(null);
+    @Override
+    public String getFilterType() {
+        return this.getDeclaringClass().getSimpleName().toLowerCase();
     }
 }

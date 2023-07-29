@@ -3,6 +3,7 @@ package com.pyonsnalcolor.batch.service.emart24;
 import com.pyonsnalcolor.batch.service.PbBatchService;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
+import com.pyonsnalcolor.product.enumtype.Filter;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
@@ -71,8 +72,8 @@ public class Emart24PbBatchService extends PbBatchService {
     }
 
     private BasePbProduct convertToBasePbProduct(String image, String name, String price) {
-        Category category = Category.matchCategoryByProductName(name);
-        Recommend recommend = Recommend.matchRecommendByProductName(name);
+        Category category = Filter.matchEnumTypeByProductName(Category.class, name);
+        Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
         BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())

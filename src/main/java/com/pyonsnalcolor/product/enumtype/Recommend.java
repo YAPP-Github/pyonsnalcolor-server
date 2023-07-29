@@ -1,16 +1,12 @@
 package com.pyonsnalcolor.product.enumtype;
 
-import com.pyonsnalcolor.product.metadata.FilterItems;
-import com.pyonsnalcolor.product.metadata.FilterItem;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Getter
-public enum Recommend {
+public enum Recommend implements Filter {
 
     NIGHT_WORK(101, "밤샘", Arrays.asList("비타", "과일", "액티비아", "에너지", "종근당", "인삼", "홍삼",
             "보약", "카페인", "녹차", "커피", "껌", "아메")),
@@ -21,10 +17,10 @@ public enum Recommend {
             "할라피뇨", "떡볶이", "라볶이", "얼큰", "하바네로", "멕시칸", "스파이시")),
     DRINK_SNACK(105, "간식", Arrays.asList("스낵", "김부각", "어묵바", "오징어", "젤리", "소시지", "땅콩", "믹스넛",
             "후랑크", "아몬드", "안주", "오뎅", "치즈", "육포", "말랭이", "감자")),
-    SWEET(106, "달달", Arrays.asList("스위트", "요거트", "버터", "카이막", "초코", "초콜릿", "쇼콜라", "키세스", "허쉬", "킷캣", "쿠앤크", "팥",
-            "바닐라", "허니", "빙수", "젤리", "달콤", "캐러멜", "모찌", "딸기", "바나나", "꿀")),
+    SWEET(106, "달달", Arrays.asList("스위트", "요거트", "버터", "카이막", "초코", "초콜릿", "쇼콜라", "키세스",
+            "허쉬", "킷캣", "쿠앤크", "팥", "바닐라", "허니", "빙수", "젤리", "달콤", "캐러멜", "모찌", "딸기", "바나나", "꿀")),
     ALONE(107, "혼밥", Arrays.asList("김밥", "컵밥", "큰컵")),
-    POPULAR(108, "인기있는", Arrays.asList());
+    HOT_ITEM(108, "인기있는", Arrays.asList());
     // TODO: 이후에 추가될 항목들
     // MIDNIGHT_SNACK(code, "야식", Arrays.asList("닭발", "후랑크", "버거", "라면", "샌드위치", "치킨", "피자")),
     // HANGOVER(code, "해장", Arrays.asList("헛개", "수프", "국", "우동", "오뎅", "호빵", "북엇국", "시원", "칼칼")),
@@ -36,44 +32,14 @@ public enum Recommend {
     private final String korean;
     private final List<String> keywords;
 
-    public static FilterItems recommendMetaData = new FilterItems("recommend", getRecommendMetaData());
-
     Recommend(int code, String korean, List<String> keywords) {
         this.code = code;
         this.korean = korean;
         this.keywords = keywords;
     }
 
-    public static Recommend matchRecommendByProductName(String name) {
-        return Arrays.stream(values())
-                .filter(recommend -> recommend.getKeywords()
-                        .stream()
-                        .anyMatch(name::contains))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private static List<FilterItem> getRecommendMetaData() {
-        return Arrays.stream(values())
-                .map(tag -> FilterItem.builder()
-                        .name(tag.korean)
-                        .code(tag.code)
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    public static List<Recommend> findRecommendByFilterList(String filterList) {
-        return Arrays.stream(filterList.split(","))
-                .map(Integer::parseInt)
-                .map(Recommend::matchRecommendByCode)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    private static Recommend matchRecommendByCode(int code) {
-        return Arrays.stream(values())
-                .filter(t -> t.code == code)
-                .findFirst()
-                .orElse(null);
+    @Override
+    public String getFilterType() {
+        return this.getDeclaringClass().getSimpleName().toLowerCase();
     }
 }

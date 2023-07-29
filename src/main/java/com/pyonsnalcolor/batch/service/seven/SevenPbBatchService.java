@@ -4,6 +4,7 @@ import com.pyonsnalcolor.batch.service.PbBatchService;
 import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
+import com.pyonsnalcolor.product.enumtype.Filter;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
@@ -81,8 +82,8 @@ public class SevenPbBatchService extends PbBatchService {
         String name = element.select("div.name").first().text();
         String image = IMG_PREFIX + element.select("img").first().attr("src");
         String price = element.select("div.price").text();
-        Category category = Category.matchCategoryByProductName(name);
-        Recommend recommend = Recommend.matchRecommendByProductName(name);
+        Category category = Filter.matchEnumTypeByProductName(Category.class, name);
+        Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
         return BasePbProduct.builder()
                 .id(generateId())

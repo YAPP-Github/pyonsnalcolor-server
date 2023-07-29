@@ -5,6 +5,7 @@ import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
 import com.pyonsnalcolor.exception.model.BatchErrorCode;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
+import com.pyonsnalcolor.product.enumtype.Filter;
 import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
@@ -92,8 +93,8 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
         }
         String price = element.select("div.price > strong").first().text();
         String description = getDescription(element, "product");
-        Category category = Category.matchCategoryByProductName(name);
-        Recommend recommend = Recommend.matchRecommendByProductName(name);
+        Category category = Filter.matchEnumTypeByProductName(Category.class, name);
+        Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
         return BasePbProduct.builder()
                 .id((generateId()))
