@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.product.entity;
 
 import com.pyonsnalcolor.product.dto.PbProductResponseDto;
+import com.pyonsnalcolor.product.enumtype.Curation;
 import com.pyonsnalcolor.product.enumtype.Recommend;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "pb_product")
 public class BasePbProduct extends BaseProduct {
     private Recommend recommend;
+    private Curation curation;
 
     @Override
     public PbProductResponseDto convertToDto() {
@@ -39,5 +41,13 @@ public class BasePbProduct extends BaseProduct {
 
     public void deleteRecommend() {
         this.recommend = null;
+    }
+
+    public void updateCuration(Curation curation) {
+        this.curation = curation;
+    }
+
+    public void deleteCuration() {
+        this.curation = null;
     }
 }

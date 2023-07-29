@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
 @SpringBootTest
-class ProductServiceTest {
+class SearchProductTest {
 
     @Autowired
-    private ProductService productService;
+    private SearchProduct searchProduct;
     @Autowired
     private PbProductRepository pbProductRepository;
     @Autowired
@@ -38,7 +38,7 @@ class ProductServiceTest {
         String keyword = "비타";
 
         // when
-        Page<ProductResponseDto> products = productService.searchProduct(0, 2, keyword);
+        Page<ProductResponseDto> products = searchProduct.searchProduct(0, 2, keyword);
         ProductResponseDto responseDto1 = products.get().findFirst().get();
         ProductResponseDto responseDto2 = products.get().findFirst().get();
 
@@ -58,7 +58,7 @@ class ProductServiceTest {
         String keyword = "연세)@#$";
 
         // when
-        Page<ProductResponseDto> products = productService.searchProduct(0, 5, keyword);
+        Page<ProductResponseDto> products = searchProduct.searchProduct(0, 5, keyword);
         ProductResponseDto responseDto = products.get().findFirst().get();
 
         // then

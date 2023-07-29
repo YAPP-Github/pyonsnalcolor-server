@@ -1,5 +1,6 @@
 package com.pyonsnalcolor.product.controller;
 
+import com.pyonsnalcolor.product.dto.CurationProductsResponseDto;
 import com.pyonsnalcolor.product.metadata.FilterItems;
 import com.pyonsnalcolor.product.metadata.ProductMetaData;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
@@ -39,6 +40,13 @@ public class ProductController {
     public ResponseEntity<Map<String, List<FilterItems>>> getProductMetaData() {
         ProductMetaData productMetaData = ProductMetaData.getInstance();
         Map<String, List<FilterItems>> result = productMetaData.getMetadata();
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @Operation(summary = "큐레이션 상품 조회", description = "큐레이션 상품을 전체 조회합니다.")
+    @GetMapping("/products/curation")
+    public ResponseEntity<CurationProductsResponseDto> getCurationProducts() {
+        CurationProductsResponseDto result = searchProduct.getCurationProducts();
         return new ResponseEntity(result, HttpStatus.OK);
     }
 }
