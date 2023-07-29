@@ -4,7 +4,7 @@ import com.pyonsnalcolor.product.dto.CurationProductsResponseDto;
 import com.pyonsnalcolor.product.metadata.FilterItems;
 import com.pyonsnalcolor.product.metadata.ProductMetaData;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
-import com.pyonsnalcolor.product.service.SearchProduct;
+import com.pyonsnalcolor.product.service.SearchProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,16 +22,18 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final SearchProduct searchProduct;
+    private final SearchProductService searchProductService;
 
     @Operation(summary = "상품 검색", description = "전체 상품 중에 해당 키워드가 포함된 상품을 조회합니다.")
     @GetMapping("/products/search")
     public ResponseEntity<Page<ProductResponseDto>> searchProducts(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam String name
+            @RequestParam String name,
+            @RequestParam(defaultValue = "1") int sortedCode
+
     ) {
-        Page<ProductResponseDto> products = searchProduct.searchProduct(pageNumber, pageSize, name);
+        Page<ProductResponseDto> products = searchProductService.searchProduct(pageNumber, pageSize, sortedCode, name);
         return new ResponseEntity(products, HttpStatus.OK);
     }
 
@@ -46,7 +48,7 @@ public class ProductController {
     @Operation(summary = "큐레이션 상품 조회", description = "큐레이션 상품을 전체 조회합니다.")
     @GetMapping("/products/curation")
     public ResponseEntity<CurationProductsResponseDto> getCurationProducts() {
-        CurationProductsResponseDto result = searchProduct.getCurationProducts();
+        CurationProductsResponseDto result = searchProductService.getCurationProducts();
         return new ResponseEntity(result, HttpStatus.OK);
     }
 }
