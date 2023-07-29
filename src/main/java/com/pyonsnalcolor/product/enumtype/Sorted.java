@@ -46,9 +46,8 @@ public enum Sorted implements Filter {
         this.comparator = comparator;
     }
 
-    public static Sort findSortedByFilterList(String filterList) {
-        return Arrays.stream(filterList.split(","))
-                .map(Integer::parseInt)
+    public static Sort findSortedByFilterList(List<Integer> filterList) {
+        return filterList.stream()
                 .map(Sorted::matchSortedByCode)
                 .filter(Objects::nonNull)
                 .findFirst()
