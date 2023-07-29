@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.product.entity;
 
 import com.pyonsnalcolor.product.dto.PbProductResponseDto;
+import com.pyonsnalcolor.product.enumtype.Recommend;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -13,6 +14,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Document(collection = "pb_product")
 public class BasePbProduct extends BaseProduct {
+    private Recommend recommend;
+
     @Override
     public PbProductResponseDto convertToDto() {
         return PbProductResponseDto.builder()
@@ -24,9 +27,17 @@ public class BasePbProduct extends BaseProduct {
                 .price(getPrice())
                 .eventType(getEventType())
                 .updatedTime(getUpdatedTime())
-                .category(getCategory())
-                .recommend(getRecommend())
-                .isNew(true)
+                .category((getCategory() == null) ? null : getCategory().getKorean())
+                .recommend((getRecommend() == null) ? null : getRecommend().getKorean())
+                .isNew(getIsNew())
                 .build();
+    }
+
+    public void updateRecommend(Recommend recommend) {
+        this.recommend = recommend;
+    }
+
+    public void deleteRecommend() {
+        this.recommend = null;
     }
 }

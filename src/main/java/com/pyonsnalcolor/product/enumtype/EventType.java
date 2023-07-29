@@ -1,52 +1,37 @@
 package com.pyonsnalcolor.product.enumtype;
 
-import com.pyonsnalcolor.product.metadata.FilterItems;
-import com.pyonsnalcolor.product.metadata.FilterItem;
 import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Getter
-public enum EventType {
+public enum EventType implements Filter {
     ONE_TO_ONE(10001),
     TWO_TO_ONE(10002),
-    THREE_TO_ONE(10003),
-    GIFT(10004),
-    DISCOUNT(10005),
-    NONE(10006);
+    GIFT(10003),
+    DISCOUNT(10004),
+    NONE(10005);
 
     private final int code;
 
-    public static FilterItems eventTypeMetaData = new FilterItems("event", getEventMetaData());
+    private static final String FILTER_TYPE = "event";
 
     EventType(int code) {
         this.code = code;
     }
 
-    private static List<FilterItem> getEventMetaData() {
-        return Arrays.stream(values())
-                .map(event -> FilterItem.builder()
-                        .name(event.name())
-                        .code(event.code)
-                        .build())
-                .collect(Collectors.toList());
+    @Override
+    public String getKorean() {
+        return name();
     }
 
-    public static List<EventType> findEventTypeByFilterList(String filterList) {
-        return Arrays.stream(filterList.split(","))
-                .map(Integer::parseInt)
-                .map(EventType::matchEventTypeByCode)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+    @Override
+    public String getFilterType() {
+        return FILTER_TYPE;
     }
 
-    private static EventType matchEventTypeByCode(int code) {
-        return Arrays.stream(values())
-                .filter(e -> e.code == code)
-                .findFirst()
-                .orElse(null);
+    @Override
+    public List<String> getKeywords() {
+        return null; // 필요X
     }
 }

@@ -1,9 +1,6 @@
 package com.pyonsnalcolor.product.metadata;
 
-import com.pyonsnalcolor.product.enumtype.Category;
-import com.pyonsnalcolor.product.enumtype.EventType;
-import com.pyonsnalcolor.product.enumtype.Recommend;
-import com.pyonsnalcolor.product.enumtype.Sorted;
+import com.pyonsnalcolor.product.enumtype.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,13 +11,15 @@ public class ProductMetaData {
     private static final String META_DATA_KEY = "data";
 
     private static ProductMetaData instance;
-    private List<FilterItems> metaDataList;
+    private final List<FilterItems> metaDataList;
 
     private ProductMetaData() {
-        metaDataList = List.of(Sorted.sortedMetaData,
-                        Recommend.recommendMetaData,
-                        Category.categoryMetaData,
-                        EventType.eventTypeMetaData);
+        metaDataList = List.of(
+                Filter.getMetaData(Sorted.class),
+                Filter.getMetaData(Recommend.class),
+                Filter.getMetaData(Category.class),
+                Filter.getMetaData(EventType.class)
+        );
     }
 
     public static ProductMetaData getInstance() {
@@ -30,7 +29,7 @@ public class ProductMetaData {
         return instance;
     }
 
-    public Map<String, List<FilterItems>> getMetadataList() {
+    public Map<String, List<FilterItems>> getMetadata() {
         return Collections.singletonMap(META_DATA_KEY, metaDataList);
     }
 }

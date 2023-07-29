@@ -12,6 +12,7 @@ public enum CommonErrorCode implements ErrorCode {
 
     SERVER_UNAVAILABLE(SERVICE_UNAVAILABLE, "서버에 오류가 발생하였습니다."),
     INVALID_PARAMETER(BAD_REQUEST, "입력값이 형식에 맞지 않습니다."),
+    INVALID_FILTER_CODE(BAD_REQUEST, "필터 코드값이 유효하지 않습니다."),
     NOT_FOUND_ERROR(NOT_FOUND, "입력값이 형식에 맞지 않습니다.");
 
     private final HttpStatus httpStatus;

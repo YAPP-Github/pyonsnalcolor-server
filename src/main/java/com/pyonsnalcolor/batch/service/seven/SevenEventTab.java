@@ -2,10 +2,7 @@ package com.pyonsnalcolor.batch.service.seven;
 
 import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
-import com.pyonsnalcolor.product.enumtype.Category;
-import com.pyonsnalcolor.product.enumtype.EventType;
-import com.pyonsnalcolor.product.enumtype.Recommend;
-import com.pyonsnalcolor.product.enumtype.StoreType;
+import com.pyonsnalcolor.product.enumtype.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -85,8 +82,7 @@ public enum SevenEventTab {
             giftTitle = subElement.select("div.infowrap div.name").text();
             giftPrice = subElement.select("div.infowrap div.price span").text();
         }
-        Category category = Category.matchCategoryByProductName(name);
-        Recommend recommend = Recommend.matchRecommendByProductName(name);
+        Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
         return BaseEventProduct.builder()
                 .name(name)
@@ -101,7 +97,6 @@ public enum SevenEventTab {
                 .eventType(eventType)
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .category(category)
-                .recommend(recommend)
                 .build();
     }
 

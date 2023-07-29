@@ -6,10 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-@Schema(description = "Pb 상품 조회 Response DTO")
+@Schema(description = "PB 상품 조회 Response DTO")
 @SuperBuilder
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
 public class PbProductResponseDto extends ProductResponseDto {
+    private String recommend;
 }

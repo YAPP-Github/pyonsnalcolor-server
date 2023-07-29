@@ -3,7 +3,7 @@ package com.pyonsnalcolor.product.controller;
 import com.pyonsnalcolor.product.metadata.FilterItems;
 import com.pyonsnalcolor.product.metadata.ProductMetaData;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
-import com.pyonsnalcolor.product.service.ProductService;
+import com.pyonsnalcolor.product.service.SearchProduct;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+    private final SearchProduct searchProduct;
 
     @Operation(summary = "상품 검색", description = "전체 상품 중에 해당 키워드가 포함된 상품을 조회합니다.")
     @GetMapping("/products/search")
@@ -30,7 +30,7 @@ public class ProductController {
             @RequestParam int pageSize,
             @RequestParam String name
     ) {
-        Page<ProductResponseDto> products = productService.searchProduct(pageNumber, pageSize, name);
+        Page<ProductResponseDto> products = searchProduct.searchProduct(pageNumber, pageSize, name);
         return new ResponseEntity(products, HttpStatus.OK);
     }
 
@@ -38,7 +38,7 @@ public class ProductController {
     @GetMapping("/products/meta-data")
     public ResponseEntity<Map<String, List<FilterItems>>> getProductMetaData() {
         ProductMetaData productMetaData = ProductMetaData.getInstance();
-        Map<String, List<FilterItems>> productMetaDataMetadataList = productMetaData.getMetadataList();
-        return new ResponseEntity(productMetaDataMetadataList, HttpStatus.OK);
+        Map<String, List<FilterItems>> result = productMetaData.getMetadata();
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

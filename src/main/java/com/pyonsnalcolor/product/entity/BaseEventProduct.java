@@ -1,7 +1,6 @@
 package com.pyonsnalcolor.product.entity;
 
 import com.pyonsnalcolor.product.dto.EventProductResponseDto;
-import com.pyonsnalcolor.product.enumtype.EventType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -31,13 +30,12 @@ public class BaseEventProduct extends BaseProduct {
                 .price(getPrice())
                 .updatedTime(getUpdatedTime())
                 .eventType(getEventType())
-                .category(getCategory())
-                .recommend(getRecommend())
+                .category((getCategory() == null) ? null : getCategory().getKorean())
                 .originPrice(getOriginPrice())
                 .giftImage(getGiftImage())
                 .giftPrice(getGiftPrice())
                 .giftTitle(getGiftTitle())
-                .isNew(true)
+                .isNew(getIsNew())
                 .build();
     }
 }
