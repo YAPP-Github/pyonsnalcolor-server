@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,24 +93,21 @@ public class GS25PbBatchService extends PbBatchService {
         String image = (String) productMap.get("attFileNm");
         String name = (String) productMap.get("goodsNm");
         String price = Double.toString((Double) productMap.get("price")).split("\\.")[0];;
-        int priceInt = Integer.parseInt(price);
-        String formattedPrice = NumberFormat.getInstance().format(priceInt);
+        int parsedPrice = Integer.parseInt(price);
 
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        BasePbProduct basePbProduct = BasePbProduct.builder()
+        return BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
-                .price(formattedPrice)
+                .price(parsedPrice)
                 .storeType(StoreType.GS25)
                 .updatedTime(LocalDateTime.now())
                 .image(image)
                 .category(category)
                 .recommend(recommend)
                 .build();
-
-        return basePbProduct;
     }
 
     private Map<String, Object> parsePaginationData(Object data) throws JsonProcessingException {

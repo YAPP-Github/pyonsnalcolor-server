@@ -18,10 +18,10 @@ public enum Sorted implements Filter {
             Comparator.comparing(BaseProduct::getId)),  // TODO: 이후 추가
     LOW_PRICE(3,
             "가격낮은순",
-            Comparator.comparing(BaseProduct::getPriceInt).thenComparing(BaseProduct::getId)),
+            Comparator.comparing(BaseProduct::getPrice).thenComparing(BaseProduct::getId)),
     HIGH_PRICE(4,
             "가격높은순",
-            Comparator.comparing(BaseProduct::getPriceInt).reversed().thenComparing(BaseProduct::getId)),
+            Comparator.comparing(BaseProduct::getPrice).reversed().thenComparing(BaseProduct::getId)),
     REVIEW(5,
             "리뷰순",
             Comparator.comparing(BaseProduct::getId)); // TODO: 이후 추가

@@ -81,6 +81,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
             image = SCHEMA + image;
         }
         String price = element.select("div.price > strong").first().text();
+        int parsedPrice = Integer.parseInt(price);
         String eventTypeTag = element.select("div.badge").first().text();
         EventType eventType = getCuEventType(eventTypeTag);
 
@@ -91,7 +92,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
                 .id((generateId()))
                 .name(name)
                 .image(image)
-                .price(price)
+                .price(parsedPrice)
                 .description(description)
                 .eventType(eventType)
                 .storeType(StoreType.CU)
@@ -116,6 +117,6 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
             return EventType.TWO_TO_ONE;
         }
         throw new PyonsnalcolorBatchException(INVALID_PRODUCT_TYPE,
-                new IllegalArgumentException("CU 이벤트 타입이 기존 엔티티와 다릅니다."));
+                new IllegalArgumentException("CU 이벤트 타입이 기존 타입과 다릅니다."));
     }
 }

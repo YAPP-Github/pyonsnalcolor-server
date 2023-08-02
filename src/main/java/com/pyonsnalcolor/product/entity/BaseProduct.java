@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.persistence.Id;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 
@@ -18,7 +19,7 @@ import java.util.Comparator;
 @ToString
 @Getter
 @NoArgsConstructor
-public class BaseProduct {
+public abstract class BaseProduct {
     @Id
     private String id;
     @Indexed
@@ -26,34 +27,24 @@ public class BaseProduct {
     private String image;
     @Indexed
     private String name;
-    private String price;
-    private int priceInt;
+    private int price;
     private LocalDateTime updatedTime;
     private String description;
     private Category category;
     private EventType eventType;
     private Boolean isNew;
 
-    public ProductResponseDto convertToDto() {
-        return ProductResponseDto.builder()
-                .id(id)
-                .name(name)
-                .description(description)
-                .image(image)
-                .storeType(storeType)
-                .price(price)
-                .updatedTime(updatedTime)
-                .isNew(isNew)
-                .category((category == null) ? null : category.getKorean())
-                .build();
-    }
+    public abstract ProductResponseDto convertToDto();
 
     public void updateIsNew(boolean isNew) {
         this.isNew = isNew;
     }
 
-
     public static Comparator<BaseProduct> getCategoryComparator() {
         return Comparator.comparing(p -> Category.GOODS.equals(p.getCategory()));
+    }
+
+    public String formattingPrice(int price) {
+        return NumberFormat.getInstance().format(price);
     }
 }

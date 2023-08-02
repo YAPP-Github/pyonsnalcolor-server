@@ -92,6 +92,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
             image = SCHEMA + image;
         }
         String price = element.select("div.price > strong").first().text();
+        int parsedPrice = Integer.parseInt(price);
         String description = getDescription(element, "product");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
@@ -100,7 +101,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
                 .id((generateId()))
                 .name(name)
                 .image(image)
-                .price(price)
+                .price(parsedPrice)
                 .description(description)
                 .storeType(StoreType.CU)
                 .updatedTime(LocalDateTime.now())

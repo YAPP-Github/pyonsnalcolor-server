@@ -26,7 +26,7 @@ public class BasePbProduct extends BaseProduct {
                 .description(getDescription())
                 .image(getImage())
                 .storeType(getStoreType())
-                .price(getPrice())
+                .price(formattingPrice(getPrice()))
                 .eventType(getEventType())
                 .updatedTime(getUpdatedTime())
                 .category((getCategory() == null) ? null : getCategory().getKorean())

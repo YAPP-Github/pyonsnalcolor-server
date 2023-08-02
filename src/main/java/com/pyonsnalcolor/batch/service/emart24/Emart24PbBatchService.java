@@ -60,32 +60,31 @@ public class Emart24PbBatchService extends PbBatchService {
         List<BasePbProduct> results = new ArrayList<>();
 
         for (Element productElement : productElements) {
-            Elements itemTitle = productElement.getElementsByClass("itemtitle");
-            Element element = itemTitle.get(0);
-            String name = element.getElementsByTag("a").get(0).text();
-            String price = productElement.getElementsByClass("price").get(0).text().split(" ")[0];
-            String image = productElement.getElementsByTag("img").attr("src");
-
-            results.add(convertToBasePbProduct(image, name, price));
+            BasePbProduct basePbProduct = convertToBasePbProduct(productElement);
+            results.add(basePbProduct);
         }
         return results;
     }
 
-    private BasePbProduct convertToBasePbProduct(String image, String name, String price) {
+    private BasePbProduct convertToBasePbProduct(Element element) {
+        Elements itemTitle = element.getElementsByClass("itemtitle");
+        Element itemTitleElement = itemTitle.get(0);
+        String name = itemTitleElement.getElementsByTag("a").get(0).text();
+        String price = element.getElementsByClass("price").get(0).text().split(" ")[0];
+        int parsedPrice = Integer.parseInt(price);
+        String image = element.getElementsByTag("img").attr("src");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        BasePbProduct basePbProduct = BasePbProduct.builder()
+        return BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
-                .price(price)
+                .price(parsedPrice)
                 .storeType(StoreType.EMART24)
                 .updatedTime(LocalDateTime.now())
                 .image(image)
                 .category(category)
                 .recommend(recommend)
                 .build();
-
-        return basePbProduct;
     }
 }
