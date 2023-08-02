@@ -80,7 +80,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
         if (!image.contains("http")) {
             image = SCHEMA + image;
         }
-        String price = element.select("div.price > strong").first().text();
+        String price = element.select("div.price > strong").first().text().replaceAll(",", "");
         int parsedPrice = Integer.parseInt(price);
         String eventTypeTag = element.select("div.badge").first().text();
         EventType eventType = getCuEventType(eventTypeTag);
@@ -96,7 +96,6 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
                 .description(description)
                 .eventType(eventType)
                 .storeType(StoreType.CU)
-                .updatedTime(LocalDateTime.now())
                 .category(category)
                 .build();
     }

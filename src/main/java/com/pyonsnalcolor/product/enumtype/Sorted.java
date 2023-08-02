@@ -12,7 +12,7 @@ import java.util.Objects;
 public enum Sorted implements Filter {
     LATEST(1,
             "최신순",
-            Comparator.comparing(BaseProduct::getUpdatedTime).reversed().thenComparing(BaseProduct::getId)),
+            Comparator.comparing(BaseProduct::getCreatedDate).reversed().thenComparing(BaseProduct::getId)),
     VIEW(2,
             "조회순",
             Comparator.comparing(BaseProduct::getId)),  // TODO: 이후 추가

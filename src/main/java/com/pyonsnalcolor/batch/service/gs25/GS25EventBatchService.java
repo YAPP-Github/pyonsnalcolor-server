@@ -96,7 +96,7 @@ public class GS25EventBatchService extends EventBatchService {
         Map<String, Object> productMap = objectMapper.convertValue(product, Map.class);
         String image = (String) productMap.get("attFileNm");
         String name = (String) productMap.get("goodsNm");
-        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0];
+        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0].replaceAll(",", "");
         int parsedPrice = Integer.parseInt(price);
         String eventType = (String) ((Map) productMap.get("eventTypeSp")).get("code");
         String giftImage = (String) productMap.get("giftAttFileNm");
@@ -113,7 +113,6 @@ public class GS25EventBatchService extends EventBatchService {
                 .id(generateId())
                 .originPrice(null)
                 .storeType(StoreType.GS25)
-                .updatedTime(LocalDateTime.now())
                 .eventType(EventType.valueOf(eventType))
                 .giftImage(giftImage)
                 .giftTitle(giftTitle)

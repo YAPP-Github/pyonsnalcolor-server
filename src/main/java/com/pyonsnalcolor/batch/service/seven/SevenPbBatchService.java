@@ -81,8 +81,9 @@ public class SevenPbBatchService extends PbBatchService {
     private BasePbProduct convertToBasePbProduct(Element element) {
         String name = element.select("div.name").first().text();
         String image = IMG_PREFIX + element.select("img").first().attr("src");
-        String price = element.select("div.price").text();
+        String price = element.select("div.price").text().replaceAll(",", "");
         int parsedPrice = Integer.parseInt(price);
+
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
@@ -91,7 +92,6 @@ public class SevenPbBatchService extends PbBatchService {
                 .name(name)
                 .image(image)
                 .price(parsedPrice)
-                .updatedTime(LocalDateTime.now())
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .category(category)
                 .recommend(recommend)

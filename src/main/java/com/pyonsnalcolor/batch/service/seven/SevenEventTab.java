@@ -66,14 +66,14 @@ public enum SevenEventTab {
     private BaseEventProduct convertToBaseEventProductWithSubProduct(Element originElement, Element subElement) {
         String name = originElement.select("div.name").first().text();
         String image = IMG_PREFIX + originElement.select("img").first().attr("src");
-        String price = originElement.select("div.price").text();
-        Integer parsedPrice = Integer.parseInt(price);
+        String price = originElement.select("div.price").text().replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
         EventType eventType = EventType.valueOf(this.name());
 
         Integer parsedOriginPrice = null;
         if (this == DISCOUNT) {
             String originProductCode = getProductCode(subElement);
-            String originPrice = getOriginPrice(originProductCode);
+            String originPrice = getOriginPrice(originProductCode).replaceAll(",", "");
             parsedOriginPrice = Integer.parseInt(originPrice);
         }
         String giftImage = null;
@@ -82,7 +82,8 @@ public enum SevenEventTab {
         if (this == GIFT) {
             giftImage = IMG_PREFIX + subElement.select("img").first().attr("src");
             giftTitle = subElement.select("div.infowrap div.name").text();
-            String giftPrice = subElement.select("div.infowrap div.price span").text();
+            String giftPrice = subElement.select("div.infowrap div.price span").text()
+                    .replaceAll(",", "");
             parsedGiftPrice = Integer.parseInt(giftPrice);
         }
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
@@ -96,7 +97,6 @@ public enum SevenEventTab {
                 .giftTitle(giftTitle)
                 .giftPrice(parsedGiftPrice)
                 .originPrice(parsedOriginPrice)
-                .updatedTime(LocalDateTime.now())
                 .eventType(eventType)
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .category(category)

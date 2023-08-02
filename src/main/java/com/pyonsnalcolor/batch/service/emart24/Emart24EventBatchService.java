@@ -68,10 +68,10 @@ public class Emart24EventBatchService extends EventBatchService {
         String giftImage = parseGiftImage(element);
         EventType eventType = parseEventType(element);
         String name = parseName(element);
-        String price = element.getElementsByClass("price").get(0).text().split(" ")[0];
-        Integer parsedPrice = Integer.parseInt(price);
+        String price = element.getElementsByClass("price").get(0).text().split(" ")[0].replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
         String originPrice = parseOriginPrice(element);
-        Integer parsedOriginPrice = Integer.parseInt(originPrice);
+        int parsedOriginPrice = Integer.parseInt(originPrice);
         String image = element.getElementsByTag("img").attr("src");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
@@ -79,7 +79,6 @@ public class Emart24EventBatchService extends EventBatchService {
                 .id(generateId())
                 .originPrice(parsedOriginPrice)
                 .storeType(StoreType.EMART24)
-                .updatedTime(LocalDateTime.now())
                 .eventType(eventType)
                 .giftImage(giftImage)
                 .giftPrice(null)

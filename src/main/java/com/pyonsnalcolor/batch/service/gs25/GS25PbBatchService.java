@@ -92,7 +92,7 @@ public class GS25PbBatchService extends PbBatchService {
         Map<String, Object> productMap = objectMapper.convertValue(product, Map.class);
         String image = (String) productMap.get("attFileNm");
         String name = (String) productMap.get("goodsNm");
-        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0];;
+        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0].replaceAll(",", "");
         int parsedPrice = Integer.parseInt(price);
 
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
@@ -103,7 +103,6 @@ public class GS25PbBatchService extends PbBatchService {
                 .name(name)
                 .price(parsedPrice)
                 .storeType(StoreType.GS25)
-                .updatedTime(LocalDateTime.now())
                 .image(image)
                 .category(category)
                 .recommend(recommend)

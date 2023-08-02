@@ -70,7 +70,7 @@ public class Emart24PbBatchService extends PbBatchService {
         Elements itemTitle = element.getElementsByClass("itemtitle");
         Element itemTitleElement = itemTitle.get(0);
         String name = itemTitleElement.getElementsByTag("a").get(0).text();
-        String price = element.getElementsByClass("price").get(0).text().split(" ")[0];
+        String price = element.getElementsByClass("price").get(0).text().split(" ")[0].replaceAll(",", "");
         int parsedPrice = Integer.parseInt(price);
         String image = element.getElementsByTag("img").attr("src");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
@@ -81,7 +81,6 @@ public class Emart24PbBatchService extends PbBatchService {
                 .name(name)
                 .price(parsedPrice)
                 .storeType(StoreType.EMART24)
-                .updatedTime(LocalDateTime.now())
                 .image(image)
                 .category(category)
                 .recommend(recommend)

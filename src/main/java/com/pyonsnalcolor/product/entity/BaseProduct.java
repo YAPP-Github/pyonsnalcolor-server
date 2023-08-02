@@ -12,26 +12,32 @@ import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.persistence.Id;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 
 @SuperBuilder
 @ToString
 @Getter
 @NoArgsConstructor
-public abstract class BaseProduct {
+public abstract class BaseProduct extends BaseTimeEntity {
     @Id
     private String id;
+
     @Indexed
     private StoreType storeType;
+
     private String image;
+
     @Indexed
     private String name;
+
     private int price;
-    private LocalDateTime updatedTime;
+
     private String description;
+
     private Category category;
+
     private EventType eventType;
+
     private Boolean isNew;
 
     public abstract ProductResponseDto convertToDto();

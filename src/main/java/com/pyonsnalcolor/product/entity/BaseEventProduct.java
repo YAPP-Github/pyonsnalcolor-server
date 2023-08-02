@@ -27,7 +27,7 @@ public class BaseEventProduct extends BaseProduct {
                 .image(getImage())
                 .storeType(getStoreType())
                 .price(formattingPrice(getPrice()))
-                .updatedTime(getUpdatedTime())
+                .updatedTime(getCreatedDate())
                 .eventType(getEventType())
                 .category((getCategory() == null) ? null : getCategory().getKorean())
                 .originPrice(formattingPrice(getOriginPrice()))

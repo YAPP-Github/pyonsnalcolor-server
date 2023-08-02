@@ -28,7 +28,7 @@ public class BasePbProduct extends BaseProduct {
                 .storeType(getStoreType())
                 .price(formattingPrice(getPrice()))
                 .eventType(getEventType())
-                .updatedTime(getUpdatedTime())
+                .updatedTime(getCreatedDate())
                 .category((getCategory() == null) ? null : getCategory().getKorean())
                 .recommend((getRecommend() == null) ? null : getRecommend().getKorean())
                 .isNew(getIsNew())
@@ -50,4 +50,6 @@ public class BasePbProduct extends BaseProduct {
     public void deleteCuration() {
         this.curation = null;
     }
+
+
 }
