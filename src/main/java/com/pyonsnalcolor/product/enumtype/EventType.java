@@ -1,8 +1,12 @@
 package com.pyonsnalcolor.product.enumtype;
 
+import com.pyonsnalcolor.product.metadata.FilterItem;
+import com.pyonsnalcolor.product.metadata.FilterItems;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public enum EventType implements Filter {
@@ -18,6 +22,20 @@ public enum EventType implements Filter {
 
     EventType(int code) {
         this.code = code;
+    }
+
+    private static List<FilterItem> getFilterItem() {
+        return Arrays.stream(EventType.values())
+                .filter(s -> !s.equals(EventType.NONE))
+                .map(filter -> FilterItem.builder()
+                        .name(filter.getKorean())
+                        .code(filter.getCode())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public static FilterItems getMetaData() {
+        return new FilterItems(FILTER_TYPE, getFilterItem());
     }
 
     @Override
