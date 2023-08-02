@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,12 +62,13 @@ public class EventProductService extends ProductService{
         List<Integer> filterList = productFilterRequestDto.getFilterList();
         validateProductFilterCodes(filterList);
 
-        List<BaseEventProduct> responseDtos = getProductsListByFilter(storeType, filterList, BaseEventProduct.class);
-        List<ProductResponseDto> result = convertToResponseDtoList(responseDtos);
+        Comparator comparator = Sorted.getCategoryFilteredComparator(filterList);
+        List<BaseEventProduct> eventProducts = getProductsListByFilter(storeType, filterList, BaseEventProduct.class);
+        eventProducts.sort(comparator);
 
-        Sort sort = Sorted.findSortedByFilterList(filterList);
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
-        return convertToPage(result, pageRequest);
+        List<ProductResponseDto> responseDtos = convertToResponseDtoList(eventProducts);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        return convertToPage(responseDtos, pageRequest);
     }
 
     @Override
