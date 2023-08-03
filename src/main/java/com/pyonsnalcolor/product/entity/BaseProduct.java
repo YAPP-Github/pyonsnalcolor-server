@@ -46,11 +46,11 @@ public abstract class BaseProduct extends BaseTimeEntity {
         this.isNew = isNew;
     }
 
-    public static Comparator<BaseProduct> getCategoryComparator() {
-        return Comparator.comparing(p -> Category.GOODS.equals(p.getCategory()));
-    }
-
     public String formattingPrice(int price) {
         return NumberFormat.getInstance().format(price);
+    }
+
+    public static Comparator<BaseProduct> getCategoryComparator() {
+        return Comparator.comparing(p -> Category.GOODS.equals(p.getCategory()));
     }
 }

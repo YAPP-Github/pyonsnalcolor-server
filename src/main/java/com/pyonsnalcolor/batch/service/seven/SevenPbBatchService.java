@@ -18,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +41,7 @@ public class SevenPbBatchService extends PbBatchService {
     }
 
     @Override
-    protected List<BasePbProduct> getAllProducts(){
+    public List<BasePbProduct> getAllProducts(){
         try {
             return getProducts();
         } catch (IllegalArgumentException e) {
@@ -87,7 +86,7 @@ public class SevenPbBatchService extends PbBatchService {
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        return BasePbProduct.builder()
+        BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
                 .image(image)
@@ -96,6 +95,8 @@ public class SevenPbBatchService extends PbBatchService {
                 .category(category)
                 .recommend(recommend)
                 .build();
+        log.info("세븐일레븐 {}", basePbProduct.toString());
+        return basePbProduct;
     }
 
     private String getSevenPbUrlByPageIndex(int pageIndex) {

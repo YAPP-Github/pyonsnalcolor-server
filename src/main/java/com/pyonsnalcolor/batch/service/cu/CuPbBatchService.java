@@ -19,7 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,7 +96,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        return BasePbProduct.builder()
+        BasePbProduct basePbProduct =  BasePbProduct.builder()
                 .id((generateId()))
                 .name(name)
                 .image(image)
@@ -107,6 +106,8 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
                 .category(category)
                 .recommend(recommend)
                 .build();
+        log.info("CU {}", basePbProduct.toString());
+        return basePbProduct;
     }
 
     private String getCuPbUrlByPageIndexAndCategory(int pageIndex, String category) {

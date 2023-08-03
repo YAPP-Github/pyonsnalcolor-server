@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
 
     private static final String CU_EVENT_URL = "https://cu.bgfretail.com/event/plusAjax.do?";
     private static final String DOC_SELECT_TAG = "a.prod_item";
-    private static final int TIMEOUT = 15000;
+    private static final int TIMEOUT = 25000;
     private static final String SCHEMA = "https:";
 
     public CuEventBatchService(EventProductRepository eventProductRepository) {
@@ -88,7 +87,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
         String description = getDescription(element, "event");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
-        return BaseEventProduct.builder()
+        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
                 .id((generateId()))
                 .name(name)
                 .image(image)
@@ -98,6 +97,8 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
                 .storeType(StoreType.CU)
                 .category(category)
                 .build();
+        log.info("CU {}", baseEventProduct.toString());
+        return baseEventProduct;
     }
 
     private String getCuEventUrlByPageIndex(int pageIndex) {

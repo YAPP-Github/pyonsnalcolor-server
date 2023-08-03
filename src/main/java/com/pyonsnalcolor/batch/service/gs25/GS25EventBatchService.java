@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +120,7 @@ public class GS25EventBatchService extends EventBatchService {
                 .name(name)
                 .category(category)
                 .build();
-
+        log.info("GS25 {}", baseEventProduct.toString());
         return baseEventProduct;
     }
 

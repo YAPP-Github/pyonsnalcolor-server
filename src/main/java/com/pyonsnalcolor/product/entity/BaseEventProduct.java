@@ -30,12 +30,11 @@ public class BaseEventProduct extends BaseProduct {
                 .updatedTime(getCreatedDate())
                 .eventType(getEventType())
                 .category((getCategory() == null) ? null : getCategory().getKorean())
-                .originPrice(formattingPrice(getOriginPrice()))
+                .originPrice(getOriginPrice() == null ? null : formattingPrice(getOriginPrice()))
                 .giftImage(getGiftImage())
-                .giftPrice(formattingPrice(getGiftPrice()))
+                .giftPrice(getGiftPrice() == null ? null : formattingPrice(getGiftPrice()))
                 .giftTitle(getGiftTitle())
                 .isNew(false) // TODO: 2차 배포 이후 행사 상품의 isNew 필드 삭제
                 .build();
     }
-
 }

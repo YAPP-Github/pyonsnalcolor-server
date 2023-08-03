@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +97,7 @@ public class GS25PbBatchService extends PbBatchService {
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        return BasePbProduct.builder()
+        BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
                 .price(parsedPrice)
@@ -107,6 +106,8 @@ public class GS25PbBatchService extends PbBatchService {
                 .category(category)
                 .recommend(recommend)
                 .build();
+        log.info("GS25 {}", basePbProduct.toString());
+        return basePbProduct;
     }
 
     private Map<String, Object> parsePaginationData(Object data) throws JsonProcessingException {

@@ -15,7 +15,6 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -76,7 +75,7 @@ public class Emart24PbBatchService extends PbBatchService {
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        return BasePbProduct.builder()
+        BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
                 .price(parsedPrice)
@@ -85,5 +84,7 @@ public class Emart24PbBatchService extends PbBatchService {
                 .category(category)
                 .recommend(recommend)
                 .build();
+        log.info("EMART24 {}", basePbProduct.toString());
+        return basePbProduct;
     }
 }

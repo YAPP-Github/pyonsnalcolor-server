@@ -26,7 +26,7 @@ import static com.pyonsnalcolor.exception.model.BatchErrorCode.BATCH_UNAVAILABLE
 public class SevenEventBatchService extends EventBatchService {
 
     private static final String SEVEN_URL = "https://www.7-eleven.co.kr/product/listMoreAjax.asp?intPageSize=10";
-    private static final int TIMEOUT = 5000;
+    private static final int TIMEOUT = 30000;
 
     public SevenEventBatchService(EventProductRepository eventProductRepository) {
         super(eventProductRepository);
