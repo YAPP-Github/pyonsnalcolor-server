@@ -13,7 +13,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,38 +65,43 @@ public enum SevenEventTab {
     private BaseEventProduct convertToBaseEventProductWithSubProduct(Element originElement, Element subElement) {
         String name = originElement.select("div.name").first().text();
         String image = IMG_PREFIX + originElement.select("img").first().attr("src");
-        String price = originElement.select("div.price").text();
+        String price = originElement.select("div.price").text().replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
         EventType eventType = EventType.valueOf(this.name());
 
-        String originPrice = null;
+        Integer parsedOriginPrice = null;
         if (this == DISCOUNT) {
             String originProductCode = getProductCode(subElement);
-            originPrice = getOriginPrice(originProductCode);
+            String originPrice = getOriginPrice(originProductCode).replaceAll(",", "");
+            parsedOriginPrice = Integer.parseInt(originPrice);
         }
         String giftImage = null;
         String giftTitle = null;
-        String giftPrice = null;
+        Integer parsedGiftPrice = null;
         if (this == GIFT) {
             giftImage = IMG_PREFIX + subElement.select("img").first().attr("src");
             giftTitle = subElement.select("div.infowrap div.name").text();
-            giftPrice = subElement.select("div.infowrap div.price span").text();
+            String giftPrice = subElement.select("div.infowrap div.price span").text()
+                    .replaceAll(",", "");
+            parsedGiftPrice = Integer.parseInt(giftPrice);
         }
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
-        return BaseEventProduct.builder()
+        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
                 .name(name)
                 .id(generateId())
                 .image(image)
-                .price(price)
+                .price(parsedPrice)
                 .giftImage(giftImage)
                 .giftTitle(giftTitle)
-                .giftPrice(giftPrice)
-                .originPrice(originPrice)
-                .updatedTime(LocalDateTime.now())
+                .giftPrice(parsedGiftPrice)
+                .originPrice(parsedOriginPrice)
                 .eventType(eventType)
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .category(category)
                 .build();
+        log.info("세븐일레븐 {}", baseEventProduct.toString());
+        return baseEventProduct;
     }
 
     private List<BaseEventProduct> getPagedProductsByGift(Elements elements) {
@@ -139,9 +143,13 @@ public enum SevenEventTab {
                     .queryParam("pCd", originProductCode)
                     .build()
                     .toString();
+
             Document doc = Jsoup.connect(originPriceUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select("div.cont_top span.product_price del");
-            return elements.text().replace(" >", "");
+            Element priceElement = doc.selectFirst(".product_price strong");
+            String originPrice = priceElement.text()
+                    .replaceAll(",", "")
+                    .replaceAll("[^0-9]", "");
+            return originPrice;
         } catch (IllegalArgumentException e) {
             throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
         } catch (SocketTimeoutException e) {

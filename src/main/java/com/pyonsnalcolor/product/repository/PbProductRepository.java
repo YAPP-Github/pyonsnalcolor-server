@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PbProductRepository
-        extends BasicProductRepository<BasePbProduct, String> {
+public interface PbProductRepository extends BasicProductRepository<BasePbProduct, String> {
 
     List<BasePbProduct> findByRecommend(Recommend recommend);
 

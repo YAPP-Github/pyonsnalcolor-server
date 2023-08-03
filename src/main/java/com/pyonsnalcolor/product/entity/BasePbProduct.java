@@ -2,6 +2,7 @@ package com.pyonsnalcolor.product.entity;
 
 import com.pyonsnalcolor.product.dto.PbProductResponseDto;
 import com.pyonsnalcolor.product.enumtype.Curation;
+import com.pyonsnalcolor.product.enumtype.EventType;
 import com.pyonsnalcolor.product.enumtype.Recommend;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,9 +27,9 @@ public class BasePbProduct extends BaseProduct {
                 .description(getDescription())
                 .image(getImage())
                 .storeType(getStoreType())
-                .price(getPrice())
-                .eventType(getEventType())
-                .updatedTime(getUpdatedTime())
+                .price(formattingPrice(getPrice()))
+                .eventType(getEventType() == null ? EventType.NONE : getEventType())
+                .updatedTime(getCreatedDate())
                 .category((getCategory() == null) ? null : getCategory().getKorean())
                 .recommend((getRecommend() == null) ? null : getRecommend().getKorean())
                 .isNew(getIsNew())

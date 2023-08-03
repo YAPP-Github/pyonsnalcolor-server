@@ -7,17 +7,16 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
 @SuperBuilder
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
 @Document(collection = "event_product")
 public class BaseEventProduct extends BaseProduct {
-    private String originPrice;
+    private Integer originPrice;
     private String giftImage;
     private String giftTitle;
-    private String giftPrice;
+    private Integer giftPrice;
 
     @Override
     public EventProductResponseDto convertToDto() {
@@ -27,15 +26,15 @@ public class BaseEventProduct extends BaseProduct {
                 .description(getDescription())
                 .image(getImage())
                 .storeType(getStoreType())
-                .price(getPrice())
-                .updatedTime(getUpdatedTime())
+                .price(formattingPrice(getPrice()))
+                .updatedTime(getCreatedDate())
                 .eventType(getEventType())
                 .category((getCategory() == null) ? null : getCategory().getKorean())
-                .originPrice(getOriginPrice())
+                .originPrice(getOriginPrice() == null ? null : formattingPrice(getOriginPrice()))
                 .giftImage(getGiftImage())
-                .giftPrice(getGiftPrice())
+                .giftPrice(getGiftPrice() == null ? null : formattingPrice(getGiftPrice()))
                 .giftTitle(getGiftTitle())
-                .isNew(getIsNew())
+                .isNew(false) // TODO: 2차 배포 이후 행사 상품의 isNew 필드 삭제
                 .build();
     }
 }

@@ -20,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -93,9 +91,8 @@ public class GS25PbBatchService extends PbBatchService {
         Map<String, Object> productMap = objectMapper.convertValue(product, Map.class);
         String image = (String) productMap.get("attFileNm");
         String name = (String) productMap.get("goodsNm");
-        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0];;
-        int priceInt = Integer.parseInt(price);
-        String formattedPrice = NumberFormat.getInstance().format(priceInt);
+        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0].replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
 
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
@@ -103,14 +100,13 @@ public class GS25PbBatchService extends PbBatchService {
         BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
-                .price(formattedPrice)
+                .price(parsedPrice)
                 .storeType(StoreType.GS25)
-                .updatedTime(LocalDateTime.now())
                 .image(image)
                 .category(category)
                 .recommend(recommend)
                 .build();
-
+        log.info("GS25 {}", basePbProduct.toString());
         return basePbProduct;
     }
 

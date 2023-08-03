@@ -19,7 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,22 +90,24 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
         if (!image.contains("http")) {
             image = SCHEMA + image;
         }
-        String price = element.select("div.price > strong").first().text();
+        String price = element.select("div.price > strong").first().text().replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
         String description = getDescription(element, "product");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        return BasePbProduct.builder()
+        BasePbProduct basePbProduct =  BasePbProduct.builder()
                 .id((generateId()))
                 .name(name)
                 .image(image)
-                .price(price)
+                .price(parsedPrice)
                 .description(description)
                 .storeType(StoreType.CU)
-                .updatedTime(LocalDateTime.now())
                 .category(category)
                 .recommend(recommend)
                 .build();
+        log.info("CU {}", basePbProduct.toString());
+        return basePbProduct;
     }
 
     private String getCuPbUrlByPageIndexAndCategory(int pageIndex, String category) {

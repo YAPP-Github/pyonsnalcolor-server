@@ -18,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +41,7 @@ public class SevenPbBatchService extends PbBatchService {
     }
 
     @Override
-    protected List<BasePbProduct> getAllProducts(){
+    public List<BasePbProduct> getAllProducts(){
         try {
             return getProducts();
         } catch (IllegalArgumentException e) {
@@ -81,20 +80,23 @@ public class SevenPbBatchService extends PbBatchService {
     private BasePbProduct convertToBasePbProduct(Element element) {
         String name = element.select("div.name").first().text();
         String image = IMG_PREFIX + element.select("img").first().attr("src");
-        String price = element.select("div.price").text();
+        String price = element.select("div.price").text().replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
+
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        return BasePbProduct.builder()
+        BasePbProduct basePbProduct = BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
                 .image(image)
-                .price(price)
-                .updatedTime(LocalDateTime.now())
+                .price(parsedPrice)
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .category(category)
                 .recommend(recommend)
                 .build();
+        log.info("세븐일레븐 {}", basePbProduct.toString());
+        return basePbProduct;
     }
 
     private String getSevenPbUrlByPageIndex(int pageIndex) {

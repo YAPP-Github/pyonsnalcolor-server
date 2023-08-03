@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +29,6 @@ import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 public class GS25EventBatchService extends EventBatchService {
     private GS25Client gs25Client;
     private ObjectMapper objectMapper;
-
-    private static final String NOT_EXIST = null;
 
     @Autowired
     public GS25EventBatchService(EventProductRepository eventProductRepository,
@@ -98,37 +94,33 @@ public class GS25EventBatchService extends EventBatchService {
         Map<String, Object> productMap = objectMapper.convertValue(product, Map.class);
         String image = (String) productMap.get("attFileNm");
         String name = (String) productMap.get("goodsNm");
-        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0];
-        int priceInt = Integer.parseInt(price);
-        String formattedPrice = NumberFormat.getInstance().format(priceInt);
+        String price = Double.toString((Double) productMap.get("price")).split("\\.")[0].replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
         String eventType = (String) ((Map) productMap.get("eventTypeSp")).get("code");
         String giftImage = (String) productMap.get("giftAttFileNm");
         String giftTitle = (String) productMap.get("giftGoodsNm");
         Double giftPriceDouble = (Double) productMap.get("giftPrice");
-        String formattedGiftPrice = null;
+        Integer parsedGiftPrice = null;
         if (giftPriceDouble != null) {
             String giftPrice =  Double.toString(giftPriceDouble).split("\\.")[0];
-            int giftPriceInt = Integer.parseInt(giftPrice);
-            formattedGiftPrice = NumberFormat.getInstance().format(giftPriceInt);
+            parsedGiftPrice = Integer.parseInt(giftPrice);
         }
-
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
         BaseEventProduct baseEventProduct = BaseEventProduct.builder()
-                .originPrice(NOT_EXIST)
-                .storeType(StoreType.GS25)
-                .updatedTime(LocalDateTime.now())
-                .eventType(EventType.valueOf(eventType))
                 .id(generateId())
+                .originPrice(null)
+                .storeType(StoreType.GS25)
+                .eventType(EventType.valueOf(eventType))
                 .giftImage(giftImage)
                 .giftTitle(giftTitle)
-                .giftPrice(formattedGiftPrice)
+                .giftPrice(parsedGiftPrice)
                 .image(image)
-                .price(formattedPrice)
+                .price(parsedPrice)
                 .name(name)
                 .category(category)
                 .build();
-
+        log.info("GS25 {}", baseEventProduct.toString());
         return baseEventProduct;
     }
 

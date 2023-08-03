@@ -18,7 +18,7 @@ public class ProductMetaData {
                 Filter.getMetaData(Sorted.class),
                 Filter.getMetaData(Recommend.class),
                 Filter.getMetaData(Category.class),
-                Filter.getMetaData(EventType.class)
+                EventType.getMetaData()
         );
     }
 

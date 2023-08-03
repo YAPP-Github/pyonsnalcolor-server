@@ -12,7 +12,6 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +22,6 @@ import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 @Slf4j
 public class Emart24EventBatchService extends EventBatchService {
     private static final String EMART_EVENT_URL_TEMPLATE = "http://www.emart24.co.kr/goods/event?search=&page=%s&category_seq=&align=";
-    private static final String NOT_EXIST = null;
 
     @Autowired
     public Emart24EventBatchService(EventProductRepository eventProductRepository) {
@@ -54,25 +52,52 @@ public class Emart24EventBatchService extends EventBatchService {
         return Collections.emptyList();
     }
 
-    private List<BaseEventProduct> parseProductsData(Elements productElements) {
+    private List<BaseEventProduct> parseProductsData(Elements elements) {
         List<BaseEventProduct> results = new ArrayList<>();
 
-        for (Element productElement : productElements) {
-            String giftImage = parseGiftImage(productElement);
-            EventType eventType = parseEventType(productElement);
-            String name = parseName(productElement);
-            String price = productElement.getElementsByClass("price").get(0).text().split(" ")[0];
-            String originPrice = parseOriginPrice(productElement);
-            String image = productElement.getElementsByTag("img").attr("src");
-
-            results.add(convertToBaseEventProduct(image, name, price, originPrice, giftImage, eventType));
+        for (Element element : elements) {
+            BaseEventProduct baseEventProduct = convertToBaseEventProduct(element);
+            results.add(baseEventProduct);
         }
         return results;
     }
 
+    private BaseEventProduct convertToBaseEventProduct(Element element) {
+        String giftImage = parseGiftImage(element);
+        EventType eventType = parseEventType(element);
+        String name = parseName(element);
+        String price = element.getElementsByClass("price").get(0).text().split(" ")[0].replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
+
+        String originPrice = parseOriginPrice(element);
+        Integer parsedOriginPrice = null;
+        if (originPrice != null) {
+            originPrice = originPrice.replaceAll(",", "");
+            parsedOriginPrice = Integer.parseInt(originPrice);
+        }
+        String image = element.getElementsByTag("img").attr("src");
+        Category category = Filter.matchEnumTypeByProductName(Category.class, name);
+
+        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
+                .id(generateId())
+                .originPrice(parsedOriginPrice)
+                .storeType(StoreType.EMART24)
+                .eventType(eventType)
+                .giftImage(giftImage)
+                .giftPrice(null)
+                .giftTitle(null)
+                .image(image)
+                .price(parsedPrice)
+                .name(name)
+                .category(category)
+                .build();
+        log.info("EMART24 {}", baseEventProduct.toString());
+        return baseEventProduct;
+    }
+
     private String parseGiftImage(Element productElement) {
         Elements giftElement = productElement.select("div.dumgift");
-        String giftImage = NOT_EXIST;
+        String giftImage = null;
         if(giftElement.size() > 0) {
             giftImage = giftElement.get(0).getElementsByTag("img").attr("src");
         }
@@ -81,13 +106,13 @@ public class Emart24EventBatchService extends EventBatchService {
     }
 
     private String parseOriginPrice(Element productElement) {
-        String originPrice = NOT_EXIST;
+        String originPrice = null;
         Elements originPriceElement = productElement.getElementsByClass("priceOff");
         if(originPriceElement.size() > 0) {
             originPrice = originPriceElement.get(0).text();
             return originPrice.split(" ")[0];
         }
-        return null;
+        return originPrice;
     }
 
     private String parseName(Element productElement) {
@@ -120,26 +145,5 @@ public class Emart24EventBatchService extends EventBatchService {
             default:
                 throw new IllegalArgumentException(eventName + "is not support");
         }
-    }
-
-    private BaseEventProduct convertToBaseEventProduct(String image, String name, String price, String originPrice, String giftImage, EventType eventType) {
-        Category category = Filter.matchEnumTypeByProductName(Category.class, name);
-
-        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
-                .id(generateId())
-                .originPrice(originPrice) //변경
-                .storeType(StoreType.EMART24)
-                .updatedTime(LocalDateTime.now())
-                .eventType(eventType) // 변경
-                .giftImage(giftImage) // 변경
-                .giftPrice(null)
-                .giftTitle(null)
-                .image(image)
-                .price(price)
-                .name(name)
-                .category(category)
-                .build();
-
-        return baseEventProduct;
     }
 }

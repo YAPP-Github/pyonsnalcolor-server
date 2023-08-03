@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
 
     private static final String CU_EVENT_URL = "https://cu.bgfretail.com/event/plusAjax.do?";
     private static final String DOC_SELECT_TAG = "a.prod_item";
-    private static final int TIMEOUT = 15000;
+    private static final int TIMEOUT = 25000;
     private static final String SCHEMA = "https:";
 
     public CuEventBatchService(EventProductRepository eventProductRepository) {
@@ -80,24 +79,26 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
         if (!image.contains("http")) {
             image = SCHEMA + image;
         }
-        String price = element.select("div.price > strong").first().text();
+        String price = element.select("div.price > strong").first().text().replaceAll(",", "");
+        int parsedPrice = Integer.parseInt(price);
         String eventTypeTag = element.select("div.badge").first().text();
         EventType eventType = getCuEventType(eventTypeTag);
 
         String description = getDescription(element, "event");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
-        return BaseEventProduct.builder()
+        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
                 .id((generateId()))
                 .name(name)
                 .image(image)
-                .price(price)
+                .price(parsedPrice)
                 .description(description)
                 .eventType(eventType)
                 .storeType(StoreType.CU)
-                .updatedTime(LocalDateTime.now())
                 .category(category)
                 .build();
+        log.info("CU {}", baseEventProduct.toString());
+        return baseEventProduct;
     }
 
     private String getCuEventUrlByPageIndex(int pageIndex) {
@@ -116,6 +117,6 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
             return EventType.TWO_TO_ONE;
         }
         throw new PyonsnalcolorBatchException(INVALID_PRODUCT_TYPE,
-                new IllegalArgumentException("CU 이벤트 타입이 기존 엔티티와 다릅니다."));
+                new IllegalArgumentException("CU 이벤트 타입이 기존 타입과 다릅니다."));
     }
 }
