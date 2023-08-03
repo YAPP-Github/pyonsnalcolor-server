@@ -32,7 +32,7 @@ public class BasePbProduct extends BaseProduct {
                 .updatedTime(getCreatedDate())
                 .category((getCategory() == null) ? null : getCategory().getKorean())
                 .recommend((getRecommend() == null) ? null : getRecommend().getKorean())
-                .isNew(getIsNew())
+                .isNew(getIsNew() == null ? false : getIsNew())
                 .build();
     }
 

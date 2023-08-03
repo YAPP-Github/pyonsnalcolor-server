@@ -1,13 +1,13 @@
 package com.pyonsnalcolor.batch.service;
 
 import com.pyonsnalcolor.product.entity.BaseProduct;
-import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Slf4j
 abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements BatchService {
     protected BasicProductRepository basicProductRepository;
 
@@ -37,23 +37,8 @@ abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements Batch
         return Collections.emptyList();
     }
 
-    private final List<T> getNewProducts(List<T> allProducts) {
-        if (allProducts.isEmpty()) {
-            return Collections.emptyList();
-        }
-        StoreType storeType = allProducts.get(0).getStoreType();
+    protected <T extends BaseProduct> List<T> getNewProducts(List<T> allProducts) { return Collections.emptyList();}
 
-        List<T> alreadyExistProducts = basicProductRepository.findByStoreType(storeType);
-        List<String> alreadyExistProductNames = alreadyExistProducts.stream()
-                .map(a -> a.getName())
-                .collect(Collectors.toList());
-
-        List<T> newProducts = allProducts.stream().filter(
-                p -> !alreadyExistProductNames.contains(p.getName())
-        ).collect(Collectors.toList());
-
-        return newProducts;
-    }
 
     // TODO : Alarm 서비스 완성 시 구현
     private final void sendAlarms(List<T> baseProducts) {

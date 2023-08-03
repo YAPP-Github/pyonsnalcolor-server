@@ -78,7 +78,7 @@ public class Emart24EventBatchService extends EventBatchService {
         String image = element.getElementsByTag("img").attr("src");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
-        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
+        return BaseEventProduct.builder()
                 .id(generateId())
                 .originPrice(parsedOriginPrice)
                 .storeType(StoreType.EMART24)
@@ -91,8 +91,6 @@ public class Emart24EventBatchService extends EventBatchService {
                 .name(name)
                 .category(category)
                 .build();
-        log.info("EMART24 {}", baseEventProduct.toString());
-        return baseEventProduct;
     }
 
     private String parseGiftImage(Element productElement) {

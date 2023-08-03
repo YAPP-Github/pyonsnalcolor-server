@@ -28,7 +28,7 @@ public class PbProductService extends ProductService {
     // TODO: v2 필터 조회 api 연동 후 삭제
     public Page<PbProductResponseDto> getProductsWithPaging(int pageNumber, int pageSize, String storeType, String filterList) {
 
-        Sort sort = Sort.by("updatedTime").descending().and(Sort.by("id"));
+        Sort sort = Sort.by("createdDate").descending().and(Sort.by("id"));
         String storeTypeUppercase = storeType.toUpperCase();
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 

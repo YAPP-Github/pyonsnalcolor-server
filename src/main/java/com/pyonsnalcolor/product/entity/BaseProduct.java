@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import javax.persistence.Id;
 import java.text.NumberFormat;
 import java.util.Comparator;
+import java.util.Objects;
 
 @SuperBuilder
 @ToString
@@ -52,5 +53,18 @@ public abstract class BaseProduct extends BaseTimeEntity {
 
     public static Comparator<BaseProduct> getCategoryComparator() {
         return Comparator.comparing(p -> Category.GOODS.equals(p.getCategory()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BaseProduct))
+            return false;
+        BaseProduct baseProduct = (BaseProduct) o;
+        return this.name.equals(baseProduct.name) && this.storeType == baseProduct.storeType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, storeType);
     }
 }

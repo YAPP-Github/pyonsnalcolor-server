@@ -87,7 +87,7 @@ public enum SevenEventTab {
         }
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
-        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
+        return BaseEventProduct.builder()
                 .name(name)
                 .id(generateId())
                 .image(image)
@@ -100,8 +100,6 @@ public enum SevenEventTab {
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .category(category)
                 .build();
-        log.info("세븐일레븐 {}", baseEventProduct.toString());
-        return baseEventProduct;
     }
 
     private List<BaseEventProduct> getPagedProductsByGift(Elements elements) {

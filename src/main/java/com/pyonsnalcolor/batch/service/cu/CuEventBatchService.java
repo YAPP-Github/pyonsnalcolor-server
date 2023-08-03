@@ -87,7 +87,7 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
         String description = getDescription(element, "event");
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
-        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
+        return BaseEventProduct.builder()
                 .id((generateId()))
                 .name(name)
                 .image(image)
@@ -97,8 +97,6 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
                 .storeType(StoreType.CU)
                 .category(category)
                 .build();
-        log.info("CU {}", baseEventProduct.toString());
-        return baseEventProduct;
     }
 
     private String getCuEventUrlByPageIndex(int pageIndex) {

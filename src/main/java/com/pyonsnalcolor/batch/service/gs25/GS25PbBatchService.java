@@ -97,7 +97,7 @@ public class GS25PbBatchService extends PbBatchService {
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        BasePbProduct basePbProduct = BasePbProduct.builder()
+        return BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
                 .price(parsedPrice)
@@ -106,8 +106,6 @@ public class GS25PbBatchService extends PbBatchService {
                 .category(category)
                 .recommend(recommend)
                 .build();
-        log.info("GS25 {}", basePbProduct.toString());
-        return basePbProduct;
     }
 
     private Map<String, Object> parsePaginationData(Object data) throws JsonProcessingException {

@@ -67,7 +67,6 @@ public class SevenEventBatchService extends EventBatchService {
             String sevenEventUrl = getSevenEventUrlByPageIndexAndTab(pageIndex, tab);
             Document document = Jsoup.connect(sevenEventUrl).timeout(TIMEOUT).get();
             Elements elements = document.select(sevenEventTab.getDocumentTag());
-
             if (elements.isEmpty()) {
                 break;
             }

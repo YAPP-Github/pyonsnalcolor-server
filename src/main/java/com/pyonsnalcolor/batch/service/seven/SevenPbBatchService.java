@@ -34,7 +34,7 @@ public class SevenPbBatchService extends PbBatchService {
     private static final String IMG_PREFIX = "https://www.7-eleven.co.kr";
     private static final String DOC_SELECT_TAG = "div.pic_product div.pic_product";
     private static final int PB_TAB = 5;
-    private static final int TIMEOUT = 5000;
+    private static final int TIMEOUT = 20000;
 
     public SevenPbBatchService(PbProductRepository pbProductRepository) {
         super(pbProductRepository);
@@ -86,7 +86,7 @@ public class SevenPbBatchService extends PbBatchService {
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        BasePbProduct basePbProduct = BasePbProduct.builder()
+        return BasePbProduct.builder()
                 .id(generateId())
                 .name(name)
                 .image(image)
@@ -95,8 +95,6 @@ public class SevenPbBatchService extends PbBatchService {
                 .category(category)
                 .recommend(recommend)
                 .build();
-        log.info("세븐일레븐 {}", basePbProduct.toString());
-        return basePbProduct;
     }
 
     private String getSevenPbUrlByPageIndex(int pageIndex) {
