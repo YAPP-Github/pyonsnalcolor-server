@@ -47,6 +47,10 @@ public abstract class BaseProduct extends BaseTimeEntity {
         this.isNew = isNew;
     }
 
+    public void updateEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
     public String formattingPrice(int price) {
         return NumberFormat.getInstance().format(price);
     }
