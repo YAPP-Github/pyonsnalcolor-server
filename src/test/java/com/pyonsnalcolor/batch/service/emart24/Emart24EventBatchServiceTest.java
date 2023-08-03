@@ -41,11 +41,10 @@ class Emart24EventBatchServiceTest {
         BaseEventProduct expiredProduct = BaseEventProduct.builder()
                 .name("testName")
                 .image("testImage")
-                .price("testPrice")
+                .price(1000)
                 .eventType(EventType.ONE_TO_ONE)
                 .storeType(StoreType.EMART24)
                 .id(testId)
-                .updatedTime(LocalDateTime.now())
                 .build();
         eventProductRepository.save(expiredProduct);
 

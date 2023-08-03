@@ -13,7 +13,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -88,7 +87,7 @@ public enum SevenEventTab {
         }
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
-        return BaseEventProduct.builder()
+        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
                 .name(name)
                 .id(generateId())
                 .image(image)
@@ -101,6 +100,8 @@ public enum SevenEventTab {
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .category(category)
                 .build();
+        log.info("세븐일레븐 {}", baseEventProduct.toString());
+        return baseEventProduct;
     }
 
     private List<BaseEventProduct> getPagedProductsByGift(Elements elements) {
@@ -142,9 +143,13 @@ public enum SevenEventTab {
                     .queryParam("pCd", originProductCode)
                     .build()
                     .toString();
+
             Document doc = Jsoup.connect(originPriceUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select("div.cont_top span.product_price del");
-            return elements.text().replace(" >", "");
+            Element priceElement = doc.selectFirst(".product_price strong");
+            String originPrice = priceElement.text()
+                    .replaceAll(",", "")
+                    .replaceAll("[^0-9]", "");
+            return originPrice;
         } catch (IllegalArgumentException e) {
             throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
         } catch (SocketTimeoutException e) {
