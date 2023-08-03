@@ -26,7 +26,7 @@ public abstract class PbBatchService extends BasicBatchServiceTemplate<BasePbPro
         if (allProducts.isEmpty()) {
             return Collections.emptyList();
         }
-        updateEventTypeOfAllProducts(allProducts);
+        updateEventTypeOfAllProducts(allProducts); // 신상만 찾기!! 해도 좋을 듯
 
         List<T> alreadyExistProducts = basicProductRepository.findAll();
         updateIsNewOfAlreadyExistProducts(alreadyExistProducts);
@@ -34,7 +34,7 @@ public abstract class PbBatchService extends BasicBatchServiceTemplate<BasePbPro
         List<T> newProducts = allProducts.stream()
                 .filter(product -> !alreadyExistProducts.contains(product))
                 .peek(product -> log.info("새로운 PB 상품이 저장됩니다. {}", product))
-                .peek(p -> p.updateIsNew(true))
+                .peek(product -> product.updateIsNew(true))
                 .collect(Collectors.toList());
         return newProducts;
     }
@@ -45,7 +45,6 @@ public abstract class PbBatchService extends BasicBatchServiceTemplate<BasePbPro
                 .forEach(product -> {
                     product.updateIsNew(false);
                     log.info("지난 주 PB 상품이 신상품에서 제외됩니다. {}", product);
-                    basicProductRepository.save(product);
                 });
     }
 
@@ -60,7 +59,6 @@ public abstract class PbBatchService extends BasicBatchServiceTemplate<BasePbPro
                 .findFirst()
                 .ifPresent(matchingEventProduct -> {
                     baseProduct.updateEventType(matchingEventProduct.getEventType());
-                    basicProductRepository.save(baseProduct);
                     log.info("PB 상품이 현재 {} 행사 진행 중입니다. {}", matchingEventProduct.getEventType(), baseProduct);
                 });
     }
