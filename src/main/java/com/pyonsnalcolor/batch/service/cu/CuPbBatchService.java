@@ -96,7 +96,7 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
         Recommend recommend = Filter.matchEnumTypeByProductName(Recommend.class, name);
 
-        BasePbProduct basePbProduct =  BasePbProduct.builder()
+        return BasePbProduct.builder()
                 .id((generateId()))
                 .name(name)
                 .image(image)
@@ -106,8 +106,6 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
                 .category(category)
                 .recommend(recommend)
                 .build();
-        log.info("CU {}", basePbProduct.toString());
-        return basePbProduct;
     }
 
     private String getCuPbUrlByPageIndexAndCategory(int pageIndex, String category) {

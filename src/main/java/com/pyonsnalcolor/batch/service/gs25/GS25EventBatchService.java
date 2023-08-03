@@ -107,7 +107,7 @@ public class GS25EventBatchService extends EventBatchService {
         }
         Category category = Filter.matchEnumTypeByProductName(Category.class, name);
 
-        BaseEventProduct baseEventProduct = BaseEventProduct.builder()
+        return BaseEventProduct.builder()
                 .id(generateId())
                 .originPrice(null)
                 .storeType(StoreType.GS25)
@@ -120,8 +120,6 @@ public class GS25EventBatchService extends EventBatchService {
                 .name(name)
                 .category(category)
                 .build();
-        log.info("GS25 {}", baseEventProduct.toString());
-        return baseEventProduct;
     }
 
 
