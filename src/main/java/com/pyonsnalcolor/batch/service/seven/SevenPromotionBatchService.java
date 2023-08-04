@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 @Service("SevenPromotion")
 public class SevenPromotionBatchService extends PromotionBatchService {
 
-    private static final String SEVEN_PROMOTION_URL = "https://www.7-eleven.co.kr/event/listMoreAjax.asp";
+    private static final String SEVEN_PROMOTION_URL = "https://www.7-eleven.co.kr/event/eventList.asp";
     private static final String SEVEN_DESCRIPTION_PAGE_URL = "https://www.7-eleven.co.kr/event/eventView.asp";
     private static final int TIMEOUT = 5000;
     private static final int MAX_PAGE_INDEX = 100;
@@ -39,9 +38,9 @@ public class SevenPromotionBatchService extends PromotionBatchService {
     }
 
     @Override
-    public List<Promotion> getAllPromotions() {
+    public List<Promotion> getNewPromotions() {
         try {
-            return getPromotionPage();
+            return getPromotions();
         } catch (IllegalArgumentException e) {
             throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
         } catch (SocketTimeoutException e) {
@@ -53,13 +52,14 @@ public class SevenPromotionBatchService extends PromotionBatchService {
         }
     }
 
-    private List<Promotion> getPromotionPage() throws Exception {
+    private List<Promotion> getPromotions() throws Exception {
         String pagedCuEventUrl = getPromotionPageUrl();
         Document doc = Jsoup.connect(pagedCuEventUrl).timeout(TIMEOUT).get();
         Elements elements = doc.select(DOC_SELECT_TAG);
 
         return elements.stream()
                 .map(this::convertToPromotion)
+                .map(this::validateAllFieldsNotNull)
                 .collect(Collectors.toList());
     }
 
@@ -77,7 +77,6 @@ public class SevenPromotionBatchService extends PromotionBatchService {
                 .image(image)
                 .storeType(StoreType.SEVEN_ELEVEN)
                 .thumbnailImage(thumbnailImage)
-                .updatedTime(LocalDateTime.now())
                 .build();
     }
 
@@ -93,7 +92,7 @@ public class SevenPromotionBatchService extends PromotionBatchService {
         try {
             String detailPage = UriComponentsBuilder
                     .fromUriString(SEVEN_DESCRIPTION_PAGE_URL)
-                    .queryParam("seqNo", pageIdx)
+                    .queryParam("eventSeq", pageIdx)
                     .build()
                     .toString();
             Document doc = Jsoup.connect(detailPage).timeout(TIMEOUT).get();

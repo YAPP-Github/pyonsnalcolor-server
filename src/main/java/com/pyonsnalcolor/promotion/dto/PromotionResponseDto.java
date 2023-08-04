@@ -7,10 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -18,8 +15,9 @@ import java.time.LocalDateTime;
 @Schema(description = "이벤트 상품 조회 Response DTO")
 @ToString(callSuper = true)
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-@Setter
 public class PromotionResponseDto {
     @NotBlank
     private String id;
