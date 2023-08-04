@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pyonsnalcolor.batch.client.GS25Client;
 import com.pyonsnalcolor.batch.client.GS25PromotionRequestBody;
 import com.pyonsnalcolor.batch.service.PromotionBatchService;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.promotion.entity.Promotion;
 import com.pyonsnalcolor.promotion.repository.PromotionRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,7 +18,6 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 public class GS25PromotionService extends PromotionBatchService {
     private GS25Client gs25Client;
     private ObjectMapper objectMapper;
+    private static final int TIMEOUT = 20000;
 
     @Autowired
     public GS25PromotionService(PromotionRepository promotionRepository, GS25Client gs25Client, ObjectMapper objectMapper) {
@@ -41,38 +43,36 @@ public class GS25PromotionService extends PromotionBatchService {
 
     @Override
     public List<Promotion> getNewPromotions() {
+        return BatchExceptionUtil.handleException(this::getPromotions);
+    }
+
+    @NotNull
+    private List<Promotion> getPromotions() {
         List<Promotion> results = new ArrayList<>();
+        Map<String, String> accessInfo = getAccessInfo();
 
-        try {
-            Map<String, String> accessInfo = getAccessInfo();
+        String csrfToken = accessInfo.get("csrfToken");
+        String sessionId = accessInfo.get("sessionId");
+        String cookie = String.format("%s=%s;", "JSESSIONID", sessionId);
 
-            String csrfToken = accessInfo.get("csrfToken");
-            String sessionId = accessInfo.get("sessionId");
-            String cookie = String.format("%s=%s;", "JSESSIONID", sessionId);
+        GS25PromotionRequestBody requestBody = new GS25PromotionRequestBody();
+        int numberOfPages = 0;
 
-            GS25PromotionRequestBody requestBody = new GS25PromotionRequestBody();
-            int numberOfPages = 0;
+        do {
+            Object promotions = gs25Client.getPromotions(cookie, csrfToken, requestBody);
 
-            do {
-                Object promotions = gs25Client.getPromotions(cookie, csrfToken, requestBody);
+            Map<String, Object> paginationMap = parsePaginationData(promotions);
 
-                Map<String, Object> paginationMap = parsePaginationData(promotions);
+            requestBody.updateNextPage();
+            numberOfPages = (Integer) paginationMap.get("numberOfPages");
 
-                requestBody.updateNextPage();
-                numberOfPages = (Integer) paginationMap.get("numberOfPages");
-
-                results.addAll(parsePromotionsData(promotions));
-            } while (requestBody.getPageNum() <= numberOfPages);
-        } catch (Exception e) {
-            // TODO : 임시로 모든 예외에 대해 퉁쳐서 처리. 후에 리팩토링 진행할 것
-            log.error("fail getAllPromotions", e);
-        }
+            results.addAll(parsePromotionsData(promotions));
+        } while (requestBody.getPageNum() <= numberOfPages);
         return results;
     }
 
-
-    private List<Promotion> parsePromotionsData(Object data) throws JsonProcessingException {
-        Map<String, Object> dataMap = objectMapper.readValue((String) data, Map.class);
+    private List<Promotion> parsePromotionsData(Object data) {
+        Map<String, Object> dataMap = BatchExceptionUtil.getPageDataMap(objectMapper, data);
         List<Object> results = (List) dataMap.get("results");
 
         List<Promotion> promotions = results.stream()
@@ -114,15 +114,15 @@ public class GS25PromotionService extends PromotionBatchService {
         return null;
     }
 
-    private Map<String, Object> parsePaginationData(Object data) throws JsonProcessingException {
-        Map<String, Object> dataMap = objectMapper.readValue((String) data, Map.class);
+    private Map<String, Object> parsePaginationData(Object data) {
+        Map<String, Object> dataMap = BatchExceptionUtil.getPageDataMap(objectMapper, data);
         Object pagination = dataMap.get("pagination");
         Map<String, Object> paginationMap = objectMapper.convertValue(pagination, Map.class);
 
         return paginationMap;
     }
 
-    private Map<String, String> getAccessInfo() throws IOException {
+    private Map<String, String> getAccessInfo() {
         Connection connect = Jsoup.connect(GS_MAIN_PAGE_URL);
         String csrfToken = getCsrfToken(connect);
         String sessionId = getSessionId(connect);
@@ -133,8 +133,8 @@ public class GS25PromotionService extends PromotionBatchService {
         );
     }
 
-    private String getCsrfToken(Connection connection) throws IOException {
-        Document document = connection.get();
+    private String getCsrfToken(Connection connection) {
+        Document document = BatchExceptionUtil.getDocumentByConnection(connection, TIMEOUT);
         Elements csrfElement = document.getElementsByAttributeValue("name", "CSRFToken");
         String csrfToken = csrfElement.attr("value");
 

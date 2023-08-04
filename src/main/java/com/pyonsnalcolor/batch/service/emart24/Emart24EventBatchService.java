@@ -1,11 +1,11 @@
 package com.pyonsnalcolor.batch.service.emart24;
 
 import com.pyonsnalcolor.batch.service.EventBatchService;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
@@ -21,7 +20,9 @@ import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 @Service("Emart24Event")
 @Slf4j
 public class Emart24EventBatchService extends EventBatchService {
+
     private static final String EMART_EVENT_URL_TEMPLATE = "http://www.emart24.co.kr/goods/event?search=&page=%s&category_seq=&align=";
+    private static final int TIMEOUT = 20000;
 
     @Autowired
     public Emart24EventBatchService(EventProductRepository eventProductRepository) {
@@ -30,26 +31,23 @@ public class Emart24EventBatchService extends EventBatchService {
 
     @Override
     protected List<BaseEventProduct> getAllProducts() {
-        try {
-            List<BaseEventProduct> results = new ArrayList<>();
-            Elements productElements;
-            int curPage = 1;
+        return BatchExceptionUtil.handleException(this::getProducts);
+    }
 
-            do {
-                String url = String.format(EMART_EVENT_URL_TEMPLATE, curPage);
-                Document document = Jsoup.connect(url).get();
-                productElements = document.getElementsByClass("itemWrap");
+    private List<BaseEventProduct> getProducts() {
+        List<BaseEventProduct> results = new ArrayList<>();
+        Elements productElements;
+        int curPage = 1;
+        do {
+            String url = String.format(EMART_EVENT_URL_TEMPLATE, curPage);
+            Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(url, TIMEOUT);
+            productElements = document.getElementsByClass("itemWrap");
 
-                results.addAll(parseProductsData(productElements));
-                curPage++;
-            } while (productElements.size() > 0);
+            results.addAll(parseProductsData(productElements));
+            curPage++;
+        } while (productElements.size() > 0);
 
-            return results;
-        } catch (Exception e) {
-            //TODO : 임시로 모든 예외에 대해 퉁쳐서 처리. 후에 리팩토링 진행할 것
-            log.error("fail getAllProducts", e);
-        }
-        return Collections.emptyList();
+        return results;
     }
 
     private List<BaseEventProduct> parseProductsData(Elements elements) {

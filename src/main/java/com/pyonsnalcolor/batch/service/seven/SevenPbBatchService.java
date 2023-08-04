@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.batch.service.seven;
 
 import com.pyonsnalcolor.batch.service.PbBatchService;
-import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.Filter;
@@ -9,21 +9,16 @@ import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.pyonsnalcolor.exception.model.BatchErrorCode.*;
-import static com.pyonsnalcolor.exception.model.BatchErrorCode.BATCH_UNAVAILABLE;
 import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 
 @Service("SevenPb")
@@ -41,29 +36,18 @@ public class SevenPbBatchService extends PbBatchService {
     }
 
     @Override
-    public List<BasePbProduct> getAllProducts(){
-        try {
-            return getProducts();
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BATCH_UNAVAILABLE, e);
-        }
+    public List<BasePbProduct> getAllProducts() {
+        return BatchExceptionUtil.handleException(this::getProducts);
     }
 
-    private List<BasePbProduct> getProducts() throws IOException {
+    private List<BasePbProduct> getProducts() {
         List<BasePbProduct> products = new ArrayList<>();
 
         int pageIndex = 0;
         while (true) {
             String pagedSevenPbUrl = getSevenPbUrlByPageIndex(pageIndex);
-            Document doc = Jsoup.connect(pagedSevenPbUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select(DOC_SELECT_TAG);
-
+            Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(pagedSevenPbUrl, TIMEOUT);
+            Elements elements = document.select(DOC_SELECT_TAG);
             if (elements.isEmpty()) {
                 break;
             }

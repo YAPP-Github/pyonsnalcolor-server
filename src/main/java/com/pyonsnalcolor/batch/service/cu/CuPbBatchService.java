@@ -1,8 +1,7 @@
 package com.pyonsnalcolor.batch.service.cu;
 
 import com.pyonsnalcolor.batch.service.PbBatchService;
-import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
-import com.pyonsnalcolor.exception.model.BatchErrorCode;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.Category;
 import com.pyonsnalcolor.product.enumtype.Filter;
@@ -10,15 +9,12 @@ import com.pyonsnalcolor.product.enumtype.Recommend;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,35 +38,24 @@ public class CuPbBatchService extends PbBatchService implements CuDescriptionBat
 
     @Override
     protected List<BasePbProduct> getAllProducts() {
-        try {
-            return getProductsByCategoryAll();
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(BatchErrorCode.INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(BatchErrorCode.TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(BatchErrorCode.IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BatchErrorCode.BATCH_UNAVAILABLE, e);
-        }
+        return BatchExceptionUtil.handleException(this::getProductsByCategoryAll);
     }
 
-    private List<BasePbProduct> getProductsByCategoryAll() throws Exception {
+    private List<BasePbProduct> getProductsByCategoryAll() {
         List<BasePbProduct> products = new ArrayList<>();
         products.addAll(getProductsByCategory(CU_CATEGORY_PB));
         products.addAll(getProductsByCategory(CU_CATEGORY_CU_ONLY));
         return products;
     }
 
-    private List<BasePbProduct> getProductsByCategory(String category) throws Exception {
+    private List<BasePbProduct> getProductsByCategory(String category) {
         List<BasePbProduct> products = new ArrayList<>();
 
         int pageIndex = 1;
         while (true) {
             String pagedCuPbUrl = getCuPbUrlByPageIndexAndCategory(pageIndex, category);
-            Document doc = Jsoup.connect(pagedCuPbUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select(DOC_SELECT_TAG);
-
+            Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(pagedCuPbUrl, TIMEOUT);
+            Elements elements = document.select(DOC_SELECT_TAG);
             if (elements.isEmpty()) {
                 break;
             }

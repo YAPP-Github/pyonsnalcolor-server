@@ -1,27 +1,24 @@
 package com.pyonsnalcolor.batch.service.seven;
 
-import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.enumtype.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static com.pyonsnalcolor.exception.model.BatchErrorCode.*;
 import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 
 @Slf4j
+@Getter
 public enum SevenEventTab {
 
     ONE_TO_ONE(1, 0),
@@ -29,9 +26,7 @@ public enum SevenEventTab {
     GIFT(3, 1),
     DISCOUNT(4, 0);
 
-    @Getter
     private int tab;
-    @Getter
     private int startPageIndex;
 
     private static final String SEVEN_DISCOUNT_URL = "https://www.7-eleven.co.kr/product/presentView.asp";
@@ -72,7 +67,7 @@ public enum SevenEventTab {
         Integer parsedOriginPrice = null;
         if (this == DISCOUNT) {
             String originProductCode = getProductCode(subElement);
-            String originPrice = getOriginPrice(originProductCode).replaceAll(",", "");
+            String originPrice = fetchOriginPrice(originProductCode).replaceAll(",", "");
             parsedOriginPrice = Integer.parseInt(originPrice);
         }
         String giftImage = null;
@@ -134,28 +129,22 @@ public enum SevenEventTab {
         return originProductElement.split("\\'")[1];
     }
 
-    private String getOriginPrice(String originProductCode) {
-        try {
-            String originPriceUrl = UriComponentsBuilder
-                    .fromUriString(SEVEN_DISCOUNT_URL)
-                    .queryParam("pCd", originProductCode)
-                    .build()
-                    .toString();
+    private String fetchOriginPrice(String originProductCode) {
+        return BatchExceptionUtil.handleException(() -> getOriginPriceStringByProductCode(originProductCode));
+    }
 
-            Document doc = Jsoup.connect(originPriceUrl).timeout(TIMEOUT).get();
-            Element priceElement = doc.selectFirst(".product_price strong");
-            String originPrice = priceElement.text()
-                    .replaceAll(",", "")
-                    .replaceAll("[^0-9]", "");
-            return originPrice;
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BATCH_UNAVAILABLE, e);
-        }
+    private String getOriginPriceStringByProductCode(String originProductCode) {
+        String originPriceUrl = UriComponentsBuilder
+                .fromUriString(SEVEN_DISCOUNT_URL)
+                .queryParam("pCd", originProductCode)
+                .build()
+                .toString();
+
+        Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(originPriceUrl, TIMEOUT);
+        Element priceElement = document.selectFirst(".product_price strong");
+        String originPrice = priceElement.text()
+                .replaceAll(",", "")
+                .replaceAll("[^0-9]", "");
+        return originPrice;
     }
 }

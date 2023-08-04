@@ -1,20 +1,18 @@
 package com.pyonsnalcolor.batch.service.cu;
 
 import com.pyonsnalcolor.batch.service.EventBatchService;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,28 +35,17 @@ public class CuEventBatchService extends EventBatchService implements CuDescript
 
     @Override
     protected List<BaseEventProduct> getAllProducts() {
-
-        try {
-            return getProducts();
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BATCH_UNAVAILABLE, e);
-        }
+        return BatchExceptionUtil.handleException(this::getProducts);
     }
 
-    private List<BaseEventProduct> getProducts() throws Exception {
+    private List<BaseEventProduct> getProducts() {
         List<BaseEventProduct> products = new ArrayList<>();
 
         int pageIndex = 1;
         while (true) {
             String pagedCuEventUrl = getCuEventUrlByPageIndex(pageIndex);
-            Document doc = Jsoup.connect(pagedCuEventUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select(DOC_SELECT_TAG);
+            Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(pagedCuEventUrl, TIMEOUT);
+            Elements elements = document.select(DOC_SELECT_TAG);
 
             if (elements.isEmpty()) {
                 break;
