@@ -2,6 +2,7 @@ package com.pyonsnalcolor.auth.controller;
 
 import com.pyonsnalcolor.auth.MemberRepository;
 import com.pyonsnalcolor.auth.dto.*;
+import com.pyonsnalcolor.auth.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,5 +51,15 @@ public class AuthController {
     ) {
         LoginResponseDto tokenResponseDto = memberService.reissueAccessToken(tokenRequestDto);
         return new ResponseEntity(tokenResponseDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "테스트 로그인/회원가입", description = "Token으로 이메일 정보를 얻어 회원가입/재로그인합니다.")
+    @PostMapping("/test/login")
+    public ResponseEntity<LoginResponseDto> testLogin(
+            @RequestParam OAuthType oAuthType,
+            @RequestParam String email
+    ) {
+        LoginResponseDto loginResponseDto = memberService.join(oAuthType, email);
+        return new ResponseEntity(loginResponseDto, HttpStatus.OK);
     }
 }

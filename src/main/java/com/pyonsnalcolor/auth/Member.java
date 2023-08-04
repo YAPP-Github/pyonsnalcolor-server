@@ -2,6 +2,7 @@ package com.pyonsnalcolor.auth;
 
 import com.pyonsnalcolor.auth.enumtype.OAuthType;
 import com.pyonsnalcolor.auth.enumtype.Role;
+import com.pyonsnalcolor.product.entity.BaseTimeEntity;
 import com.pyonsnalcolor.push.PushKeyword;
 import com.pyonsnalcolor.push.PushProductStore;
 import com.pyonsnalcolor.push.PushRecord;
@@ -19,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "member")
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
