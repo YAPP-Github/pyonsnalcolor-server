@@ -4,9 +4,8 @@ import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.promotion.entity.Promotion;
 import com.pyonsnalcolor.promotion.repository.PromotionRepository;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 public abstract class PromotionBatchService implements BatchService {
     protected PromotionRepository promotionRepository;
@@ -17,56 +16,32 @@ public abstract class PromotionBatchService implements BatchService {
 
     @Override
     public void execute() {
-        List<Promotion> promotions = getAllPromotions();
-        List<Promotion> newPromotions = getNewPromotions(promotions);
-        List<Promotion> expiredPromotions = getExpiredPromotions(promotions);
-        sendAlarms(newPromotions);
+        List<Promotion> newPromotions = getNewPromotions();
+
+        StoreType storeType = newPromotions.get(0).getStoreType();
+        deleteExpiredPromotions(storeType);
+
         savePromotions(newPromotions);
-        deletePromotions(expiredPromotions);
     }
 
-    private void deletePromotions(List<Promotion> expiredPromotions) {
-        promotionRepository.deleteAll(expiredPromotions);
+    abstract protected List<Promotion> getNewPromotions();
+
+    private void deleteExpiredPromotions(StoreType storeType) {
+        promotionRepository.deleteByStoreType(storeType);
     }
 
     private void savePromotions(List<Promotion> newPromotions) {
         promotionRepository.saveAll(newPromotions);
     }
 
-    // TODO : Alarm 서비스 완성 시 구현
-    private void sendAlarms(List<Promotion> newPromotions) {
-    }
-
-    private List<Promotion> getExpiredPromotions(List<Promotion> promotions) {
-        if(promotions.isEmpty()) {
-            return Collections.emptyList();
+    protected Promotion validateAllFieldsNotNull(Promotion promotion) {
+        try {
+            Objects.requireNonNull(promotion.getImage());
+            Objects.requireNonNull(promotion.getThumbnailImage());
+            Objects.requireNonNull(promotion.getTitle());
+            return promotion;
+        } catch (NullPointerException exception) {
+            return null;
         }
-        StoreType storeType = promotions.get(0).getStoreType();
-
-        List<String> promotionTitles = promotions.stream().map(p -> p.getTitle()).collect(Collectors.toList());
-
-        List<Promotion> alreadyExistPromotions = promotionRepository.findByStoreType(storeType);
-        List<Promotion> expiredPromotions = alreadyExistPromotions.stream().filter(
-                p -> !promotionTitles.contains(p.getTitle())
-        ).collect(Collectors.toList());
-
-        return expiredPromotions;
     }
-
-    private List<Promotion> getNewPromotions(List<Promotion> promotions) {
-        if(promotions.isEmpty()) {
-            return Collections.emptyList();
-        }
-        StoreType storeType = promotions.get(0).getStoreType();
-        List<Promotion> alreadyExistPromotions = promotionRepository.findByStoreType(storeType);
-
-        List<Promotion> newPromotions = promotions.stream().filter(
-                p -> !alreadyExistPromotions.contains(p)
-        ).collect(Collectors.toList());
-
-        return newPromotions;
-    }
-
-    abstract public List<Promotion> getAllPromotions();
-
 }

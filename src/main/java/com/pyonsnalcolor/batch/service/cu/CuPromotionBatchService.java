@@ -40,7 +40,7 @@ public class CuPromotionBatchService extends PromotionBatchService {
     }
 
     @Override
-    public List<Promotion> getAllPromotions() {
+    public List<Promotion> getNewPromotions() {
         try {
             return getPromotions();
         } catch (IllegalArgumentException e) {
@@ -70,6 +70,7 @@ public class CuPromotionBatchService extends PromotionBatchService {
 
             List<Promotion> pagedPromotions = elements.stream()
                     .map(this::convertToPromotion)
+                    .map(this::validateAllFieldsNotNull)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
             promotions.addAll(pagedPromotions);
@@ -105,7 +106,6 @@ public class CuPromotionBatchService extends PromotionBatchService {
                 .title(title)
                 .thumbnailImage(thumbnailImage)
                 .image(image)
-                .updatedTime(LocalDateTime.now())
                 .storeType(StoreType.CU)
                 .build();
     }

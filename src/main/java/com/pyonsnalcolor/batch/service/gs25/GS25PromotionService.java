@@ -17,10 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.pyonsnalcolor.batch.service.gs25.GS25Constant.GS_MAIN_PAGE_URL;
 import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
@@ -39,7 +40,7 @@ public class GS25PromotionService extends PromotionBatchService {
     }
 
     @Override
-    public List<Promotion> getAllPromotions() {
+    public List<Promotion> getNewPromotions() {
         List<Promotion> results = new ArrayList<>();
 
         try {
@@ -63,24 +64,22 @@ public class GS25PromotionService extends PromotionBatchService {
                 results.addAll(parsePromotionsData(promotions));
             } while (requestBody.getPageNum() <= numberOfPages);
         } catch (Exception e) {
-            //TODO : 임시로 모든 예외에 대해 퉁쳐서 처리. 후에 리팩토링 진행할 것
+            // TODO : 임시로 모든 예외에 대해 퉁쳐서 처리. 후에 리팩토링 진행할 것
             log.error("fail getAllPromotions", e);
         }
-
         return results;
     }
 
 
     private List<Promotion> parsePromotionsData(Object data) throws JsonProcessingException {
-        List<Promotion> promotions = new ArrayList<>();
         Map<String, Object> dataMap = objectMapper.readValue((String) data, Map.class);
-        Object results = dataMap.get("results");
+        List<Object> results = (List) dataMap.get("results");
 
-        List promotionList = (List) results;
-        for (Object promotion : promotionList) {
-            Promotion promotionEntity = convertToPromotion(promotion);
-            promotions.add(promotionEntity);
-        }
+        List<Promotion> promotions = results.stream()
+                .map(this::convertToPromotion)
+                .map(this::validateAllFieldsNotNull)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         return promotions;
     }
 
@@ -97,7 +96,6 @@ public class GS25PromotionService extends PromotionBatchService {
                 .image(image)
                 .thumbnailImage(thumbnailImage)
                 .title(title)
-                .updatedTime(LocalDateTime.now())
                 .build();
     }
 
