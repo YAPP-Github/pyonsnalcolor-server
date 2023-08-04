@@ -24,7 +24,7 @@ public class EventProductController {
     public ResponseEntity<Page<EventProductResponseDto>> getEventProductsByFilter(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam(defaultValue = "all") String storeType,
+            @RequestParam String storeType,
             @RequestBody ProductFilterRequestDto productFilterRequestDto
     ) {
         Page<ProductResponseDto> products = eventProductService.getFilteredProducts(

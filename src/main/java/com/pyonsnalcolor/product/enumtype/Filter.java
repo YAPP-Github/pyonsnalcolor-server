@@ -15,6 +15,8 @@ public interface Filter {
 
     String getKorean();
 
+    String getImage();
+
     String getFilterType();
 
     List<String> getKeywords();
@@ -45,6 +47,7 @@ public interface Filter {
                 .map(filter -> FilterItem.builder()
                         .name(filter.getKorean())
                         .code(filter.getCode())
+                        .image(filter.getImage())
                         .build())
                 .collect(Collectors.toList());
     }
