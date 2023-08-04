@@ -19,28 +19,7 @@ public class EventProductController {
 
     private final EventProductService eventProductService;
 
-    // TODO: v2 필터 조회 api 연동 후 삭제
-    @Operation(summary = "v1. 이벤트 상품 조회", description = "이벤트 상품을 조회합니다.")
-    @GetMapping("/products/event-products")
-    public ResponseEntity<Page<EventProductResponseDto>> getEventProducts(
-            @RequestParam int pageNumber,
-            @RequestParam int pageSize,
-            @RequestParam(defaultValue = "all") String storeType,
-            @RequestParam(defaultValue = "updatedTime") String sorted
-    ) {
-        Page<EventProductResponseDto> products = eventProductService
-                .getProducts(pageNumber, pageSize, storeType, sorted);
-        return new ResponseEntity(products, HttpStatus.OK);
-    }
-
-    @Operation(summary = "이벤트 상품 단건 조회", description = "id 바탕으로 이벤트 상품을 조회합니다.")
-    @GetMapping("/products/event-products/{id}")
-    public ResponseEntity<EventProductResponseDto> getEventProduct(@PathVariable String id) {
-        ProductResponseDto responseDto = eventProductService.getProduct(id);
-        return new ResponseEntity(responseDto, HttpStatus.OK);
-    }
-
-    @Operation(summary = "v2. 이벤트 상품 필터 조회", description = "이벤트 상품을 필터링 조회합니다.")
+    @Operation(summary = "이벤트 상품 필터 조회", description = "이벤트 상품을 필터링 조회합니다.")
     @PostMapping("/products/event-products")
     public ResponseEntity<Page<EventProductResponseDto>> getEventProductsByFilter(
             @RequestParam int pageNumber,
@@ -51,5 +30,12 @@ public class EventProductController {
         Page<ProductResponseDto> products = eventProductService.getFilteredProducts(
                 pageNumber, pageSize, storeType, productFilterRequestDto);
         return new ResponseEntity(products, HttpStatus.OK);
+    }
+
+    @Operation(summary = "이벤트 상품 단건 조회", description = "id 바탕으로 이벤트 상품을 조회합니다.")
+    @GetMapping("/products/event-products/{id}")
+    public ResponseEntity<EventProductResponseDto> getEventProduct(@PathVariable String id) {
+        ProductResponseDto responseDto = eventProductService.getProduct(id);
+        return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 }

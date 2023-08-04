@@ -19,28 +19,7 @@ public class PbProductController {
 
     private final PbProductService pbProductService;
 
-    // TODO: v2 필터 조회 api 연동 후 삭제
-    @Operation(summary = "v1. PB 상품 조회", description = "PB 상품을 조회합니다.")
-    @GetMapping("/products/pb-products")
-    public ResponseEntity<Page<PbProductResponseDto>> getPbProducts(
-            @RequestParam int pageNumber,
-            @RequestParam int pageSize,
-            @RequestParam(defaultValue = "all") String storeType,
-            @RequestParam(defaultValue = "updatedTime") String sorted
-    ) {
-        Page<PbProductResponseDto> products =  pbProductService
-                .getProductsWithPaging(pageNumber, pageSize, storeType, sorted);
-        return new ResponseEntity(products, HttpStatus.OK);
-    }
-
-    @Operation(summary = "PB 상품 단건 조회", description = "id 바탕으로 PB 상품을 조회합니다.")
-    @GetMapping("/products/pb-products/{id}")
-    public ResponseEntity<PbProductResponseDto> getPbProducts(@PathVariable String id) {
-        ProductResponseDto product = pbProductService.getProduct(id);
-        return new ResponseEntity(product, HttpStatus.OK);
-    }
-
-    @Operation(summary = "v2. PB 상품 필터 조회", description = "PB 상품을 필터링 조회합니다.")
+    @Operation(summary = "PB 상품 필터 조회", description = "PB 상품을 필터링 조회합니다.")
     @PostMapping("/products/pb-products")
     public ResponseEntity<Page<PbProductResponseDto>> getPbProductsByFilter(
             @RequestParam int pageNumber,
@@ -51,5 +30,12 @@ public class PbProductController {
         Page<ProductResponseDto> products =  pbProductService.getFilteredProducts(
                 pageNumber, pageSize, storeType, productFilterRequestDto);
         return new ResponseEntity(products, HttpStatus.OK);
+    }
+
+    @Operation(summary = "PB 상품 단건 조회", description = "id 바탕으로 PB 상품을 조회합니다.")
+    @GetMapping("/products/pb-products/{id}")
+    public ResponseEntity<PbProductResponseDto> getPbProduct(@PathVariable String id) {
+        ProductResponseDto product = pbProductService.getProduct(id);
+        return new ResponseEntity(product, HttpStatus.OK);
     }
 }
