@@ -30,6 +30,7 @@ public enum EventType implements Filter {
                 .map(filter -> FilterItem.builder()
                         .name(filter.getKorean())
                         .code(filter.getCode())
+                        .image(null)
                         .build())
                 .collect(Collectors.toList());
     }
@@ -41,6 +42,11 @@ public enum EventType implements Filter {
     @Override
     public String getKorean() {
         return name();
+    }
+
+    @Override
+    public String getImage() {
+        return null;
     }
 
     @Override

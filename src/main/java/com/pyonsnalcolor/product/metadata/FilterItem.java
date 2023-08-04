@@ -11,4 +11,5 @@ public class FilterItem {
 
     private String name;
     private int code;
+    private String image;
 }

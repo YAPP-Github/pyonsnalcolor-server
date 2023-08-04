@@ -12,29 +12,36 @@ import java.util.Objects;
 public enum Sorted implements Filter {
     LATEST(1,
             "최신순",
+            null,
             Comparator.comparing(BaseProduct::getCreatedDate).reversed().thenComparing(BaseProduct::getId)),
-    VIEW(2,
-            "조회순",
-            Comparator.comparing(BaseProduct::getId)),  // TODO: 이후 추가
+//    VIEW(2,
+//            "조회순",
+//            null,
+//            Comparator.comparing(BaseProduct::getId)),  // TODO: 이후 추가
     LOW_PRICE(3,
-            "가격낮은순",
+            "낮은가격순",
+            null,
             Comparator.comparing(BaseProduct::getPrice).thenComparing(BaseProduct::getId)),
     HIGH_PRICE(4,
-            "가격높은순",
-            Comparator.comparing(BaseProduct::getPrice).reversed().thenComparing(BaseProduct::getId)),
-    REVIEW(5,
-            "리뷰순",
-            Comparator.comparing(BaseProduct::getId)); // TODO: 이후 추가
+            "높은가격순",
+            null,
+            Comparator.comparing(BaseProduct::getPrice).reversed().thenComparing(BaseProduct::getId));
+//    REVIEW(5,
+//            "리뷰순",
+//            null,
+//            Comparator.comparing(BaseProduct::getId)); // TODO: 이후 추가
 
     private final int code;
     private final String korean;
+    private final String image;
     private final Comparator<BaseProduct> comparator;
 
     private static final String FILTER_TYPE = "sort";
 
-    Sorted(int code, String korean, Comparator<BaseProduct> comparator) {
+    Sorted(int code, String korean, String image, Comparator<BaseProduct> comparator) {
         this.code = code;
         this.korean = korean;
+        this.image = image;
         this.comparator = comparator;
     }
 
