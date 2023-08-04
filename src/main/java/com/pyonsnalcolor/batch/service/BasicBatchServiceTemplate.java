@@ -37,8 +37,9 @@ abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements Batch
         return Collections.emptyList();
     }
 
-    protected <T extends BaseProduct> List<T> getNewProducts(List<T> allProducts) { return Collections.emptyList();}
-
+    protected <T extends BaseProduct> List<T> getNewProducts(List<T> allProducts) {
+        return Collections.emptyList();
+    }
 
     // TODO : Alarm 서비스 완성 시 구현
     private final void sendAlarms(List<T> baseProducts) {

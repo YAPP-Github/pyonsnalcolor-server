@@ -1,7 +1,5 @@
 package com.pyonsnalcolor.batch.service;
 
-
-import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.entity.BaseProduct;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
@@ -28,7 +26,7 @@ public abstract class PbBatchService extends BasicBatchServiceTemplate<BasePbPro
         if (allProducts.isEmpty()) {
             return Collections.emptyList();
         }
-        updateEventTypeOfAllProducts(allProducts);
+        updateEventTypeOfAllProducts(allProducts); // 신상만 찾기!! 해도 좋을 듯
 
         List<T> alreadyExistProducts = basicProductRepository.findAll();
         updateIsNewOfAlreadyExistProducts(alreadyExistProducts);
@@ -36,34 +34,31 @@ public abstract class PbBatchService extends BasicBatchServiceTemplate<BasePbPro
         List<T> newProducts = allProducts.stream()
                 .filter(product -> !alreadyExistProducts.contains(product))
                 .peek(product -> log.info("새로운 PB 상품이 저장됩니다. {}", product))
-                .peek(p -> p.updateIsNew(true))
+                .peek(product -> product.updateIsNew(true))
                 .collect(Collectors.toList());
         return newProducts;
     }
 
     private <T extends BaseProduct> void updateIsNewOfAlreadyExistProducts(List<T> alreadyExistProducts) {
         alreadyExistProducts.stream()
-                .filter(T::getIsNew)
+                .filter(p -> p.getIsNew() != null && p.getIsNew())
                 .forEach(product -> {
                     product.updateIsNew(false);
                     log.info("지난 주 PB 상품이 신상품에서 제외됩니다. {}", product);
-                    basicProductRepository.save(product);
                 });
     }
 
     private <T extends BaseProduct> void updateEventTypeOfAllProducts(List<T> alreadyExistProducts) {
-        List<BaseEventProduct> baseEventProducts = eventProductRepository.findAll();
         alreadyExistProducts
-                .forEach(p -> updateEventTypeIfEventInProgress(p, baseEventProducts));
+                .forEach(this::updateEventTypeIfEventInProgress);
     }
 
-    private void updateEventTypeIfEventInProgress(BaseProduct baseProduct, List<BaseEventProduct> baseEventProducts) {
-        baseEventProducts.stream()
+    private void updateEventTypeIfEventInProgress(BaseProduct baseProduct) {
+        eventProductRepository.findAll().stream()
                 .filter(baseEventProduct -> baseEventProduct.equals(baseProduct))
                 .findFirst()
                 .ifPresent(matchingEventProduct -> {
                     baseProduct.updateEventType(matchingEventProduct.getEventType());
-                    basicProductRepository.save(baseProduct);
                     log.info("PB 상품이 현재 {} 행사 진행 중입니다. {}", matchingEventProduct.getEventType(), baseProduct);
                 });
     }
