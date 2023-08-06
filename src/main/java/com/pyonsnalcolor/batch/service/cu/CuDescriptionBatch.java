@@ -1,17 +1,10 @@
 package com.pyonsnalcolor.batch.service.cu;
 
-import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
-import org.jsoup.Jsoup;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-
-import static com.pyonsnalcolor.exception.model.BatchErrorCode.*;
-import static com.pyonsnalcolor.exception.model.BatchErrorCode.BATCH_UNAVAILABLE;
 
 public interface CuDescriptionBatch {
 
@@ -20,26 +13,19 @@ public interface CuDescriptionBatch {
 
     default String getDescription(Element element, String productType) {
         String productCode = getProductCode(element);
+        return BatchExceptionUtil.handleException(() -> fetchDescriptionByProductCode(productType, productCode));
+    }
 
-        try {
-            String detailPage = UriComponentsBuilder
-                    .fromUriString(CU_DESCRIPTION_PAGE_URL)
-                    .queryParam("category", productType)
-                    .queryParam("gdIdx", productCode)
-                    .build()
-                    .toString();
-            Document doc = Jsoup.connect(detailPage).timeout(TIMEOUT).get();
-            Elements elements = doc.select("ul.prodExplain li");
-            return elements.text();
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BATCH_UNAVAILABLE, e);
-        }
+    private String fetchDescriptionByProductCode(String productType, String productCode) {
+        String detailPage = UriComponentsBuilder
+                .fromUriString(CU_DESCRIPTION_PAGE_URL)
+                .queryParam("category", productType)
+                .queryParam("gdIdx", productCode)
+                .build()
+                .toString();
+        Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(detailPage, TIMEOUT);
+        Elements elements = document.select("ul.prodExplain li");
+        return elements.text();
     }
 
     default String getProductCode(Element element) {

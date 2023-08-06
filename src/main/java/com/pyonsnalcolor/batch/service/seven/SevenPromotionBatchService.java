@@ -1,25 +1,20 @@
 package com.pyonsnalcolor.batch.service.seven;
 
 import com.pyonsnalcolor.batch.service.PromotionBatchService;
-import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.promotion.entity.Promotion;
 import com.pyonsnalcolor.promotion.repository.PromotionRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.pyonsnalcolor.exception.model.BatchErrorCode.*;
-import static com.pyonsnalcolor.exception.model.BatchErrorCode.BATCH_UNAVAILABLE;
 import static com.pyonsnalcolor.product.entity.UUIDGenerator.generateId;
 
 @Slf4j
@@ -39,23 +34,13 @@ public class SevenPromotionBatchService extends PromotionBatchService {
 
     @Override
     public List<Promotion> getNewPromotions() {
-        try {
-            return getPromotions();
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BATCH_UNAVAILABLE, e);
-        }
+        return BatchExceptionUtil.handleException(this::getPromotions);
     }
 
-    private List<Promotion> getPromotions() throws Exception {
+    private List<Promotion> getPromotions() {
         String pagedCuEventUrl = getPromotionPageUrl();
-        Document doc = Jsoup.connect(pagedCuEventUrl).timeout(TIMEOUT).get();
-        Elements elements = doc.select(DOC_SELECT_TAG);
+        Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(pagedCuEventUrl, TIMEOUT);
+        Elements elements = document.select(DOC_SELECT_TAG);
 
         return elements.stream()
                 .map(this::convertToPromotion)
@@ -89,28 +74,22 @@ public class SevenPromotionBatchService extends PromotionBatchService {
     }
 
     private String getDetailPageImage(int pageIdx) {
-        try {
-            String detailPage = UriComponentsBuilder
-                    .fromUriString(SEVEN_DESCRIPTION_PAGE_URL)
-                    .queryParam("eventSeq", pageIdx)
-                    .build()
-                    .toString();
-            Document doc = Jsoup.connect(detailPage).timeout(TIMEOUT).get();
-            Elements elements = doc.select("div.cont_top div.gallery_view img");
+        return BatchExceptionUtil.handleException(() -> fetchDetailImage(pageIdx));
+    }
 
-            String detailImage = null;
-            if (elements.size() != 0) {
-                detailImage = elements.first().attr("src");
-            }
-            return detailImage;
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BATCH_UNAVAILABLE, e);
+    private String fetchDetailImage(int pageIdx) {
+        String detailPage = UriComponentsBuilder
+                .fromUriString(SEVEN_DESCRIPTION_PAGE_URL)
+                .queryParam("seqNo", pageIdx)
+                .build()
+                .toString();
+        Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(detailPage, TIMEOUT);
+        Elements elements = document.select("div.cont_top div.gallery_view img");
+
+        String detailImage = null;
+        if (elements.size() != 0) {
+            detailImage = elements.first().attr("src");
         }
+        return detailImage;
     }
 }

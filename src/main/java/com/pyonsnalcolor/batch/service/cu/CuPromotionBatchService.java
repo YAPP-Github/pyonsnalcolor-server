@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.batch.service.cu;
 
 import com.pyonsnalcolor.batch.service.PromotionBatchService;
+import com.pyonsnalcolor.batch.util.BatchExceptionUtil;
 import com.pyonsnalcolor.exception.PyonsnalcolorBatchException;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import com.pyonsnalcolor.promotion.entity.Promotion;
@@ -41,28 +42,18 @@ public class CuPromotionBatchService extends PromotionBatchService {
 
     @Override
     public List<Promotion> getNewPromotions() {
-        try {
-            return getPromotions();
-        } catch (IllegalArgumentException e) {
-            throw new PyonsnalcolorBatchException(INVALID_ACCESS, e);
-        } catch (SocketTimeoutException e) {
-            throw new PyonsnalcolorBatchException(TIME_OUT, e);
-        } catch (IOException e) {
-            throw new PyonsnalcolorBatchException(IO_EXCEPTION, e);
-        } catch (Exception e) {
-            throw new PyonsnalcolorBatchException(BATCH_UNAVAILABLE, e);
-        }
+        return BatchExceptionUtil.handleException(this::getPromotions);
     }
 
-    private List<Promotion> getPromotions() throws IOException {
+    private List<Promotion> getPromotions() {
         List<Promotion> promotions = new ArrayList<>();
 
         int pageIndex = 1;
         while (true) {
             String pagedCuEventUrl = getPromotion(pageIndex);
-            Document doc = Jsoup.connect(pagedCuEventUrl).timeout(TIMEOUT).get();
-            Elements elements = doc.select(DOC_SELECT_TAG);
-            Elements finishedElements = doc.select(LAST_SELECT_TAG);
+            Document document = BatchExceptionUtil.getDocumentByUrlWithTimeout(pagedCuEventUrl, TIMEOUT);
+            Elements elements = document.select(DOC_SELECT_TAG);
+            Elements finishedElements = document.select(LAST_SELECT_TAG);
             String isPromotionNotExist = finishedElements.text();
             if (isPromotionNotExist.contains(LAST_MENT)) {
                 break;
