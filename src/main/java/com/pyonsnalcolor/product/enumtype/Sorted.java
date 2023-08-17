@@ -2,6 +2,7 @@ package com.pyonsnalcolor.product.enumtype;
 
 import com.pyonsnalcolor.product.entity.BaseProduct;
 import lombok.Getter;
+import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -13,6 +14,7 @@ public enum Sorted implements Filter {
     LATEST(1,
             "최신순",
             null,
+            Sort.by("updatedTime").descending().and(Sort.by("id").ascending()),
             Comparator.comparing(BaseProduct::getCreatedDate).reversed().thenComparing(BaseProduct::getId)),
 //    VIEW(2,
 //            "조회순",
@@ -21,10 +23,12 @@ public enum Sorted implements Filter {
     LOW_PRICE(3,
             "낮은가격순",
             null,
+            Sort.by("price").ascending().and(Sort.by("id").ascending()),
             Comparator.comparing(BaseProduct::getPrice).thenComparing(BaseProduct::getId)),
     HIGH_PRICE(4,
             "높은가격순",
             null,
+            Sort.by("price").descending().and(Sort.by("id").ascending()),
             Comparator.comparing(BaseProduct::getPrice).reversed().thenComparing(BaseProduct::getId));
 //    REVIEW(5,
 //            "리뷰순",
@@ -34,14 +38,16 @@ public enum Sorted implements Filter {
     private final int code;
     private final String korean;
     private final String image;
+    private final Sort sort;
     private final Comparator<BaseProduct> comparator;
 
     private static final String FILTER_TYPE = "sort";
 
-    Sorted(int code, String korean, String image, Comparator<BaseProduct> comparator) {
+    Sorted(int code, String korean, String image, Sort sort, Comparator<BaseProduct> comparator) {
         this.code = code;
         this.korean = korean;
         this.image = image;
+        this.sort = sort;
         this.comparator = comparator;
     }
 
@@ -52,16 +58,6 @@ public enum Sorted implements Filter {
                 .orElse(null);
     }
 
-    public static Comparator<BaseProduct> getCategoryFilteredComparator(List<Integer> filterList) {
-        Comparator<BaseProduct> filter = Sorted.findComparatorByFilterList(filterList);
-
-        if (Sorted.LATEST.getComparator() == filter) {
-            return BaseProduct.getCategoryComparator()
-                    .thenComparing(filter);
-        }
-        return filter;
-    }
-
     public static Comparator<BaseProduct> findComparatorByFilterList(List<Integer> filterList) {
         return filterList.stream()
                 .map(Sorted::matchSortedByCode)
@@ -69,6 +65,15 @@ public enum Sorted implements Filter {
                 .findFirst()
                 .orElse(LATEST)
                 .getComparator();
+    }
+
+    public static Sort findSortByFilterList(List<Integer> filterList) {
+        return filterList.stream()
+                .map(Sorted::matchSortedByCode)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(LATEST)
+                .getSort();
     }
 
     @Override
