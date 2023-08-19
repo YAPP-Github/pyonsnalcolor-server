@@ -55,10 +55,11 @@ public class PbProductService extends ProductService {
                 aggregation, "pb_product", BasePbProduct.class
         );
 
+        Criteria criteria = createCriteriaByFilter(storeType, productFilterRequestDto.getFilterList());
         return PageableExecutionUtils.getPage(
                 aggregationResults.getMappedResults(),
                 pageable,
-                () -> mongoTemplate.count(new Query(), BasePbProduct.class)
+                () -> mongoTemplate.count(new Query(criteria), BasePbProduct.class)
         );
     }
 
@@ -77,14 +78,16 @@ public class PbProductService extends ProductService {
     ) {
         List<Integer> filterList = productFilterRequestDto.getFilterList();
         Criteria criteria = createCriteriaByFilter(storeType, filterList);
-        Sort sort = Sorted.findSortByFilterList(filterList);
+        Sort sortByFilterList = Sorted.findSortByFilterList(filterList);
+
+        SortOperation sortStage = Aggregation.sort(Sort.Direction.ASC, CATEGORY_GOODS_FIELD);
+        sortStage.and(sortByFilterList);
 
         return newAggregation(
                 match(criteria),
                 addGoodsCategoryField(),
-                sort(Sort.Direction.ASC, CATEGORY_GOODS_FIELD),
+                sort(Sort.Direction.ASC, CATEGORY_GOODS_FIELD).and(sortByFilterList),
                 project().andExclude(CATEGORY_GOODS_FIELD),
-                sort(sort),
                 skip(pageable.getOffset()),
                 limit(pageable.getPageSize())
         );

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
@@ -50,14 +51,15 @@ public class EventProductService extends ProductService{
     ) {
         Aggregation aggregation = getAggregation(pageable, storeType, productFilterRequestDto);
 
-        AggregationResults<BaseEventProduct> results = mongoTemplate.aggregate(
+        AggregationResults<BaseEventProduct> aggregationResults = mongoTemplate.aggregate(
                 aggregation, "event_product", BaseEventProduct.class
         );
 
+        Criteria criteria = createCriteriaByFilter(storeType, productFilterRequestDto.getFilterList());
         return PageableExecutionUtils.getPage(
-                results.getMappedResults(),
+                aggregationResults.getMappedResults(),
                 pageable,
-                () -> mongoTemplate.count(new Query(), BaseEventProduct.class)
+                () -> mongoTemplate.count(new Query(criteria), BaseEventProduct.class)
         );
     }
 }
