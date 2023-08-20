@@ -2,17 +2,21 @@ package com.pyonsnalcolor.product.service;
 
 import com.pyonsnalcolor.exception.PyonsnalcolorProductException;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
-import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,37 +27,39 @@ import static com.pyonsnalcolor.exception.model.CommonErrorCode.INVALID_FILTER_C
 @Service
 public class EventProductService extends ProductService{
 
-    public EventProductService(EventProductRepository eventProductRepository) {
-        super(eventProductRepository);
-    }
+    private static final List<Integer> FILTER_CODES = Stream.of(
+            Filter.getCodes(Category.class),
+            Filter.getCodes(Sorted.class),
+            Filter.getCodes(EventType.class))
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
 
-    @Override
-    public Page<ProductResponseDto> getFilteredProducts(
-            int pageNumber, int pageSize, String storeType, ProductFilterRequestDto productFilterRequestDto
-    ) {
-        List<Integer> filterList = productFilterRequestDto.getFilterList();
-        validateProductFilterCodes(filterList);
-
-        Comparator comparator = Sorted.getCategoryFilteredComparator(filterList);
-        List<BaseEventProduct> eventProducts = getProductsListByFilter(storeType, filterList, BaseEventProduct.class);
-        eventProducts.sort(comparator);
-
-        List<ProductResponseDto> responseDtos = convertToResponseDtoList(eventProducts);
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        return convertToPage(responseDtos, pageRequest);
+    public EventProductService(EventProductRepository eventProductRepository, MongoTemplate mongoTemplate) {
+        super(eventProductRepository, mongoTemplate);
     }
 
     @Override
     protected void validateProductFilterCodes(List<Integer> filterList) {
-        List<Integer> codes = Stream.of(
-                Filter.getCodes(Category.class),
-                Filter.getCodes(Sorted.class),
-                Filter.getCodes(EventType.class))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-
-        if (!codes.containsAll(filterList)) {
+        if (!FILTER_CODES.containsAll(filterList)) {
             throw new PyonsnalcolorProductException(INVALID_FILTER_CODE);
         }
+    }
+
+    @Override
+    protected Page<BaseEventProduct> getPagedProductsByFilter(
+            Pageable pageable, String storeType, ProductFilterRequestDto productFilterRequestDto
+    ) {
+        Aggregation aggregation = getAggregation(pageable, storeType, productFilterRequestDto);
+
+        AggregationResults<BaseEventProduct> aggregationResults = mongoTemplate.aggregate(
+                aggregation, "event_product", BaseEventProduct.class
+        );
+
+        Criteria criteria = createCriteriaByFilter(storeType, productFilterRequestDto.getFilterList());
+        return PageableExecutionUtils.getPage(
+                aggregationResults.getMappedResults(),
+                pageable,
+                () -> mongoTemplate.count(new Query(criteria), BaseEventProduct.class)
+        );
     }
 }

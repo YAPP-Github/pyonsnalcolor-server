@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,15 +29,16 @@ public class PbProductController {
             @RequestParam String storeType,
             @RequestBody ProductFilterRequestDto productFilterRequestDto
     ) {
-        Page<ProductResponseDto> products =  pbProductService.getFilteredProducts(
-                pageNumber, pageSize, storeType, productFilterRequestDto);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<ProductResponseDto> products =  pbProductService.getPagedProductsDtoByFilter(
+                pageable, storeType, productFilterRequestDto);
         return new ResponseEntity(products, HttpStatus.OK);
     }
 
-    @Operation(summary = "PB 상품 단건 조회", description = "id 바탕으로 PB 상품을 조회합니다.")
+    @Operation(summary = "PB 상품 단건 조회", description = "id로 PB 상품을 조회합니다.")
     @GetMapping("/products/pb-products/{id}")
     public ResponseEntity<PbProductResponseDto> getPbProduct(@PathVariable String id) {
-        ProductResponseDto product = pbProductService.getProduct(id);
+        ProductResponseDto product = pbProductService.getProductById(id);
         return new ResponseEntity(product, HttpStatus.OK);
     }
 }

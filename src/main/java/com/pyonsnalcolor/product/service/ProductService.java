@@ -6,62 +6,63 @@ import com.pyonsnalcolor.product.entity.BaseProduct;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
 
 @RequiredArgsConstructor
 public abstract class ProductService {
+
     protected final BasicProductRepository basicProductRepository;
+    protected final MongoTemplate mongoTemplate;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
-    public ProductResponseDto getProduct(String id) {
+    public ProductResponseDto getProductById(String id) {
         Optional<BaseProduct> baseProduct = basicProductRepository.findById(id);
         baseProduct.orElseThrow(NoSuchElementException::new);
         return baseProduct.get().convertToDto();
     }
 
-    protected List<ProductResponseDto> convertToResponseDtoList(List<? extends BaseProduct> products) {
-        return products.stream()
-                .map(BaseProduct::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    protected abstract Page<ProductResponseDto> getFilteredProducts(
-            int pageNumber, int pageSize, String storeType, ProductFilterRequestDto productFilterRequestDto);
-
     protected abstract void validateProductFilterCodes(List<Integer> filterList);
 
-    protected Page<ProductResponseDto> convertToPage(List<ProductResponseDto> list, PageRequest pageRequest) {
-        int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + pageRequest.getPageSize()), list.size());
+    public <T extends ProductResponseDto> Page<T> getPagedProductsDtoByFilter(
+            Pageable pageable, String storeType, ProductFilterRequestDto productFilterRequestDto) {
 
-        return new PageImpl<>(list.subList(start, end), pageRequest, list.size());
+        return getPagedProductsByFilter(pageable, storeType, productFilterRequestDto)
+                .map(p -> (T) p.convertToDto());
     }
 
-    protected <T extends BaseProduct> List<T> getProductsListByFilter(
-            String storeType, List<Integer> filterList, Class<T> productClass
+    protected abstract <T extends BaseProduct> Page<T> getPagedProductsByFilter(
+            Pageable pageable, String storeType, ProductFilterRequestDto productFilterRequestDto);
+
+    protected Aggregation getAggregation(
+            Pageable pageable, String storeType, ProductFilterRequestDto productFilterRequestDto
     ) {
-        Query query = createQueryByFilter(storeType, filterList);
-        return mongoTemplate.find(query, productClass);
+        List<Integer> filterList = productFilterRequestDto.getFilterList();
+        Criteria criteria = createCriteriaByFilter(storeType, filterList);
+        Sort sort = Sorted.findSortByFilterList(filterList);
+
+        return newAggregation(
+                match(criteria),
+                sort(sort),
+                skip(pageable.getOffset()),
+                limit(pageable.getPageSize())
+        );
     }
 
-    private Query createQueryByFilter(String storeType, List<Integer> filterList) {
+    protected Criteria createCriteriaByFilter(String storeType, List<Integer> filterList) {
         List<Recommend> recommends = Filter.findEnumByFilterList(Recommend.class, filterList);
         List<Category> categories = Filter.findEnumByFilterList(Category.class, filterList);
         List<EventType> eventTypes = Filter.findEnumByFilterList(EventType.class, filterList);
 
-        Criteria criteria = createFilterCriteria(recommends, categories, eventTypes, storeType);
-        return new Query(criteria);
+        return createFilterCriteria(recommends, categories, eventTypes, storeType);
     }
 
     private Criteria createFilterCriteria(List<Recommend> recommends, List<Category> categories,
