@@ -50,8 +50,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<Object> handleNoSuchElementException(PyonsnalcolorPushException e) {
-        log.error("GlobalExceptionHandler catch NoSuchElementException: {}", e.getErrorCode().name());
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException e) {
+        log.error("GlobalExceptionHandler catch NoSuchElementException", e);
         ErrorCode errorCode = CommonErrorCode.NOT_FOUND_ERROR;
 
         return createResponseEntity(errorCode);
