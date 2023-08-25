@@ -12,7 +12,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.persistence.Id;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 @SuperBuilder
@@ -41,7 +43,13 @@ public abstract class BaseProduct extends BaseTimeEntity {
 
     private Boolean isNew;
 
+    private List<Review> reviews = new ArrayList<>();
+
     public abstract ProductResponseDto convertToDto();
+
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
 
     public void updateIsNew(boolean isNew) {
         this.isNew = isNew;

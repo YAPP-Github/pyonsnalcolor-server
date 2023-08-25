@@ -1,10 +1,16 @@
 package com.pyonsnalcolor.product.service;
 
+import com.pyonsnalcolor.exception.PyonsnalcolorException;
+import com.pyonsnalcolor.exception.model.CommonErrorCode;
+import com.pyonsnalcolor.exception.model.ErrorCode;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
+import com.pyonsnalcolor.product.dto.ReviewDto;
 import com.pyonsnalcolor.product.entity.BaseProduct;
+import com.pyonsnalcolor.product.entity.Review;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
+import com.pyonsnalcolor.util.file.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,11 +18,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
 
 @RequiredArgsConstructor
 public abstract class ProductService {
@@ -74,5 +82,31 @@ public abstract class ProductService {
         criteria = StoreType.getCriteria(storeType, criteria);
 
         return criteria;
+    }
+
+    //리뷰 등록
+    public void registerReview(MultipartFile image, ReviewDto reviewDto, String productId) throws Throwable {
+        BaseProduct baseProduct = (BaseProduct) basicProductRepository
+                .findById(productId)
+                .orElseThrow(NoSuchElementException::new);
+
+        String filePath = FileUtils.uploadImage(image, baseProduct.getId());
+        if (filePath.isEmpty()) {
+            //TODO : 업로드 실패했을 시 처리 필요
+            throw new PyonsnalcolorException(CommonErrorCode.SERVER_UNAVAILABLE);
+        }
+
+        Review review = new Review().builder()
+                .contents(reviewDto.getContents())
+                .image(filePath)
+                .quality(reviewDto.getQuality())
+                .score(reviewDto.getScore())
+                .taste(reviewDto.getTaste())
+                .valueForMoney(reviewDto.getValueForMoney())
+                .build();
+
+        baseProduct.addReview(review);
+
+        basicProductRepository.save(baseProduct);
     }
 }

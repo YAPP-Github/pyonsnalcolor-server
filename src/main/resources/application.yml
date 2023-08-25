@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   main:
     allow-bean-definition-overriding: true
   config:
@@ -59,3 +63,5 @@ fcm:
   scope: https://www.googleapis.com/auth/firebase.messaging
 slack:
   url: ${SLACK_URL}
+file:
+  base-path: "/Users/kakao/Desktop/pyonsnal-project/review"

@@ -3,6 +3,8 @@ package com.pyonsnalcolor.product.controller;
 import com.pyonsnalcolor.product.dto.PbProductResponseDto;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
+import com.pyonsnalcolor.product.dto.ReviewDto;
+import com.pyonsnalcolor.product.entity.Review;
 import com.pyonsnalcolor.product.service.PbProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,8 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "PB 상품 api")
 @RestController
@@ -40,5 +44,18 @@ public class PbProductController {
     public ResponseEntity<PbProductResponseDto> getPbProduct(@PathVariable String id) {
         ProductResponseDto product = pbProductService.getProductById(id);
         return new ResponseEntity(product, HttpStatus.OK);
+    }
+
+    @Operation(summary = "리뷰 등록", description = "특정 상품의 리뷰를 등록합니다")
+    @PostMapping(value = "/products/pb-products/{id}/reviews",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Void> registerReview(
+            @PathVariable String id,
+            @RequestPart ReviewDto reviewDto,
+            @RequestPart MultipartFile imageFile
+    ) throws Throwable {
+        pbProductService.registerReview(imageFile, reviewDto, id);
+
+        return ResponseEntity.ok().build();
     }
 }
