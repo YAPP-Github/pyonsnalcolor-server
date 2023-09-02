@@ -12,22 +12,26 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
 
+@Service
 @RequiredArgsConstructor
 public abstract class ProductService {
 
     protected final BasicProductRepository basicProductRepository;
     protected final MongoTemplate mongoTemplate;
 
+    @Transactional
     public ProductResponseDto getProductById(String id) {
-        Optional<BaseProduct> baseProduct = basicProductRepository.findById(id);
-        baseProduct.orElseThrow(NoSuchElementException::new);
-        return baseProduct.get().convertToDto();
+        BaseProduct baseProduct = (BaseProduct) basicProductRepository.findById(id).get();
+        baseProduct.increaseViewCount();
+        basicProductRepository.save(baseProduct);
+        return baseProduct.convertToDto();
     }
 
     protected abstract void validateProductFilterCodes(List<Integer> filterList);

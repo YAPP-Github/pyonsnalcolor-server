@@ -41,7 +41,13 @@ public abstract class BaseProduct extends BaseTimeEntity {
 
     private Boolean isNew;
 
+    private int viewCount;
+
     public abstract ProductResponseDto convertToDto();
+
+    public void increaseViewCount() {
+        this.viewCount += 1;
+    }
 
     public void updateIsNew(boolean isNew) {
         this.isNew = isNew;

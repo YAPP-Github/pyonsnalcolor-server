@@ -42,5 +42,7 @@ public class ProductResponseDto {
     private String description;
     @NotBlank
     private Boolean isNew;
+    @NotBlank
+    private int viewCount;
     private String category;
 }
