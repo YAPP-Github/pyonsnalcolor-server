@@ -1,0 +1,61 @@
+version: '3'
+
+networks:
+  bridge_network:
+
+services:
+  application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - mysql-database
+      - mongo1
+    networks:
+      - bridge_network
+  mysql-database:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: # { MySQL 루트 비밀번호 }
+      MYSQL_DATABASE: pyonsnalcolordb
+    networks:
+      - bridge_network
+  mongo1:
+    image: mongo
+    container_name: mongo1
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: pyonsnal
+    command: mongod --replSet rs1 --port 27017
+    networks:
+      - bridge_network
+  mongo2:
+    image: mongo
+    container_name: mongo2
+    restart: always
+    ports:
+      - "27018:27018"
+    environment:
+      MONGO_INITDB_DATABASE: pyonsnal
+    command: mongod --replSet rs1 --port 27018
+    networks:
+      - bridge_network
+  mongo3:
+    image: mongo
+    container_name: mongo3
+    restart: always
+    ports:
+      - "27019:27019"
+    environment:
+      MONGO_INITDB_DATABASE: pyonsnal
+    networks:
+      - bridge_network
+    command: mongod --replSet rs1 --port 27019
