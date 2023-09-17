@@ -5,6 +5,7 @@ import com.pyonsnalcolor.exception.model.CommonErrorCode;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.*;
+import com.pyonsnalcolor.product.repository.ImageRepository;
 import com.pyonsnalcolor.product.repository.PbProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,15 +28,16 @@ public class PbProductService extends ProductService {
 
     private static final String CATEGORY_GOODS_FIELD = "categoryGoods";
     private static final List<Integer> FILTER_CODES = Stream.of(
-            Filter.getCodes(Category.class),
-            Filter.getCodes(Sorted.class),
-            Filter.getCodes(Recommend.class),
-            Filter.getCodes(EventType.class))
+                    Filter.getCodes(Category.class),
+                    Filter.getCodes(Sorted.class),
+                    Filter.getCodes(Recommend.class),
+                    Filter.getCodes(EventType.class)
+            )
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
 
-    public PbProductService(PbProductRepository pbProductRepository, MongoTemplate mongoTemplate) {
-        super(pbProductRepository, mongoTemplate);
+    public PbProductService(PbProductRepository pbProductRepository, MongoTemplate mongoTemplate, ImageRepository imageRepository) {
+        super(pbProductRepository, mongoTemplate, imageRepository);
     }
 
     @Override
@@ -70,7 +72,8 @@ public class PbProductService extends ProductService {
 
         if (sort == Sorted.LATEST.getSort()) {
             return getAggregationSortCategoryOfGoodsLast(pageable, storeType, productFilterRequestDto);
-        } return getAggregation(pageable, storeType, productFilterRequestDto);
+        }
+        return getAggregation(pageable, storeType, productFilterRequestDto);
     }
 
     private Aggregation getAggregationSortCategoryOfGoodsLast(
@@ -98,7 +101,7 @@ public class PbProductService extends ProductService {
                 .addField(CATEGORY_GOODS_FIELD)
                 .withValue(
                         ConditionalOperators.when(
-                                ComparisonOperators.Eq.valueOf("category").equalToValue("GOODS"))
+                                        ComparisonOperators.Eq.valueOf("category").equalToValue("GOODS"))
                                 .then(1)
                                 .otherwise(0))
                 .build();

@@ -39,23 +39,23 @@ public class PbProductController {
         return new ResponseEntity(products, HttpStatus.OK);
     }
 
-    @Operation(summary = "PB 상품 단건 조회", description = "id로 PB 상품을 조회합니다.")
-    @GetMapping("/products/pb-products/{id}")
-    public ResponseEntity<PbProductResponseDto> getPbProduct(@PathVariable String id) {
-        ProductResponseDto product = pbProductService.getProductById(id);
-        return new ResponseEntity(product, HttpStatus.OK);
-    }
-
     @Operation(summary = "리뷰 등록", description = "특정 상품의 리뷰를 등록합니다")
     @PostMapping(value = "/products/pb-products/{id}/reviews",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> registerReview(
             @PathVariable String id,
-            @RequestPart ReviewDto reviewDto,
-            @RequestPart MultipartFile imageFile
+            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
+            @RequestPart(value = "reviewDto") ReviewDto reviewDto
     ) throws Throwable {
         pbProductService.registerReview(imageFile, reviewDto, id);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build(); //현재는 리뷰 단건 조회하는 기능 존재 x -> location 지정 안함
+    }
+
+    @Operation(summary = "PB 상품 단건 조회", description = "id로 PB 상품을 조회합니다.")
+    @GetMapping("/products/pb-products/{id}")
+    public ResponseEntity<PbProductResponseDto> getPbProduct(@PathVariable String id) {
+        ProductResponseDto product = pbProductService.getProductById(id);
+        return new ResponseEntity(product, HttpStatus.OK);
     }
 }

@@ -1,8 +1,5 @@
 package com.pyonsnalcolor.product.service;
 
-import com.pyonsnalcolor.exception.PyonsnalcolorException;
-import com.pyonsnalcolor.exception.model.CommonErrorCode;
-import com.pyonsnalcolor.exception.model.ErrorCode;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.dto.ReviewDto;
@@ -10,7 +7,7 @@ import com.pyonsnalcolor.product.entity.BaseProduct;
 import com.pyonsnalcolor.product.entity.Review;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
-import com.pyonsnalcolor.util.file.FileUtils;
+import com.pyonsnalcolor.product.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,13 +15,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
@@ -34,6 +30,7 @@ public abstract class ProductService {
 
     protected final BasicProductRepository basicProductRepository;
     protected final MongoTemplate mongoTemplate;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public ProductResponseDto getProductById(String id) {
@@ -95,11 +92,7 @@ public abstract class ProductService {
                 .findById(productId)
                 .orElseThrow(NoSuchElementException::new);
 
-        String filePath = FileUtils.uploadImage(image, baseProduct.getId());
-        if (filePath.isEmpty()) {
-            //TODO : 업로드 실패했을 시 처리 필요
-            throw new PyonsnalcolorException(CommonErrorCode.SERVER_UNAVAILABLE);
-        }
+        String filePath = imageRepository.uploadImage(image);
 
         Review review = new Review().builder()
                 .contents(reviewDto.getContents())
@@ -108,6 +101,8 @@ public abstract class ProductService {
                 .score(reviewDto.getScore())
                 .taste(reviewDto.getTaste())
                 .valueForMoney(reviewDto.getValueForMoney())
+                .writerId(reviewDto.getWriterId())
+                .writerName(reviewDto.getWriterName())
                 .build();
 
         baseProduct.addReview(review);
