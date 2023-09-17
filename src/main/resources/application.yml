@@ -70,8 +70,8 @@ cloud:
     s3:
       bucket: pyonsnal-bucket
     credentials:
-      access-key: AKIA3KCXHKAFO6IHI6PI
-      secret-key: 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
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
     region:
       static: ap-northeast-2
     stack:
