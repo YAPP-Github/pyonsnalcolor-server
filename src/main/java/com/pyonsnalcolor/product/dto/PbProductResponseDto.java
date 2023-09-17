@@ -16,4 +16,5 @@ import java.util.List;
 public class PbProductResponseDto extends ProductResponseDto {
     private String recommend;
     private List<ReviewDto> reviews;
+    private float avgScore;
 }
