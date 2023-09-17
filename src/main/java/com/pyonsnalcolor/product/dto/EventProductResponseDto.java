@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Schema(description = "이벤트 상품 조회 Response DTO")
 @SuperBuilder
 @ToString(callSuper = true)
@@ -16,4 +18,6 @@ public class EventProductResponseDto extends ProductResponseDto {
     private String giftImage;
     private String giftTitle;
     private String giftPrice;
+    private List<ReviewDto> reviews;
+    private float avgScore;
 }

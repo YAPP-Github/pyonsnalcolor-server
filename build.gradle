@@ -66,6 +66,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'net.gpedro.integrations.slack:slack-webhook:1.4.0'
 
+    // aws
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     // FCM
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 

@@ -1,6 +1,7 @@
 package com.pyonsnalcolor.product.entity;
 
 import com.pyonsnalcolor.product.dto.PbProductResponseDto;
+import com.pyonsnalcolor.product.dto.ReviewDto;
 import com.pyonsnalcolor.product.enumtype.Curation;
 import com.pyonsnalcolor.product.enumtype.EventType;
 import com.pyonsnalcolor.product.enumtype.Recommend;
@@ -9,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuperBuilder
 @ToString(callSuper = true)
@@ -21,6 +25,15 @@ public class BasePbProduct extends BaseProduct {
 
     @Override
     public PbProductResponseDto convertToDto() {
+        List<ReviewDto> reviewDtos = new ArrayList<>();
+        float avgScore = 0;
+
+        for (Review review : getReviews()) {
+            reviewDtos.add(review.convertToDto());
+            avgScore += review.getScore();
+        }
+        avgScore = avgScore / reviewDtos.size();
+
         return PbProductResponseDto.builder()
                 .id(getId())
                 .name(getName())
@@ -34,6 +47,8 @@ public class BasePbProduct extends BaseProduct {
                 .recommend((getRecommend() == null) ? null : getRecommend().getKorean())
                 .isNew(getIsNew() == null ? false : getIsNew())
                 .viewCount(getViewCount())
+                .reviews(reviewDtos)
+                .avgScore(avgScore)
                 .build();
     }
 

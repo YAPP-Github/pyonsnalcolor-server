@@ -2,9 +2,12 @@ package com.pyonsnalcolor.product.service;
 
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
+import com.pyonsnalcolor.product.dto.ReviewDto;
 import com.pyonsnalcolor.product.entity.BaseProduct;
+import com.pyonsnalcolor.product.entity.Review;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
+import com.pyonsnalcolor.product.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +17,10 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
@@ -25,6 +30,7 @@ public abstract class ProductService {
 
     protected final BasicProductRepository basicProductRepository;
     protected final MongoTemplate mongoTemplate;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public ProductResponseDto getProductById(String id) {
@@ -78,5 +84,29 @@ public abstract class ProductService {
         criteria = StoreType.getCriteria(storeType, criteria);
 
         return criteria;
+    }
+
+    //리뷰 등록
+    public void registerReview(MultipartFile image, ReviewDto reviewDto, String productId) throws Throwable {
+        BaseProduct baseProduct = (BaseProduct) basicProductRepository
+                .findById(productId)
+                .orElseThrow(NoSuchElementException::new);
+
+        String filePath = imageRepository.uploadImage(image);
+
+        Review review = new Review().builder()
+                .contents(reviewDto.getContents())
+                .image(filePath)
+                .quality(reviewDto.getQuality())
+                .score(reviewDto.getScore())
+                .taste(reviewDto.getTaste())
+                .valueForMoney(reviewDto.getValueForMoney())
+                .writerId(reviewDto.getWriterId())
+                .writerName(reviewDto.getWriterName())
+                .build();
+
+        baseProduct.addReview(review);
+
+        basicProductRepository.save(baseProduct);
     }
 }

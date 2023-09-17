@@ -5,6 +5,7 @@ import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
+import com.pyonsnalcolor.product.repository.ImageRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,17 +26,20 @@ import static com.pyonsnalcolor.exception.model.CommonErrorCode.INVALID_FILTER_C
 
 @Slf4j
 @Service
-public class EventProductService extends ProductService{
+public class EventProductService extends ProductService {
 
     private static final List<Integer> FILTER_CODES = Stream.of(
-            Filter.getCodes(Category.class),
-            Filter.getCodes(Sorted.class),
-            Filter.getCodes(EventType.class))
+                    Filter.getCodes(Category.class),
+                    Filter.getCodes(Sorted.class),
+                    Filter.getCodes(EventType.class)
+            )
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
 
-    public EventProductService(EventProductRepository eventProductRepository, MongoTemplate mongoTemplate) {
-        super(eventProductRepository, mongoTemplate);
+    public EventProductService(EventProductRepository eventProductRepository,
+                               MongoTemplate mongoTemplate,
+                               ImageRepository imageRepository) {
+        super(eventProductRepository, mongoTemplate, imageRepository);
     }
 
     @Override

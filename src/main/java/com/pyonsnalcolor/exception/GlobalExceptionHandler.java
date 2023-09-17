@@ -28,6 +28,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return createResponseEntity(errorCode);
     }
 
+    @ExceptionHandler(PyonsnalcolorException.class)
+    public ResponseEntity<Object> handlePyonsnalcolorException(PyonsnalcolorException e) {
+        log.error("GlobalExceptionHandler catch Exception ", e);
+        ErrorCode errorCode = e.getErrorCode();
+        return createResponseEntity(errorCode);
+    }
+
     @ExceptionHandler(PyonsnalcolorAuthException.class)
     public ResponseEntity<Object> handleAuthException(PyonsnalcolorAuthException e) {
         log.error("GlobalExceptionHandler catch PyonsnalcolorAuthException: {}", e.getErrorCode().name());
@@ -50,8 +57,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<Object> handleNoSuchElementException(PyonsnalcolorPushException e) {
-        log.error("GlobalExceptionHandler catch NoSuchElementException: {}", e.getErrorCode().name());
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException e) {
+        log.error("GlobalExceptionHandler catch NoSuchElementException", e);
         ErrorCode errorCode = CommonErrorCode.NOT_FOUND_ERROR;
 
         return createResponseEntity(errorCode);
@@ -69,7 +76,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(errorResponse, INVALID_PARAMETER.getHttpStatus());
     }
 
-    private ErrorResponse createErrorResponse(BindingResult bindingResult){
+    private ErrorResponse createErrorResponse(BindingResult bindingResult) {
         String errorMessage = bindingResult.getFieldErrors().get(0).getDefaultMessage();
         return new ErrorResponse(INVALID_PARAMETER.name(), errorMessage);
     }

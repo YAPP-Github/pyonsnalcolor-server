@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Schema(description = "PB 상품 조회 Response DTO")
 @SuperBuilder
 @ToString(callSuper = true)
@@ -13,4 +15,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class PbProductResponseDto extends ProductResponseDto {
     private String recommend;
+    private List<ReviewDto> reviews;
+    private float avgScore;
 }
