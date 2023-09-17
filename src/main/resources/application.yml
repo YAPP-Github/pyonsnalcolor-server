@@ -65,3 +65,14 @@ slack:
   url: ${SLACK_URL}
 file:
   base-path: "/Users/kakao/Desktop/pyonsnal-project/review"
+cloud:
+  aws:
+    s3:
+      bucket: pyonsnal-bucket
+    credentials:
+      access-key: AKIA3KCXHKAFO6IHI6PI
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
