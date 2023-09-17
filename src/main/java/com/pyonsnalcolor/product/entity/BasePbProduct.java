@@ -32,7 +32,9 @@ public class BasePbProduct extends BaseProduct {
             reviewDtos.add(review.convertToDto());
             avgScore += review.getScore();
         }
-        avgScore = avgScore / reviewDtos.size();
+        if(reviewDtos.size() > 0) {
+            avgScore = avgScore / reviewDtos.size();
+        }
 
         return PbProductResponseDto.builder()
                 .id(getId())
