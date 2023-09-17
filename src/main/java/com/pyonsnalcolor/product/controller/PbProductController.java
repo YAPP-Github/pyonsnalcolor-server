@@ -4,7 +4,6 @@ import com.pyonsnalcolor.product.dto.PbProductResponseDto;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.dto.ReviewDto;
-import com.pyonsnalcolor.product.entity.Review;
 import com.pyonsnalcolor.product.service.PbProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +33,7 @@ public class PbProductController {
             @RequestBody ProductFilterRequestDto productFilterRequestDto
     ) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<ProductResponseDto> products =  pbProductService.getPagedProductsDtoByFilter(
+        Page<ProductResponseDto> products = pbProductService.getPagedProductsDtoByFilter(
                 pageable, storeType, productFilterRequestDto);
         return new ResponseEntity(products, HttpStatus.OK);
     }
@@ -55,7 +54,7 @@ public class PbProductController {
     @Operation(summary = "PB 상품 단건 조회", description = "id로 PB 상품을 조회합니다.")
     @GetMapping("/products/pb-products/{id}")
     public ResponseEntity<PbProductResponseDto> getPbProduct(@PathVariable String id) {
-        ProductResponseDto product = pbProductService.getProductById(id);
+        PbProductResponseDto product = (PbProductResponseDto) pbProductService.getProductById(id);
         return new ResponseEntity(product, HttpStatus.OK);
     }
 }

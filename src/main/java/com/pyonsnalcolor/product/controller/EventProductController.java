@@ -54,7 +54,7 @@ public class EventProductController {
     @Operation(summary = "행사 상품 단건 조회", description = "id로 행사 상품을 조회합니다.")
     @GetMapping("/products/event-products/{id}")
     public ResponseEntity<EventProductResponseDto> getEventProduct(@PathVariable String id) {
-        ProductResponseDto responseDto = eventProductService.getProductById(id);
+        EventProductResponseDto responseDto = (EventProductResponseDto) eventProductService.getProductById(id);
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 }

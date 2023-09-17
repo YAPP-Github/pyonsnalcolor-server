@@ -7,6 +7,8 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.stream.Collectors;
+
 @SuperBuilder
 @ToString(callSuper = true)
 @Getter
@@ -36,6 +38,8 @@ public class BaseEventProduct extends BaseProduct {
                 .giftTitle(getGiftTitle())
                 .isNew(false) // TODO: 2차 배포 이후 행사 상품의 isNew 필드 삭제
                 .viewCount(getViewCount())
+                .reviews(getReviews().stream()
+                        .map(Review::convertToDto).collect(Collectors.toList()))
                 .build();
     }
 }

@@ -20,4 +20,8 @@ public class Review {
     private String image; //이미지
     private Long writerId; // 작성자 id <- 이후 기능 추가 고려
     private String writerName;
+
+    public ReviewDto convertToDto() {
+        return new ReviewDto(taste, quality, valueForMoney, score, contents, image, writerId, writerName);
+    }
 }
