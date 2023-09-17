@@ -45,10 +45,16 @@ public abstract class BaseProduct extends BaseTimeEntity {
 
     private List<Review> reviews = new ArrayList<>();
 
+    private int viewCount;
+
     public abstract ProductResponseDto convertToDto();
 
     public void addReview(Review review) {
         reviews.add(review);
+    }
+
+    public void increaseViewCount() {
+        this.viewCount += 1;
     }
 
     public void updateIsNew(boolean isNew) {

@@ -33,6 +33,7 @@ public class BasePbProduct extends BaseProduct {
                 .category((getCategory() == null) ? null : getCategory().getKorean())
                 .recommend((getRecommend() == null) ? null : getRecommend().getKorean())
                 .isNew(getIsNew() == null ? false : getIsNew())
+                .viewCount(getViewCount())
                 .build();
     }
 

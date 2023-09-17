@@ -35,6 +35,7 @@ public class BaseEventProduct extends BaseProduct {
                 .giftPrice(getGiftPrice() == null ? null : formattingPrice(getGiftPrice()))
                 .giftTitle(getGiftTitle())
                 .isNew(false) // TODO: 2차 배포 이후 행사 상품의 isNew 필드 삭제
+                .viewCount(getViewCount())
                 .build();
     }
 }

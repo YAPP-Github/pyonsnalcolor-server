@@ -19,6 +19,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,16 +28,19 @@ import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
+@Service
 @RequiredArgsConstructor
 public abstract class ProductService {
 
     protected final BasicProductRepository basicProductRepository;
     protected final MongoTemplate mongoTemplate;
 
+    @Transactional
     public ProductResponseDto getProductById(String id) {
-        Optional<BaseProduct> baseProduct = basicProductRepository.findById(id);
-        baseProduct.orElseThrow(NoSuchElementException::new);
-        return baseProduct.get().convertToDto();
+        BaseProduct baseProduct = (BaseProduct) basicProductRepository.findById(id).get();
+        baseProduct.increaseViewCount();
+        basicProductRepository.save(baseProduct);
+        return baseProduct.convertToDto();
     }
 
     protected abstract void validateProductFilterCodes(List<Integer> filterList);
