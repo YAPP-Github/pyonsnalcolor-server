@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.push;
 
-import com.pyonsnalcolor.auth.Member;
+import com.pyonsnalcolor.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;

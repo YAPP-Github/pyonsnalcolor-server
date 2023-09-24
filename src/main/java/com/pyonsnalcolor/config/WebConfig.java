@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.config;
 
-import com.pyonsnalcolor.auth.AuthParameterResolver;
+import com.pyonsnalcolor.member.AuthParameterResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

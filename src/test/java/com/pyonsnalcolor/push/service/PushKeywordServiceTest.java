@@ -1,9 +1,9 @@
 package com.pyonsnalcolor.push.service;
 
-import com.pyonsnalcolor.auth.Member;
-import com.pyonsnalcolor.auth.MemberRepository;
-import com.pyonsnalcolor.auth.enumtype.OAuthType;
-import com.pyonsnalcolor.auth.enumtype.Role;
+import com.pyonsnalcolor.member.entity.Member;
+import com.pyonsnalcolor.member.repository.MemberRepository;
+import com.pyonsnalcolor.member.enumtype.OAuthType;
+import com.pyonsnalcolor.member.enumtype.Role;
 import com.pyonsnalcolor.exception.PyonsnalcolorPushException;
 import com.pyonsnalcolor.push.PushKeyword;
 import com.pyonsnalcolor.push.dto.PushKeywordRequestDto;

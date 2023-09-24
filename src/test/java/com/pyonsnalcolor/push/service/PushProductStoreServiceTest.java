@@ -1,10 +1,10 @@
 package com.pyonsnalcolor.push.service;
 
-import com.pyonsnalcolor.auth.Member;
-import com.pyonsnalcolor.auth.MemberRepository;
-import com.pyonsnalcolor.auth.enumtype.OAuthType;
-import com.pyonsnalcolor.auth.enumtype.Role;
-import com.pyonsnalcolor.auth.service.MemberService;
+import com.pyonsnalcolor.member.entity.Member;
+import com.pyonsnalcolor.member.repository.MemberRepository;
+import com.pyonsnalcolor.member.enumtype.OAuthType;
+import com.pyonsnalcolor.member.enumtype.Role;
+import com.pyonsnalcolor.member.service.AuthService;
 import com.pyonsnalcolor.push.dto.PushProductStoreRequestDto;
 import com.pyonsnalcolor.push.dto.PushProductStoreResponseDto;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ class PushProductStoreServiceTest {
 
 
     @Autowired
-    private MemberService memberService;
+    private AuthService authService;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -42,7 +42,7 @@ class PushProductStoreServiceTest {
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
         Member savedMember = memberRepository.save(member);
-        memberService.createPushProductStores(member);
+        authService.createPushProductStores(member);
 
         List<PushProductStoreResponseDto> result = pushProductStoreService.getPushProductStores(savedMember.getId());
 
@@ -65,7 +65,7 @@ class PushProductStoreServiceTest {
                 .refreshToken("refreshToken")
                 .role(Role.ROLE_USER).build();
         Member savedMember = memberRepository.save(member);
-        memberService.createPushProductStores(savedMember);
+        authService.createPushProductStores(savedMember);
 
         PushProductStoreRequestDto requestDto = PushProductStoreRequestDto.builder()
                 .productStores(List.of("EVENT_CU", "PB_CU"))
