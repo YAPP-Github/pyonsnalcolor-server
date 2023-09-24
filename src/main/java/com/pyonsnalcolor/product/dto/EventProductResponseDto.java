@@ -18,6 +18,7 @@ public class EventProductResponseDto extends ProductResponseDto {
     private String giftImage;
     private String giftTitle;
     private String giftPrice;
+    private Boolean isEventExpired;
     private List<ReviewDto> reviews;
     private float avgScore;
 }

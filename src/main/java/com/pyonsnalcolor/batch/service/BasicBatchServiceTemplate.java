@@ -19,10 +19,9 @@ abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements Batch
     public void execute() {
         List<T> allProducts = getAllProducts();
         List<T> newProducts = getNewProducts(allProducts);
-        List<T> eventExpiredProducts = getEventExpiredProducts(allProducts);
+        updateExpiredProducts(allProducts);
         sendAlarms(newProducts);
         saveProducts(newProducts);
-        deleteProducts(eventExpiredProducts);
     }
 
     protected abstract List<T> getAllProducts();
@@ -33,7 +32,7 @@ abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements Batch
      * @param allProducts
      * @return
      */
-    protected List<T> getEventExpiredProducts(List<T> allProducts) {
+    protected List<T> updateExpiredProducts(List<T> allProducts) {
         return Collections.emptyList();
     }
 
@@ -47,13 +46,5 @@ abstract class BasicBatchServiceTemplate<T extends BaseProduct> implements Batch
 
     private final void saveProducts(List<T> baseProducts) {
         basicProductRepository.saveAll(baseProducts);
-    }
-
-    /**
-     * event 상품에 대해서만 구현체 작성 필요
-     *
-     * @param baseProducts
-     */
-    protected void deleteProducts(List<T> baseProducts) {
     }
 }
