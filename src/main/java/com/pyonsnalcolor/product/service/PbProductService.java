@@ -3,6 +3,7 @@ package com.pyonsnalcolor.product.service;
 import com.pyonsnalcolor.exception.PyonsnalcolorProductException;
 import com.pyonsnalcolor.exception.model.CommonErrorCode;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
+import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.entity.BasePbProduct;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.ImageRepository;
@@ -36,7 +37,9 @@ public class PbProductService extends ProductService {
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
 
-    public PbProductService(PbProductRepository pbProductRepository, MongoTemplate mongoTemplate, ImageRepository imageRepository) {
+    public PbProductService(PbProductRepository pbProductRepository,
+                            MongoTemplate mongoTemplate,
+                            ImageRepository imageRepository) {
         super(pbProductRepository, mongoTemplate, imageRepository);
     }
 
@@ -48,7 +51,7 @@ public class PbProductService extends ProductService {
     }
 
     @Override
-    protected Page<BasePbProduct> getPagedProductsByFilter(
+    public Page<ProductResponseDto> getPagedProductsByFilter(
             Pageable pageable, String storeType, ProductFilterRequestDto productFilterRequestDto
     ) {
         Aggregation aggregation = getAggregationBySortCondition(pageable, storeType, productFilterRequestDto);
@@ -62,7 +65,7 @@ public class PbProductService extends ProductService {
                 aggregationResults.getMappedResults(),
                 pageable,
                 () -> mongoTemplate.count(new Query(criteria), BasePbProduct.class)
-        );
+        ).map(BasePbProduct::convertToDto);
     }
 
     private Aggregation getAggregationBySortCondition(

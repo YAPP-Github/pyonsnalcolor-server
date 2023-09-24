@@ -4,6 +4,7 @@ import com.pyonsnalcolor.product.dto.PbProductResponseDto;
 import com.pyonsnalcolor.product.dto.ReviewDto;
 import com.pyonsnalcolor.product.enumtype.Curation;
 import com.pyonsnalcolor.product.enumtype.EventType;
+import com.pyonsnalcolor.product.enumtype.ProductType;
 import com.pyonsnalcolor.product.enumtype.Recommend;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,7 @@ public class BasePbProduct extends BaseProduct {
                 .storeType(getStoreType())
                 .price(formattingPrice(getPrice()))
                 .eventType(getEventType() == null ? EventType.NONE : getEventType())
+                .productType(ProductType.PB)
                 .updatedTime(getCreatedDate())
                 .category((getCategory() == null) ? null : getCategory().getKorean())
                 .recommend((getRecommend() == null) ? null : getRecommend().getKorean())
@@ -51,6 +53,7 @@ public class BasePbProduct extends BaseProduct {
                 .viewCount(getViewCount())
                 .reviews(reviewDtos)
                 .avgScore(avgScore)
+                .isFavorite(false)
                 .build();
     }
 
