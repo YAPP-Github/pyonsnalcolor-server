@@ -22,6 +22,7 @@ public class Review extends BaseTimeEntity {
     private String writerName;
 
     public ReviewDto convertToDto() {
-        return new ReviewDto(taste, quality, valueForMoney, score, contents, image, writerId, writerName, getModifiedDate());
+        return new ReviewDto(taste, quality, valueForMoney, score, contents, image, writerId, writerName,
+                getCreatedDate(), getModifiedDate());
     }
 }
