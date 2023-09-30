@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+public class Review extends BaseTimeEntity {
     private Like taste; //맛
     private Like quality; //퀄리티
     private Like valueForMoney; //가성비
@@ -22,6 +22,7 @@ public class Review {
     private String writerName;
 
     public ReviewDto convertToDto() {
-        return new ReviewDto(taste, quality, valueForMoney, score, contents, image, writerId, writerName);
+        return new ReviewDto(taste, quality, valueForMoney, score, contents, image, writerId, writerName,
+                getCreatedDate(), getModifiedDate());
     }
 }
