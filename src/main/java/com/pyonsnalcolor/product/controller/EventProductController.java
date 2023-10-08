@@ -1,11 +1,15 @@
 package com.pyonsnalcolor.product.controller;
 
+import com.pyonsnalcolor.member.AuthMemberId;
+import com.pyonsnalcolor.member.service.MemberService;
 import com.pyonsnalcolor.product.dto.EventProductResponseDto;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.dto.ReviewDto;
+import com.pyonsnalcolor.product.enumtype.ProductType;
 import com.pyonsnalcolor.product.service.EventProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class EventProductController {
 
     private final EventProductService eventProductService;
+    private final MemberService memberService;
 
     @Operation(summary = "행사 상품 필터 조회", description = "행사 상품을 필터링 조회합니다.")
     @PostMapping("/products/event-products")
@@ -30,12 +35,14 @@ public class EventProductController {
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
             @RequestParam String storeType,
-            @RequestBody ProductFilterRequestDto productFilterRequestDto
+            @RequestBody ProductFilterRequestDto productFilterRequestDto,
+            @Parameter(hidden = true) @AuthMemberId Long memberId
     ) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<ProductResponseDto> products = eventProductService.getPagedProductsDtoByFilter(
+        Page<ProductResponseDto> products = eventProductService.getPagedProductsByFilter(
                 pageable, storeType, productFilterRequestDto);
-        return new ResponseEntity(products, HttpStatus.OK);
+        Page<ProductResponseDto> results = memberService.updateProductsIfFavorite(products, ProductType.EVENT, memberId);
+        return new ResponseEntity(results, HttpStatus.OK);
     }
 
     @Operation(summary = "리뷰 등록", description = "특정 상품의 리뷰를 등록합니다")
@@ -53,8 +60,12 @@ public class EventProductController {
 
     @Operation(summary = "행사 상품 단건 조회", description = "id로 행사 상품을 조회합니다.")
     @GetMapping("/products/event-products/{id}")
-    public ResponseEntity<EventProductResponseDto> getEventProduct(@PathVariable String id) {
-        EventProductResponseDto responseDto = (EventProductResponseDto) eventProductService.getProductById(id);
-        return new ResponseEntity(responseDto, HttpStatus.OK);
+    public ResponseEntity<EventProductResponseDto> getEventProduct(
+            @PathVariable String id,
+            @Parameter(hidden = true) @AuthMemberId Long memberId
+    ) {
+        ProductResponseDto product = eventProductService.getProductById(id);
+        ProductResponseDto result = memberService.updateProductIfFavorite(product, ProductType.EVENT, memberId);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

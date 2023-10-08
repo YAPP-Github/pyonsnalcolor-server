@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.config;
 
-import com.pyonsnalcolor.auth.security.AuthUserDetailsService;
-import com.pyonsnalcolor.auth.security.JwtAuthenticationFilter;
+import com.pyonsnalcolor.member.security.AuthUserDetailsService;
+import com.pyonsnalcolor.member.security.JwtAuthenticationFilter;
 import com.pyonsnalcolor.handler.JwtAccessDeniedHandler;
 import com.pyonsnalcolor.handler.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +51,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**", "/products/**",
-                        "/promotions/**", "/fcm/**", "/manage/**").permitAll()
+                .antMatchers("/auth/**", "/promotions/**", "/fcm/**", "/manage/**").permitAll()
                 .antMatchers("/member/**").hasRole("USER")
                 .anyRequest().authenticated()
             .and()

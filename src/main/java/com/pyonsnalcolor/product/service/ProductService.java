@@ -1,5 +1,6 @@
 package com.pyonsnalcolor.product.service;
 
+import com.pyonsnalcolor.exception.PyonsnalcolorProductException;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.dto.ReviewDto;
@@ -9,8 +10,10 @@ import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
 import com.pyonsnalcolor.product.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -22,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.pyonsnalcolor.exception.model.CommonErrorCode.INVALID_PRODUCT_TYPE;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Service
@@ -42,14 +46,7 @@ public abstract class ProductService {
 
     protected abstract void validateProductFilterCodes(List<Integer> filterList);
 
-    public <T extends ProductResponseDto> Page<T> getPagedProductsDtoByFilter(
-            Pageable pageable, String storeType, ProductFilterRequestDto productFilterRequestDto) {
-
-        return getPagedProductsByFilter(pageable, storeType, productFilterRequestDto)
-                .map(p -> (T) p.convertToDto());
-    }
-
-    protected abstract <T extends BaseProduct> Page<T> getPagedProductsByFilter(
+    public abstract <T extends ProductResponseDto> Page<T> getPagedProductsByFilter(
             Pageable pageable, String storeType, ProductFilterRequestDto productFilterRequestDto);
 
     protected Aggregation getAggregation(
@@ -108,5 +105,21 @@ public abstract class ProductService {
         baseProduct.addReview(review);
 
         basicProductRepository.save(baseProduct);
+    }
+
+    public Slice<ProductResponseDto> getProductsOfFavoriteByIds(Slice<String> productIds) {
+        return productIds
+                .map(p -> {
+                    BaseProduct baseProduct = (BaseProduct) basicProductRepository.findById(p).get();
+                    ProductResponseDto productResponseDto = baseProduct.convertToDto();
+                    productResponseDto.setFavoriteTrue();
+                    return productResponseDto;
+                });
+    }
+
+    public void validateProductTypeOfProduct(String id) {
+        if (basicProductRepository.findById(id).isEmpty()) {
+            throw new PyonsnalcolorProductException(INVALID_PRODUCT_TYPE);
+        }
     }
 }

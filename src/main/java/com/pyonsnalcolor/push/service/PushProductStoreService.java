@@ -1,7 +1,7 @@
 package com.pyonsnalcolor.push.service;
 
-import com.pyonsnalcolor.auth.MemberRepository;
-import com.pyonsnalcolor.auth.Member;
+import com.pyonsnalcolor.member.repository.MemberRepository;
+import com.pyonsnalcolor.member.entity.Member;
 import com.pyonsnalcolor.product.enumtype.ProductStoreType;
 import com.pyonsnalcolor.push.PushProductStore;
 import com.pyonsnalcolor.push.dto.PushProductStoreRequestDto;

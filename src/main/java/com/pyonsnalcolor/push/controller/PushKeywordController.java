@@ -1,6 +1,6 @@
 package com.pyonsnalcolor.push.controller;
 
-import com.pyonsnalcolor.auth.AuthMemberId;
+import com.pyonsnalcolor.member.AuthMemberId;
 import com.pyonsnalcolor.push.dto.PushKeywordRequestDto;
 import com.pyonsnalcolor.push.dto.PushKeywordResponseDto;
 import com.pyonsnalcolor.push.service.PushKeywordService;

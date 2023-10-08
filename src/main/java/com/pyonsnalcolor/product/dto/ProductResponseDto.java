@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.pyonsnalcolor.product.enumtype.EventType;
+import com.pyonsnalcolor.product.enumtype.ProductType;
 import com.pyonsnalcolor.product.enumtype.StoreType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,8 @@ public class ProductResponseDto {
     @NotBlank
     private EventType eventType;
     @NotBlank
+    private ProductType productType;
+    @NotBlank
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -45,4 +48,9 @@ public class ProductResponseDto {
     @NotBlank
     private int viewCount;
     private String category;
+    private Boolean isFavorite;
+
+    public void setFavoriteTrue() {
+        this.isFavorite = true;
+    }
 }

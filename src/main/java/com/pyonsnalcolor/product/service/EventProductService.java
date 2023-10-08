@@ -2,6 +2,7 @@ package com.pyonsnalcolor.product.service;
 
 import com.pyonsnalcolor.exception.PyonsnalcolorProductException;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
+import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.entity.BaseEventProduct;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.EventProductRepository;
@@ -50,7 +51,7 @@ public class EventProductService extends ProductService {
     }
 
     @Override
-    protected Page<BaseEventProduct> getPagedProductsByFilter(
+    public Page<ProductResponseDto> getPagedProductsByFilter(
             Pageable pageable, String storeType, ProductFilterRequestDto productFilterRequestDto
     ) {
         Aggregation aggregation = getAggregation(pageable, storeType, productFilterRequestDto);
@@ -64,6 +65,6 @@ public class EventProductService extends ProductService {
                 aggregationResults.getMappedResults(),
                 pageable,
                 () -> mongoTemplate.count(new Query(criteria), BaseEventProduct.class)
-        );
+        ).map(BaseEventProduct::convertToDto);
     }
 }
