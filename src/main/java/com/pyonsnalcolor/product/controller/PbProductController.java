@@ -12,7 +12,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -65,5 +67,23 @@ public class PbProductController {
         ProductResponseDto product = pbProductService.getProductById(id);
         ProductResponseDto result = memberService.updateProductIfFavorite(product, ProductType.PB, memberId);
         return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @Operation(summary = "PB 상품 리뷰 좋아요", description = "id에 해당하는 PB 상품의 리뷰 좋아요 카운트 증가.")
+    @PutMapping("/products/pb-products/{productId}/reviews/{reviewId}/like")
+    public ResponseEntity<Void> likeReview(@PathVariable("productId") String productId,
+                                           @PathVariable("reviewId") String reviewId) throws Throwable {
+        pbProductService.likeReview(productId, reviewId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "PB 상품 리뷰 싫어요", description = "id에 해당하는 PB 상품의 리뷰 싫어요 카운트 증가.")
+    @PutMapping("/products/pb-products/{productId}/reviews/{reviewId}/hate")
+    public ResponseEntity<Void> hateReview(@PathVariable("productId") String productId,
+                                           @PathVariable("reviewId") String reviewId) throws Throwable {
+        pbProductService.hateReview(productId, reviewId);
+
+        return ResponseEntity.ok().build();
     }
 }

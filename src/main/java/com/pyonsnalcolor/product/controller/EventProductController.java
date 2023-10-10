@@ -68,4 +68,22 @@ public class EventProductController {
         ProductResponseDto result = memberService.updateProductIfFavorite(product, ProductType.EVENT, memberId);
         return new ResponseEntity(result, HttpStatus.OK);
     }
+
+    @Operation(summary = "event 상품 리뷰 좋아요", description = "id에 해당하는 event 상품의 리뷰 좋아요 카운트 증가.")
+    @PutMapping("/products/event-products/{productId}/reviews/{reviewId}/like")
+    public ResponseEntity<Void> likeReview(@PathVariable("productId") String productId,
+                                           @PathVariable("reviewId") String reviewId) throws Throwable {
+        eventProductService.likeReview(productId, reviewId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "event 상품 리뷰 싫어요", description = "id에 해당하는 event 상품의 리뷰 싫어요 카운트 증가.")
+    @PutMapping("/products/event-products/{productId}/reviews/{reviewId}/hate")
+    public ResponseEntity<Void> hateReview(@PathVariable("productId") String productId,
+                                           @PathVariable("reviewId") String reviewId) throws Throwable {
+        eventProductService.hateReview(productId, reviewId);
+
+        return ResponseEntity.ok().build();
+    }
 }
