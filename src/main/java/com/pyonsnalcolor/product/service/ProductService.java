@@ -6,11 +6,11 @@ import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.dto.ReviewDto;
 import com.pyonsnalcolor.product.entity.BaseProduct;
 import com.pyonsnalcolor.product.entity.Review;
+import com.pyonsnalcolor.product.entity.UUIDGenerator;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
 import com.pyonsnalcolor.product.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -83,15 +84,52 @@ public abstract class ProductService {
         return criteria;
     }
 
+    //리뷰 좋아요
+    public void likeReview(String productId, String reviewId) throws Throwable {
+        BaseProduct baseProduct = (BaseProduct) basicProductRepository
+                .findById(productId)
+                .orElseThrow(NoSuchElementException::new);
+
+        Review review = baseProduct.getReviews().stream().filter(
+                        r -> r.getReviewId().equals(reviewId)
+                ).findFirst()
+                .orElseThrow(NoSuchElementException::new);
+
+        review.likeReview();
+
+        basicProductRepository.save(baseProduct);
+    }
+
+    //리뷰 싫어요
+    public void hateReview(String productId, String reviewId) throws Throwable {
+        BaseProduct baseProduct = (BaseProduct) basicProductRepository
+                .findById(productId)
+                .orElseThrow(NoSuchElementException::new);
+
+        Review review = baseProduct.getReviews().stream().filter(
+                        r -> r.getReviewId().equals(reviewId)
+                ).findFirst()
+                .orElseThrow(NoSuchElementException::new);
+
+        review.hateReview();
+
+        basicProductRepository.save(baseProduct);
+    }
+
     //리뷰 등록
     public void registerReview(MultipartFile image, ReviewDto reviewDto, String productId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
                 .orElseThrow(NoSuchElementException::new);
 
-        String filePath = imageRepository.uploadImage(image);
+        String filePath = "None";
+
+        if (image != null) {
+            filePath = imageRepository.uploadImage(image);
+        }
 
         Review review = new Review().builder()
+                .reviewId(UUIDGenerator.generateId())
                 .contents(reviewDto.getContents())
                 .image(filePath)
                 .quality(reviewDto.getQuality())
@@ -100,6 +138,10 @@ public abstract class ProductService {
                 .valueForMoney(reviewDto.getValueForMoney())
                 .writerId(reviewDto.getWriterId())
                 .writerName(reviewDto.getWriterName())
+                .updatedTime(LocalDateTime.now())
+                .createdTime(LocalDateTime.now())
+                .hateCount(0L)
+                .likeCount(0L)
                 .build();
 
         baseProduct.addReview(review);

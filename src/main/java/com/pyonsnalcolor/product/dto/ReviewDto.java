@@ -32,4 +32,6 @@ public class ReviewDto {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedTime;
+    private Long likeCount;
+    private Long hateCount;
 }
