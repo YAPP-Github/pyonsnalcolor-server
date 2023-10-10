@@ -85,7 +85,6 @@ public abstract class ProductService {
     }
 
     //리뷰 좋아요
-    @Transactional
     public void likeReview(String productId, String reviewId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
@@ -102,7 +101,6 @@ public abstract class ProductService {
     }
 
     //리뷰 싫어요
-    @Transactional
     public void hateReview(String productId, String reviewId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
@@ -119,7 +117,6 @@ public abstract class ProductService {
     }
 
     //리뷰 등록
-    @Transactional
     public void registerReview(MultipartFile image, ReviewDto reviewDto, String productId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
@@ -127,7 +124,7 @@ public abstract class ProductService {
 
         String filePath = "None";
 
-        if (!image.isEmpty()) {
+        if (image != null) {
             filePath = imageRepository.uploadImage(image);
         }
 
