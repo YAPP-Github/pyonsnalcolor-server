@@ -43,6 +43,7 @@ public class Review {
 
         if (this.hateCount != null && this.hateCount.getWriterIds().contains(writerId)) {
             this.hateCount.setHateCount(this.hateCount.getHateCount() - 1);
+            this.hateCount.getWriterIds().remove(writerId);
         }
     }
 
@@ -58,6 +59,7 @@ public class Review {
 
         if (this.likeCount != null && this.likeCount.getWriterIds().contains(writerId)) {
             this.likeCount.setLikeCount(this.likeCount.getLikeCount() - 1);
+            this.likeCount.getWriterIds().remove(writerId);
         }
     }
 }

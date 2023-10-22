@@ -84,6 +84,7 @@ public abstract class ProductService {
     }
 
     //리뷰 좋아요
+    @Transactional
     public void likeReview(String productId, String reviewId, Long writerId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
@@ -100,6 +101,7 @@ public abstract class ProductService {
     }
 
     //리뷰 싫어요
+    @Transactional
     public void hateReview(String productId, String reviewId, Long writerId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
