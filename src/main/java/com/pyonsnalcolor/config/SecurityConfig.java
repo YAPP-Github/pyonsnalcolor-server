@@ -38,8 +38,7 @@ public class SecurityConfig {
                 .antMatchers( "/resources/**",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "/health-check",
-                        "/products/**"
+                        "/health-check"
                 );
     }
 
@@ -52,7 +51,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/products/**","/auth/**", "/promotions/**", "/fcm/**", "/manage/**").permitAll()
+                .antMatchers("/auth/**", "/promotions/**", "/fcm/**", "/manage/**").permitAll()
                 .antMatchers("/member/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
