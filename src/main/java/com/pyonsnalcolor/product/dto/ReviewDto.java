@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.pyonsnalcolor.product.entity.HateCount;
+import com.pyonsnalcolor.product.entity.LikeCount;
 import com.pyonsnalcolor.product.enumtype.Like;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewDto {
+    private String reviewId;
     private Like taste; //맛
     private Like quality; //퀄리티
     private Like valueForMoney; //가성비
@@ -32,6 +35,6 @@ public class ReviewDto {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedTime;
-    private Long likeCount;
-    private Long hateCount;
+    private LikeCount likeCount;
+    private HateCount hateCount;
 }

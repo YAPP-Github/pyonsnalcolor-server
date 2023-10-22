@@ -5,7 +5,7 @@ import com.pyonsnalcolor.member.service.MemberService;
 import com.pyonsnalcolor.product.dto.PbProductResponseDto;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
-import com.pyonsnalcolor.product.dto.ReviewDto;
+import com.pyonsnalcolor.product.dto.ReviewRequestDto;
 import com.pyonsnalcolor.product.enumtype.ProductType;
 import com.pyonsnalcolor.product.service.PbProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,7 +51,7 @@ public class PbProductController {
     public ResponseEntity<Void> registerReview(
             @PathVariable String id,
             @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
-            @RequestPart(value = "reviewDto") ReviewDto reviewDto
+            @RequestPart(value = "reviewDto") ReviewRequestDto reviewDto
     ) throws Throwable {
         pbProductService.registerReview(imageFile, reviewDto, id);
 
@@ -72,8 +72,9 @@ public class PbProductController {
     @Operation(summary = "PB 상품 리뷰 좋아요", description = "id에 해당하는 PB 상품의 리뷰 좋아요 카운트 증가.")
     @PutMapping("/products/pb-products/{productId}/reviews/{reviewId}/like")
     public ResponseEntity<Void> likeReview(@PathVariable("productId") String productId,
-                                           @PathVariable("reviewId") String reviewId) throws Throwable {
-        pbProductService.likeReview(productId, reviewId);
+                                           @PathVariable("reviewId") String reviewId,
+                                           @RequestParam("writerId") Long writerId) throws Throwable {
+        pbProductService.likeReview(productId, reviewId, writerId);
 
         return ResponseEntity.ok().build();
     }
@@ -81,8 +82,9 @@ public class PbProductController {
     @Operation(summary = "PB 상품 리뷰 싫어요", description = "id에 해당하는 PB 상품의 리뷰 싫어요 카운트 증가.")
     @PutMapping("/products/pb-products/{productId}/reviews/{reviewId}/hate")
     public ResponseEntity<Void> hateReview(@PathVariable("productId") String productId,
-                                           @PathVariable("reviewId") String reviewId) throws Throwable {
-        pbProductService.hateReview(productId, reviewId);
+                                           @PathVariable("reviewId") String reviewId,
+                                           @RequestParam("writerId") Long writerId) throws Throwable {
+        pbProductService.hateReview(productId, reviewId, writerId);
 
         return ResponseEntity.ok().build();
     }

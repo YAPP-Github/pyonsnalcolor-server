@@ -23,25 +23,41 @@ public class Review {
     private String writerName;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
-    private Long likeCount;
-    private Long hateCount;
+    private LikeCount likeCount;
+    private HateCount hateCount;
 
     public ReviewDto convertToDto() {
-        return new ReviewDto(taste, quality, valueForMoney, score, contents, image, writerId, writerName,
+        return new ReviewDto(reviewId, taste, quality, valueForMoney, score, contents, image, writerId, writerName,
                 createdTime, updatedTime, likeCount, hateCount);
     }
 
-    public void likeReview() {
-        if(this.likeCount == null) {
-            this.likeCount = 0L;
+    public void likeReview(Long writerId) {
+        if (this.likeCount == null) {
+            this.likeCount = new LikeCount();
         }
-        this.likeCount += 1;
+        if (this.likeCount.getWriterIds().contains(writerId)) {
+            return;
+        }
+        this.likeCount.addWriter(writerId);
+        this.likeCount.setLikeCount(this.likeCount.getLikeCount() + 1);
+
+        if (this.hateCount != null && this.hateCount.getWriterIds().contains(writerId)) {
+            this.hateCount.setHateCount(this.hateCount.getHateCount() - 1);
+        }
     }
 
-    public void hateReview() {
-        if(this.hateCount == null) {
-            this.hateCount = 0L;
+    public void hateReview(Long writerId) {
+        if (this.hateCount == null) {
+            this.hateCount = new HateCount();
         }
-        this.hateCount += 1;
+        if (this.hateCount.getWriterIds().contains(writerId)) {
+            return;
+        }
+        this.hateCount.addWriter(writerId);
+        this.hateCount.setHateCount(this.hateCount.getHateCount() + 1);
+
+        if (this.likeCount != null && this.likeCount.getWriterIds().contains(writerId)) {
+            this.likeCount.setLikeCount(this.likeCount.getLikeCount() - 1);
+        }
     }
 }

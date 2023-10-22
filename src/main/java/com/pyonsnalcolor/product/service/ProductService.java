@@ -4,9 +4,8 @@ import com.pyonsnalcolor.exception.PyonsnalcolorProductException;
 import com.pyonsnalcolor.product.dto.ProductFilterRequestDto;
 import com.pyonsnalcolor.product.dto.ProductResponseDto;
 import com.pyonsnalcolor.product.dto.ReviewDto;
-import com.pyonsnalcolor.product.entity.BaseProduct;
-import com.pyonsnalcolor.product.entity.Review;
-import com.pyonsnalcolor.product.entity.UUIDGenerator;
+import com.pyonsnalcolor.product.dto.ReviewRequestDto;
+import com.pyonsnalcolor.product.entity.*;
 import com.pyonsnalcolor.product.enumtype.*;
 import com.pyonsnalcolor.product.repository.BasicProductRepository;
 import com.pyonsnalcolor.product.repository.ImageRepository;
@@ -85,7 +84,7 @@ public abstract class ProductService {
     }
 
     //리뷰 좋아요
-    public void likeReview(String productId, String reviewId) throws Throwable {
+    public void likeReview(String productId, String reviewId, Long writerId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
                 .orElseThrow(NoSuchElementException::new);
@@ -95,13 +94,13 @@ public abstract class ProductService {
                 ).findFirst()
                 .orElseThrow(NoSuchElementException::new);
 
-        review.likeReview();
+        review.likeReview(writerId);
 
         basicProductRepository.save(baseProduct);
     }
 
     //리뷰 싫어요
-    public void hateReview(String productId, String reviewId) throws Throwable {
+    public void hateReview(String productId, String reviewId, Long writerId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
                 .orElseThrow(NoSuchElementException::new);
@@ -111,13 +110,13 @@ public abstract class ProductService {
                 ).findFirst()
                 .orElseThrow(NoSuchElementException::new);
 
-        review.hateReview();
+        review.hateReview(writerId);
 
         basicProductRepository.save(baseProduct);
     }
 
     //리뷰 등록
-    public void registerReview(MultipartFile image, ReviewDto reviewDto, String productId) throws Throwable {
+    public void registerReview(MultipartFile image, ReviewRequestDto reviewDto, String productId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
                 .orElseThrow(NoSuchElementException::new);
@@ -140,8 +139,8 @@ public abstract class ProductService {
                 .writerName(reviewDto.getWriterName())
                 .updatedTime(LocalDateTime.now())
                 .createdTime(LocalDateTime.now())
-                .hateCount(0L)
-                .likeCount(0L)
+                .hateCount(new HateCount())
+                .likeCount(new LikeCount())
                 .build();
 
         baseProduct.addReview(review);
