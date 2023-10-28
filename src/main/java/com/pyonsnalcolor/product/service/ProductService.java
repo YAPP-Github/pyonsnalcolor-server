@@ -84,7 +84,6 @@ public abstract class ProductService {
     }
 
     //리뷰 좋아요
-    @Transactional
     public void likeReview(String productId, String reviewId, Long writerId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
@@ -101,7 +100,6 @@ public abstract class ProductService {
     }
 
     //리뷰 싫어요
-    @Transactional
     public void hateReview(String productId, String reviewId, Long writerId) throws Throwable {
         BaseProduct baseProduct = (BaseProduct) basicProductRepository
                 .findById(productId)
@@ -123,9 +121,9 @@ public abstract class ProductService {
                 .findById(productId)
                 .orElseThrow(NoSuchElementException::new);
 
-        String filePath = "None";
+        String filePath = null;
 
-        if (image != null) {
+        if (image != null && !image.isEmpty()) {
             filePath = imageRepository.uploadImage(image);
         }
 
