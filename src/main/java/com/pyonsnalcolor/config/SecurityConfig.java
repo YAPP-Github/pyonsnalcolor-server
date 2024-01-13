@@ -39,7 +39,9 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/health-check",
-                        "/"
+                        "/",
+                        "/apple-app-site-association",
+                        "/.well-known/apple-app-site-association"
                 );
     }
 
