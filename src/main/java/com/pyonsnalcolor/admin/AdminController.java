@@ -9,11 +9,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -31,6 +36,17 @@ public class AdminController {
 
     @Autowired
     private FcmPushService fcmPushService;
+
+    // universial link
+    @GetMapping("/")
+    public ResponseEntity<String> getAASAData() throws IOException {
+        Resource resource = new ClassPathResource("apple-app-site-association");
+        byte[] jsonData = Files.readAllBytes(resource.getFile().toPath());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new String(jsonData));
+    }
 
     // ios 테스트용
     @GetMapping("/fcm/test")
