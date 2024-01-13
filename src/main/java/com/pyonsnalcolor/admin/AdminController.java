@@ -37,7 +37,7 @@ public class AdminController {
     private FcmPushService fcmPushService;
 
     // universial link
-    @GetMapping("/")
+    @GetMapping(value = {"/", "/apple-app-site-association", "/.well-known/apple-app-site-association"})
     public ResponseEntity<String> getAASAData() throws IOException {
         byte[] jsonData = Files.readAllBytes(Paths.get("/home/aasa/apple-app-site-association"));
 
